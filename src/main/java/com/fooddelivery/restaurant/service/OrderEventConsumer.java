@@ -17,15 +17,16 @@ public class OrderEventConsumer {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "order-events", groupId = "restaurant-service-group")
-    public void consumeOrderEvent(String message) {
+    public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Header(value = "eventType", required = false) String headerEventType) {
         try {
             JsonNode root = objectMapper.readTree(message);
-            String eventType = root.path("eventType").asText();
+            String jsonEventType = root.path("eventType").asText(null);
+            String eventType = headerEventType != null ? headerEventType : jsonEventType;
             
-            if ("ORDER_CREATED".equals(eventType)) {
+            if ("ORDER_PAID".equals(eventType)) {
                 String orderId = root.path("orderId").asText();
                 String restaurantId = root.path("restaurantId").asText();
-                log.info("Restaurant {} received new order {}. Awaiting restaurant staff to accept/reject.", restaurantId, orderId);
+                log.info("Restaurant {} received new paid order {}. Awaiting restaurant staff to accept/reject.", restaurantId, orderId);
                 // In a real application, we would save this to a RestaurantOrder table 
                 // so the restaurant UI can fetch and display pending orders.
             }

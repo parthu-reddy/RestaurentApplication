@@ -27,10 +27,10 @@ class OrderEventConsumerTest {
         UUID orderId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
         
-        String message = String.format("{\"eventType\":\"ORDER_CREATED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\"}", 
+        String message = String.format("{\"eventType\":\"ORDER_PAID\", \"orderId\":\"%s\", \"restaurantId\":\"%s\"}", 
                 orderId, restaurantId);
 
-        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message));
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, null));
     }
 
     @Test
@@ -39,6 +39,6 @@ class OrderEventConsumerTest {
         
         String message = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\"}", orderId);
 
-        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message));
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, null));
     }
 }
