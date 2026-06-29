@@ -13,12 +13,20 @@ import java.util.UUID;
 public class FulfillmentService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
     private static final String TOPIC = "order-events";
 
     public void acceptOrder(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} accepting order {}", restaurantId, orderId);
         
-        String payload = "{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"" + orderId + "\", \"restaurantId\":\"" + restaurantId + "\"}";
+        com.fooddelivery.restaurant.entity.Restaurant restaurant = restaurantRepository.findById(restaurantId)
+            .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+            
+        double lat = restaurant.getLocation() != null ? restaurant.getLocation().getY() : 0.0;
+        double lng = restaurant.getLocation() != null ? restaurant.getLocation().getX() : 0.0;
+        
+        String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f}", 
+                orderId, restaurantId, lat, lng);
         
         kafkaTemplate.send(TOPIC, orderId.toString(), payload);
         log.info("Published ORDER_ACCEPTED for order {}", orderId);

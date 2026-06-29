@@ -1,0 +1,36 @@
+package com.fooddelivery.restaurant.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class OrderEventConsumer {
+
+    private final ObjectMapper objectMapper;
+
+    @KafkaListener(topics = "order-events", groupId = "restaurant-service-group")
+    public void consumeOrderEvent(String message) {
+        try {
+            JsonNode root = objectMapper.readTree(message);
+            String eventType = root.path("eventType").asText();
+            
+            if ("ORDER_CREATED".equals(eventType)) {
+                String orderId = root.path("orderId").asText();
+                String restaurantId = root.path("restaurantId").asText();
+                log.info("Restaurant {} received new order {}. Awaiting restaurant staff to accept/reject.", restaurantId, orderId);
+                // In a real application, we would save this to a RestaurantOrder table 
+                // so the restaurant UI can fetch and display pending orders.
+            }
+        } catch (Exception e) {
+            log.error("Failed to process order event in RestaurantApplication", e);
+        }
+    }
+}
