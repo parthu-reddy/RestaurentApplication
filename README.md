@@ -1,33 +1,29 @@
-# Restaurant Application (Catalog & Fulfillment)
+# Restaurant Application
 
-The Restaurant Application is a dedicated microservice for restaurant partners. It handles the menu catalog, pricing, and the restaurant-side order fulfillment lifecycle. It operates completely independently of the Customer Application, communicating only via asynchronous Kafka events.
+The Restaurant Application provides the backend API for restaurant partners. It allows restaurants to manage their menus, configure availability, and accept or reject incoming orders.
 
-## Key Responsibilities
+## Responsibilities
 
-1. **Menu & Catalog Management**: 
-   - Manages restaurant profiles, menu items, and pricing in its isolated database (`restaurant_db`).
-2. **Order Fulfillment**: 
-   - Listens for new order requests (`ORDER_CREATED`) from the Customer Application.
-   - Allows restaurant staff to accept or reject orders via the `FulfillmentService`.
-3. **Geospatial Context**:
-   - When an order is accepted, it attaches the restaurant's geographic coordinates (`lat`/`lng`) to the `ORDER_ACCEPTED` event so the Delivery Application can route drivers effectively.
+1. **Menu Management**: CRUD operations for `restaurants` and `menu_items`.
+2. **Order Lifecycle**: Consumes `ORDER_CREATED` events from Kafka (emitted by CustomerApplication) and presents them to the restaurant dashboard.
+3. **Acceptance Events**: When a restaurant manually accepts an order, it publishes an `ORDER_ACCEPTED` event back to Kafka to inform the Customer and Delivery applications.
 
-## Architecture & Integrations
+## Flow Diagram
 
-- **Database**: PostgreSQL (`restaurant_db`). Fully isolated.
-- **Message Broker**: Apache Kafka.
-- **Events Published**: 
-  - `ORDER_ACCEPTED` -> `order-events` (Consumed by Customer and Delivery apps)
-  - `ORDER_REJECTED` -> `order-events` (Consumed by Customer app for refund processing)
-- **Events Consumed**:
-  - `ORDER_CREATED` (From `order-events`)
+```mermaid
+sequenceDiagram
+    participant K as Kafka (order-events)
+    participant Consumer as OrderEventConsumer
+    participant DB as Restaurant DB
+    participant API as Restaurant API
 
-## Running Locally
-
-```bash
-# Start required infrastructure (Kafka, Zookeeper, PostgreSQL)
-docker-compose up -d
-
-# Run the application
-./mvnw spring-boot:run
+    K->>Consumer: ORDER_CREATED
+    Consumer->>DB: Materialize Order locally
+    
+    API->>API: Restaurant Partner accepts order
+    API->>K: Publish ORDER_ACCEPTED
 ```
+
+## Setup
+
+Requires PostgreSQL (`restaurant_db`) and Kafka. Run `mvn spring-boot:run`.
