@@ -29,6 +29,10 @@ public class OrderEventConsumer {
                 log.info("Restaurant {} received new paid order {}. Awaiting restaurant staff to accept/reject.", restaurantId, orderId);
                 // In a real application, we would save this to a RestaurantOrder table 
                 // so the restaurant UI can fetch and display pending orders.
+            } else if ("ORDER_CANCELLED".equals(eventType)) {
+                String orderId = root.path("orderId").asText();
+                String restaurantId = root.path("restaurantId").asText();
+                log.info("Restaurant {} received ORDER_CANCELLED for order {}. Stop preparation.", restaurantId, orderId);
             }
         } catch (Exception e) {
             log.error("Failed to process order event in RestaurantApplication", e);
