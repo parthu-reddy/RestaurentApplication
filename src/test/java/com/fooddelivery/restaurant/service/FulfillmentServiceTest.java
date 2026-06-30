@@ -55,8 +55,11 @@ class FulfillmentServiceTest {
         
         org.mockito.Mockito.when(restaurantRepository.findById(restaurantId))
             .thenReturn(java.util.Optional.of(restaurant));
+        
+        org.mockito.Mockito.when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        org.mockito.Mockito.when(valueOperations.get(org.mockito.ArgumentMatchers.anyString())).thenReturn("20");
 
-        fulfillmentService.acceptOrder(restaurantId, orderId);
+        fulfillmentService.acceptOrder(restaurantId, orderId, null, null);
 
         ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
         verify(kafkaTemplate).send(eq("order-events"), eq(orderId.toString()), payloadCaptor.capture());

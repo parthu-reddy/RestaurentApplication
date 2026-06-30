@@ -20,9 +20,16 @@ public class FulfillmentController {
     private final FulfillmentService fulfillmentService;
 
     @PostMapping("/orders/{orderId}/accept")
-    public ResponseEntity<ApiResponse<Void>> acceptOrder(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
-        fulfillmentService.acceptOrder(restaurantId, orderId);
-        return ResponseEntity.ok(ApiResponse.success(null, "Order accepted and dispatched for logistics"));
+    public ResponseEntity<ApiResponse<Void>> acceptOrder(
+            @PathVariable UUID restaurantId, 
+            @PathVariable UUID orderId,
+            @org.springframework.web.bind.annotation.RequestBody(required = false) com.fooddelivery.restaurant.dto.AcceptOrderRequest request) {
+        
+        Integer additionalPrepTime = request != null ? request.getAdditionalPrepTime() : null;
+        String delayReason = request != null ? request.getDelayReason() : null;
+        
+        fulfillmentService.acceptOrder(restaurantId, orderId, additionalPrepTime, delayReason);
+        return ResponseEntity.ok(ApiResponse.success(null, "Order accept processed"));
     }
 
     @PostMapping("/orders/{orderId}/reject")

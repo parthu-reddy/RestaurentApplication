@@ -41,11 +41,12 @@ class FulfillmentControllerTest {
     @Test
     void acceptOrder_ShouldReturnSuccess() throws Exception {
         mockMvc.perform(post("/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/accept", restaurantId, orderId)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Order accepted and dispatched for logistics"));
-
-        verify(fulfillmentService).acceptOrder(restaurantId, orderId);
+                .andExpect(jsonPath("$.message").value("Order accept processed"));
+                
+        verify(fulfillmentService, org.mockito.Mockito.times(1)).acceptOrder(restaurantId, orderId, null, null);
     }
 
     @Test
