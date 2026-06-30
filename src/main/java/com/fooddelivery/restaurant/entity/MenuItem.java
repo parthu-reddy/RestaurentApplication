@@ -29,4 +29,5 @@ public class MenuItem {
     private String description;
     private BigDecimal price;
     private Boolean isAvailable;
+    private Integer prepTimeMinutes;
 }

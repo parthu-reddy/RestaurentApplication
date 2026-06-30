@@ -16,6 +16,8 @@ public class FulfillmentService {
     private final com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
     private static final String TOPIC = "order-events";
 
+    private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
+
     public void acceptOrder(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} accepting order {}", restaurantId, orderId);
         
@@ -25,11 +27,17 @@ public class FulfillmentService {
         double lat = restaurant.getLocation() != null ? restaurant.getLocation().getY() : 0.0;
         double lng = restaurant.getLocation() != null ? restaurant.getLocation().getX() : 0.0;
         
-        String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f}", 
-                orderId, restaurantId, lat, lng);
+        // Fetch estimatedPrepTimeMinutes stored when ORDER_PAID was received
+        String prepTimeStr = redisTemplate.opsForValue().get("order:prepTime:" + orderId);
+        int prepTime = prepTimeStr != null ? Integer.parseInt(prepTimeStr) : 15; // default 15
+        
+        long estimatedCompletionTime = System.currentTimeMillis() + (prepTime * 60 * 1000L);
+        
+        String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f, \"estimatedCompletionTime\":%d}", 
+                orderId, restaurantId, lat, lng, estimatedCompletionTime);
         
         kafkaTemplate.send(TOPIC, orderId.toString(), payload);
-        log.info("Published ORDER_ACCEPTED for order {}", orderId);
+        log.info("Published ORDER_ACCEPTED for order {} with estimatedCompletionTime {}", orderId, estimatedCompletionTime);
     }
 
     public void rejectOrder(UUID restaurantId, UUID orderId) {

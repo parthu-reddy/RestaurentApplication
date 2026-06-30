@@ -9,17 +9,31 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.when;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 @ExtendWith(MockitoExtension.class)
 class OrderEventConsumerTest {
 
     private ObjectMapper objectMapper;
+
+    @Mock
+    private org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
+    
+    @Mock
+    private org.springframework.data.redis.core.ValueOperations<String, String> valueOperations;
+
     private OrderEventConsumer orderEventConsumer;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         objectMapper = new ObjectMapper();
-        orderEventConsumer = new OrderEventConsumer(objectMapper);
+        orderEventConsumer = new OrderEventConsumer(objectMapper, redisTemplate);
+        org.mockito.Mockito.lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
 
     @Test

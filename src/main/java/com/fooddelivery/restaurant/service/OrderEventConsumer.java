@@ -15,6 +15,7 @@ import java.util.UUID;
 public class OrderEventConsumer {
 
     private final ObjectMapper objectMapper;
+    private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
 
     @KafkaListener(topics = "order-events", groupId = "restaurant-service-group")
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Header(value = "eventType", required = false) String headerEventType) {
@@ -26,7 +27,13 @@ public class OrderEventConsumer {
             if ("ORDER_PAID".equals(eventType)) {
                 String orderId = root.path("orderId").asText();
                 String restaurantId = root.path("restaurantId").asText();
-                log.info("Restaurant {} received new paid order {}. Awaiting restaurant staff to accept/reject.", restaurantId, orderId);
+                int estimatedPrepTimeMinutes = root.path("estimatedPrepTimeMinutes").asInt(15);
+                
+                // Store the estimated prep time in Redis for FulfillmentService to use when accepting
+                redisTemplate.opsForValue().set("order:prepTime:" + orderId, String.valueOf(estimatedPrepTimeMinutes));
+                
+                log.info("Restaurant {} received new paid order {} with estimated prep time {}m. Awaiting restaurant staff to accept/reject.", 
+                        restaurantId, orderId, estimatedPrepTimeMinutes);
                 // In a real application, we would save this to a RestaurantOrder table 
                 // so the restaurant UI can fetch and display pending orders.
             } else if ("ORDER_CANCELLED".equals(eventType)) {

@@ -5,14 +5,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
+import com.fooddelivery.restaurant.repository.IRestaurantRepository;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FulfillmentServiceTest {
@@ -21,13 +26,21 @@ class FulfillmentServiceTest {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Mock
-    private com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
+    private IRestaurantRepository restaurantRepository;
+
+    @Mock
+    private StringRedisTemplate redisTemplate;
+    
+    @Mock
+    private ValueOperations<String, String> valueOperations;
 
     private FulfillmentService fulfillmentService;
 
     @BeforeEach
     void setUp() {
-        fulfillmentService = new FulfillmentService(kafkaTemplate, restaurantRepository);
+        MockitoAnnotations.openMocks(this);
+        fulfillmentService = new FulfillmentService(kafkaTemplate, restaurantRepository, redisTemplate);
+        org.mockito.Mockito.lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
 
     @Test
