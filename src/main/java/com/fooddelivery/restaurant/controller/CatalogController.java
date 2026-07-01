@@ -1,58 +1,74 @@
 package com.fooddelivery.restaurant.controller;
 
 import com.fooddelivery.common.dto.ApiResponse;
-import com.fooddelivery.restaurant.entity.MenuItem;
-import com.fooddelivery.restaurant.repository.IMenuItemRepository;
+import com.fooddelivery.restaurant.dto.MenuItemDTO;
+import com.fooddelivery.restaurant.entity.MasterMenuItem;
+import com.fooddelivery.restaurant.entity.OutletMenuOverride;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/restaurants/{restaurantId}/catalog")
 @RequiredArgsConstructor
 public class CatalogController {
 
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
 
-    @PostMapping("/items")
-    public ResponseEntity<ApiResponse<MenuItem>> addMenuItem(@PathVariable UUID restaurantId, @RequestBody MenuItem item) {
-        try {
-            MenuItem savedItem = catalogService.addMenuItem(restaurantId, item);
-            return ResponseEntity.ok(ApiResponse.success(savedItem, "Menu item added successfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
-        }
+    // Phase 3: Brand uploads Master Menu
+    @PostMapping("/api/v1/brands/{brandId}/master-menu")
+    public ResponseEntity<ApiResponse<MasterMenuItem>> addMasterMenuItem(@PathVariable UUID brandId, @RequestBody MasterMenuItem item) {
+        MasterMenuItem savedItem = catalogService.addMasterMenuItem(brandId, item);
+        return ResponseEntity.ok(ApiResponse.success(savedItem, "Master Menu item added successfully"));
     }
 
-    @GetMapping("/items")
-    public ResponseEntity<ApiResponse<List<MenuItem>>> getMenuItems(@PathVariable UUID restaurantId) {
-        List<MenuItem> items = catalogService.getMenuItems(restaurantId);
+    @GetMapping("/api/v1/brands/{brandId}/master-menu")
+    public ResponseEntity<ApiResponse<List<MasterMenuItem>>> getMasterMenuItems(@PathVariable UUID brandId) {
+        List<MasterMenuItem> items = catalogService.getMasterMenuItems(brandId);
+        return ResponseEntity.ok(ApiResponse.success(items, "Master Menu retrieved"));
+    }
+
+    // Phase 3: Outlet overrides Price or Availability
+    @PostMapping("/api/v1/outlets/{outletId}/menu-overrides/{masterMenuItemId}")
+    public ResponseEntity<ApiResponse<OutletMenuOverride>> overrideMenuItem(
+            @PathVariable UUID outletId, 
+            @PathVariable UUID masterMenuItemId, 
+            @RequestBody OutletMenuOverride override) {
+        OutletMenuOverride saved = catalogService.addOrUpdateOverride(outletId, masterMenuItemId, override);
+        return ResponseEntity.ok(ApiResponse.success(saved, "Menu override saved"));
+    }
+
+    // Customer fetching the effective menu for an Outlet
+    @GetMapping("/api/v1/restaurants/{restaurantId}/catalog/items")
+    public ResponseEntity<ApiResponse<List<MenuItemDTO>>> getEffectiveMenu(@PathVariable UUID restaurantId) {
+        List<MenuItemDTO> items = catalogService.getEffectiveMenuForOutlet(restaurantId);
         return ResponseEntity.ok(ApiResponse.success(items, "Menu items retrieved"));
     }
 
-    @org.springframework.web.bind.annotation.PutMapping("/items/{itemId}")
-    public ResponseEntity<ApiResponse<MenuItem>> updateMenuItem(
-            @PathVariable UUID restaurantId, 
-            @PathVariable UUID itemId, 
-            @RequestBody MenuItem updatedItem) {
-        try {
-            MenuItem saved = catalogService.updateMenuItem(restaurantId, itemId, updatedItem);
-            return ResponseEntity.ok(ApiResponse.success(saved, "Menu item updated"));
-        } catch (IllegalArgumentException e) {
-            if (e.getMessage().equals("Menu item not found")) {
-                return ResponseEntity.notFound().build();
-            } else if (e.getMessage().equals("Menu item does not belong to this restaurant")) {
-                return ResponseEntity.status(403).body(ApiResponse.<MenuItem>error(e.getMessage()));
-            }
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+    // Batch endpoint used by CustomerOrderService to validate and fetch prices
+    @GetMapping("/api/v1/restaurants/{restaurantId}/menu/batch")
+    public ResponseEntity<List<MenuItemDTO>> getEffectiveMenuBatch(
+            @PathVariable UUID restaurantId,
+            @RequestParam("ids") String idsStr) {
+        if (idsStr == null || idsStr.isBlank()) {
+            return ResponseEntity.badRequest().build();
         }
+        
+        List<UUID> ids = Arrays.stream(idsStr.split(","))
+            .map(String::trim)
+            .map(UUID::fromString)
+            .collect(Collectors.toList());
+            
+        List<MenuItemDTO> items = catalogService.getEffectiveMenuBatch(restaurantId, ids);
+        return ResponseEntity.ok(items);
     }
 }

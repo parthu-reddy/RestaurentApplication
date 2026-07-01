@@ -13,7 +13,8 @@ import java.util.UUID;
 public class FulfillmentService {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
-    private final com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
+    private final com.fooddelivery.restaurant.repository.OutletRepository outletRepository;
+    private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
     private static final String TOPIC = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS;
 
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
@@ -22,8 +23,8 @@ public class FulfillmentService {
         log.info("Restaurant {} accepting order {} with additional prep time {} and reason {}", 
                 restaurantId, orderId, additionalPrepTime, delayReason);
         
-        com.fooddelivery.restaurant.entity.Restaurant restaurant = restaurantRepository.findById(restaurantId)
-            .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+        com.fooddelivery.restaurant.entity.Outlet restaurant = outletRepository.findById(restaurantId)
+            .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
             
         double lat = restaurant.getLocation() != null ? restaurant.getLocation().getY() : 0.0;
         double lng = restaurant.getLocation() != null ? restaurant.getLocation().getX() : 0.0;
@@ -38,8 +39,13 @@ public class FulfillmentService {
                 // Store the requested extra time temporarily
                 redisTemplate.opsForValue().set("order:additionalPrepTime:" + orderId, String.valueOf(additionalPrepTime));
                 
-                String payload = String.format("{\"eventType\":\"ORDER_DELAY_APPROVAL_REQUESTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"additionalPrepTimeMinutes\":%d, \"delayReason\":\"%s\"}", 
-                        orderId, restaurantId, additionalPrepTime, delayReason != null ? delayReason : "");
+                com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+                payloadNode.put("eventType", "ORDER_DELAY_APPROVAL_REQUESTED");
+                payloadNode.put("orderId", orderId.toString());
+                payloadNode.put("restaurantId", restaurantId.toString());
+                payloadNode.put("additionalPrepTimeMinutes", additionalPrepTime);
+                payloadNode.put("delayReason", delayReason != null ? delayReason : "");
+                String payload = objectMapper.writeValueAsString(payloadNode);
                 kafkaTemplate.send(TOPIC, orderId.toString(), payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
                 log.info("Published ORDER_DELAY_APPROVAL_REQUESTED for order {}", orderId);
             } else {
@@ -54,8 +60,18 @@ public class FulfillmentService {
                 String deliveryAddress = redisTemplate.opsForValue().get("order:deliveryAddress:" + orderId);
                 if (deliveryAddress == null) deliveryAddress = "";
                 
-                String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f, \"estimatedCompletionTime\":%d, \"estimatedPrepTimeMinutes\":%d, \"deliveryLat\":%f, \"deliveryLng\":%f, \"deliveryAddress\":\"%s\"}", 
-                        orderId, restaurantId, lat, lng, estimatedCompletionTime, finalPrepTime, deliveryLat, deliveryLng, deliveryAddress.replace("\"", "\\\""));
+                com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+                payloadNode.put("eventType", "ORDER_ACCEPTED");
+                payloadNode.put("orderId", orderId.toString());
+                payloadNode.put("restaurantId", restaurantId.toString());
+                payloadNode.put("restaurantLat", lat);
+                payloadNode.put("restaurantLng", lng);
+                payloadNode.put("estimatedCompletionTime", estimatedCompletionTime);
+                payloadNode.put("estimatedPrepTimeMinutes", finalPrepTime);
+                payloadNode.put("deliveryLat", deliveryLat);
+                payloadNode.put("deliveryLng", deliveryLng);
+                payloadNode.put("deliveryAddress", deliveryAddress);
+                String payload = objectMapper.writeValueAsString(payloadNode);
                 
                 kafkaTemplate.send(TOPIC, orderId.toString(), payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
                 log.info("Published ORDER_ACCEPTED for order {} with estimatedCompletionTime {}", orderId, estimatedCompletionTime);
@@ -69,9 +85,13 @@ public class FulfillmentService {
     public void rejectOrder(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} rejecting order {}", restaurantId, orderId);
         
-        String payload = "{\"eventType\":\"ORDER_REJECTED\", \"orderId\":\"" + orderId + "\", \"restaurantId\":\"" + restaurantId + "\"}";
-        
         try {
+            com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+            payloadNode.put("eventType", "ORDER_REJECTED");
+            payloadNode.put("orderId", orderId.toString());
+            payloadNode.put("restaurantId", restaurantId.toString());
+            String payload = objectMapper.writeValueAsString(payloadNode);
+            
             kafkaTemplate.send(TOPIC, orderId.toString(), payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
             log.info("Published ORDER_REJECTED for order {}", orderId);
         } catch (Exception e) {
@@ -83,9 +103,13 @@ public class FulfillmentService {
     public void readyOrder(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} marked order {} as ready", restaurantId, orderId);
         
-        String payload = "{\"eventType\":\"ORDER_READY\", \"orderId\":\"" + orderId + "\", \"restaurantId\":\"" + restaurantId + "\"}";
-        
         try {
+            com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+            payloadNode.put("eventType", "ORDER_READY");
+            payloadNode.put("orderId", orderId.toString());
+            payloadNode.put("restaurantId", restaurantId.toString());
+            String payload = objectMapper.writeValueAsString(payloadNode);
+            
             kafkaTemplate.send(TOPIC, orderId.toString(), payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
             log.info("Published ORDER_READY for order {}", orderId);
         } catch (Exception e) {
@@ -97,9 +121,13 @@ public class FulfillmentService {
     public void cancelOrderAfterAccept(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} cancelling order {} after acceptance", restaurantId, orderId);
         
-        String payload = "{\"eventType\":\"ORDER_CANCELLED_BY_RESTAURANT\", \"orderId\":\"" + orderId + "\", \"restaurantId\":\"" + restaurantId + "\"}";
-        
         try {
+            com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+            payloadNode.put("eventType", "ORDER_CANCELLED_BY_RESTAURANT");
+            payloadNode.put("orderId", orderId.toString());
+            payloadNode.put("restaurantId", restaurantId.toString());
+            String payload = objectMapper.writeValueAsString(payloadNode);
+            
             kafkaTemplate.send(TOPIC, orderId.toString(), payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
             log.info("Published ORDER_CANCELLED_BY_RESTAURANT for order {}", orderId);
         } catch (Exception e) {

@@ -14,20 +14,22 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(name = "menu_items")
+@Table(name = "master_menu_items")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuItem {
+public class MasterMenuItem {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     
-    private UUID restaurantId;
+    private UUID brandId;
+    
     private String name;
     private String description;
-    private BigDecimal price;
-    private Boolean isAvailable;
-    private Integer prepTimeMinutes;
+    
+    private BigDecimal basePrice;
+    private Integer defaultPrepTimeMinutes;
 }

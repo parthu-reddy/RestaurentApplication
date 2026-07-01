@@ -1,7 +1,9 @@
 package com.fooddelivery.restaurant.service;
 
-import com.fooddelivery.restaurant.entity.Restaurant;
-import com.fooddelivery.restaurant.repository.IRestaurantRepository;
+import com.fooddelivery.restaurant.entity.Brand;
+import com.fooddelivery.restaurant.entity.Outlet;
+import com.fooddelivery.restaurant.repository.BrandRepository;
+import com.fooddelivery.restaurant.repository.OutletRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.UUID;
 import java.util.Map;
 import org.locationtech.jts.geom.Coordinate;
@@ -24,7 +28,8 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class RestaurantOnboardingService {
 
-    private final IRestaurantRepository restaurantRepository;
+    private final BrandRepository brandRepository;
+    private final OutletRepository outletRepository;
     private final RestTemplate restTemplate;
 
     @Value("${kyb.fssai.api.url:http://localhost:8080/mock/fssai}")
@@ -33,125 +38,132 @@ public class RestaurantOnboardingService {
     @Value("${kyb.gstin.api.url:http://localhost:8080/mock/gstin}")
     private String gstinApiUrl;
 
-    @Value("${kyb.pan.api.url:http://localhost:8080/mock/pan}")
-    private String panApiUrl;
-
-    @Value("${kyb.cin.api.url:http://localhost:8080/mock/cin}")
-    private String cinApiUrl;
-
     @Value("${kyb.pennydrop.api.url:http://localhost:8080/mock/pennydrop}")
     private String pennyDropApiUrl;
 
-    public Restaurant startOnboarding(String name, String fssai, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, Double lat, Double lng) {
-        log.info("Starting onboarding for restaurant: {}, FSSAI: {}, GSTIN: {}, PAN: {}, CIN: {}", name, fssai, gstin, pan, cin);
+    // Phase 1: Brand & Financial Setup
+    public Brand onboardBrand(String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode) {
+        log.info("Starting Brand onboarding: {}, GSTIN: {}, Bank: {}", name, gstin, bankAccountNumber);
         
-        // External KYB Verifications in parallel
-        CompletableFuture<Boolean> fssaiFuture = CompletableFuture.supplyAsync(() -> verifyFssai(fssai));
+        if (pan != null && pan.length() != 10) {
+            throw new IllegalArgumentException("Invalid PAN. Must be 10 characters.");
+        }
+        if (cin != null && cin.length() != 21) {
+            throw new IllegalArgumentException("Invalid CIN. Must be 21 characters.");
+        }
+        
         CompletableFuture<Boolean> gstinFuture = CompletableFuture.supplyAsync(() -> verifyGstin(gstin));
-        CompletableFuture<Boolean> panFuture = CompletableFuture.supplyAsync(() -> verifyPan(pan));
-        CompletableFuture<Boolean> cinFuture = CompletableFuture.supplyAsync(() -> verifyCin(cin));
         CompletableFuture<Boolean> bankAccountFuture = CompletableFuture.supplyAsync(() -> verifyBankAccount(bankAccountNumber, ifscCode));
 
-        CompletableFuture.allOf(fssaiFuture, gstinFuture, panFuture, cinFuture, bankAccountFuture).join();
+        CompletableFuture.allOf(gstinFuture, bankAccountFuture).join();
 
-        boolean isFssaiValid = fssaiFuture.join();
         boolean isGstinValid = gstinFuture.join();
-        boolean isPanValid = panFuture.join();
-        boolean isCinValid = cinFuture.join();
         boolean isBankAccountValid = bankAccountFuture.join();
         
-        if (!isFssaiValid || !isGstinValid || !isPanValid || !isCinValid || !isBankAccountValid) {
-            throw new IllegalArgumentException("Invalid KYC/KYB documents or Bank details based on government/bank records.");
+        if (!isGstinValid || !isBankAccountValid) {
+            throw new IllegalArgumentException("Invalid KYC/KYB documents or Bank details based on records.");
+        }
+        
+        Brand brand = Brand.builder()
+                .id(UUID.randomUUID())
+                .name(name)
+                .gstin(gstin)
+                .pan(pan)
+                .cin(cin)
+                .bankAccountNumber(bankAccountNumber)
+                .bankIfsc(ifscCode)
+                .isGstinVerified(true)
+                .isBankVerified(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+                
+        return brandRepository.save(brand);
+    }
+    
+    // Phase 2: Outlet & Geospatial Setup
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, LocalTime openingTime, LocalTime closingTime) {
+        log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
+        
+        Brand brand = brandRepository.findById(brandId)
+            .orElseThrow(() -> new IllegalArgumentException("Brand not found"));
+
+        if (!brand.getIsGstinVerified() || !brand.getIsBankVerified()) {
+            throw new IllegalStateException("Brand financial setup incomplete.");
+        }
+        
+        boolean isFssaiValid = verifyFssai(fssai);
+        if (!isFssaiValid) {
+            throw new IllegalArgumentException("Invalid FSSAI License.");
         }
         
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         Point locationPoint = null;
         if (lat != null && lng != null) {
-            locationPoint = geometryFactory.createPoint(new Coordinate(lng, lat)); // Note: longitude is X, latitude is Y
+            locationPoint = geometryFactory.createPoint(new Coordinate(lng, lat));
         }
         
-        Restaurant restaurant = Restaurant.builder()
+        // Use randomUUID which acts as the legacy restaurantId
+        Outlet outlet = Outlet.builder()
                 .id(UUID.randomUUID())
+                .brandId(brand.getId())
                 .name(name)
                 .fssaiLicenseNumber(fssai)
-                .gstin(gstin)
-                .pan(pan)
-                .cin(cin)
-                .isActive(true) // Automatically active after mock validation
                 .location(locationPoint)
+                .openingTime(openingTime)
+                .closingTime(closingTime)
+                .isActive(true)
                 .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
                 
-        return restaurantRepository.save(restaurant);
+        return outletRepository.save(outlet);
     }
     
-    public Restaurant getRestaurantById(UUID id) {
-        return restaurantRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+    public Brand getBrandById(UUID id) {
+        return brandRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Brand not found"));
+    }
+
+    public Outlet getOutletById(UUID id) {
+        return outletRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
+    }
+
+    public List<Outlet> getOutletsByBrand(UUID brandId) {
+        return outletRepository.findByBrandId(brandId);
     }
     
     private boolean verifyFssai(String fssai) {
-        log.info("Verifying FSSAI against external API for {}", fssai);
-        if (fssai == null || fssai.length() < 10) return false;
-        
+        log.info("Verifying FSSAI against API for {}", fssai);
+        if (fssai == null || fssai.length() != 14) return false;
         try {
-            // Mocking the call: In production, this would hit Karza or Signzy
             ResponseEntity<Map> response = restTemplate.getForEntity(fssaiApiUrl + "?fssai=" + fssai, Map.class);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
-            log.warn("FSSAI API call failed, falling back to mock logic for demonstration", e);
+            log.warn("FSSAI API failed, mocking true", e);
             return true;
         }
     }
     
     private boolean verifyGstin(String gstin) {
-        log.info("Verifying GSTIN against external API for {}", gstin);
+        log.info("Verifying GSTIN against API for {}", gstin);
         if (gstin == null || gstin.length() != 15) return false;
-        
         try {
             ResponseEntity<Map> response = restTemplate.getForEntity(gstinApiUrl + "?gstin=" + gstin, Map.class);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
-            log.warn("GSTIN API call failed, falling back to mock logic for demonstration", e);
-            return true;
-        }
-    }
-
-    private boolean verifyPan(String pan) {
-        log.info("Verifying PAN against external API for {}", pan);
-        if (pan == null || pan.length() != 10) return false;
-        
-        try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(panApiUrl + "?pan=" + pan, Map.class);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            log.warn("PAN API call failed, falling back to mock logic for demonstration", e);
-            return true;
-        }
-    }
-
-    private boolean verifyCin(String cin) {
-        log.info("Verifying CIN against external API for {}", cin);
-        if (cin == null || cin.length() != 21) return false;
-        
-        try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(cinApiUrl + "?cin=" + cin, Map.class);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            log.warn("CIN API call failed, falling back to mock logic for demonstration", e);
+            log.warn("GSTIN API failed, mocking true", e);
             return true;
         }
     }
 
     private boolean verifyBankAccount(String bankAccountNumber, String ifscCode) {
-        log.info("Verifying Bank Account using Penny Drop API for A/C: {}, IFSC: {}", bankAccountNumber, ifscCode);
+        log.info("Penny Drop Verification A/C: {}, IFSC: {}", bankAccountNumber, ifscCode);
         if (bankAccountNumber == null || ifscCode == null || bankAccountNumber.length() < 9) return false;
-        
         try {
             ResponseEntity<Map> response = restTemplate.getForEntity(pennyDropApiUrl + "?account=" + bankAccountNumber + "&ifsc=" + ifscCode, Map.class);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
-            log.warn("Penny Drop API call failed, falling back to mock logic for demonstration", e);
+            log.warn("Penny Drop API failed, mocking true", e);
             return true;
         }
     }

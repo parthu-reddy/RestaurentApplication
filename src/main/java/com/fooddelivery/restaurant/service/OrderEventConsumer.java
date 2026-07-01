@@ -17,7 +17,7 @@ public class OrderEventConsumer {
     private final ObjectMapper objectMapper;
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
     private final org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate;
-    private final com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
+    private final com.fooddelivery.restaurant.repository.OutletRepository outletRepository;
 
     @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE)
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Header(value = "eventType", required = false) String headerEventType) {
@@ -62,7 +62,7 @@ public class OrderEventConsumer {
                 long estimatedCompletionTime = System.currentTimeMillis() + (finalPrepTime * 60 * 1000L);
                 
                 // Fetch restaurant to get Lat/Lng
-                com.fooddelivery.restaurant.entity.Restaurant restaurant = restaurantRepository.findById(UUID.fromString(restaurantId))
+                com.fooddelivery.restaurant.entity.Outlet restaurant = outletRepository.findById(UUID.fromString(restaurantId))
                         .orElse(null);
                 double lat = 0.0;
                 double lng = 0.0;
@@ -78,8 +78,18 @@ public class OrderEventConsumer {
                 String deliveryAddress = redisTemplate.opsForValue().get("order:deliveryAddress:" + orderId);
                 if (deliveryAddress == null) deliveryAddress = "";
                 
-                String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f, \"estimatedCompletionTime\":%d, \"estimatedPrepTimeMinutes\":%d, \"deliveryLat\":%f, \"deliveryLng\":%f, \"deliveryAddress\":\"%s\"}", 
-                        orderId, restaurantId, lat, lng, estimatedCompletionTime, finalPrepTime, deliveryLat, deliveryLng, deliveryAddress.replace("\"", "\\\""));
+                com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+                payloadNode.put("eventType", "ORDER_ACCEPTED");
+                payloadNode.put("orderId", orderId);
+                payloadNode.put("restaurantId", restaurantId);
+                payloadNode.put("restaurantLat", lat);
+                payloadNode.put("restaurantLng", lng);
+                payloadNode.put("estimatedCompletionTime", estimatedCompletionTime);
+                payloadNode.put("estimatedPrepTimeMinutes", finalPrepTime);
+                payloadNode.put("deliveryLat", deliveryLat);
+                payloadNode.put("deliveryLng", deliveryLng);
+                payloadNode.put("deliveryAddress", deliveryAddress);
+                String payload = objectMapper.writeValueAsString(payloadNode);
                 
                 kafkaTemplate.send(com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, orderId, payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
                 log.info("Published ORDER_ACCEPTED for order {} after delay approval with estimatedCompletionTime {}", orderId, estimatedCompletionTime);

@@ -10,31 +10,36 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "restaurants")
+@Table(name = "outlets")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Restaurant {
+public class Outlet {
     
     @Id
     private UUID id;
     
+    private UUID brandId;
+    
     private String name;
     private String fssaiLicenseNumber;
-    private String gstin;
-    private String pan;
-    private String cin;
-    
-    private Boolean isActive;
     
     @JsonIgnore
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point location;
     
+    private LocalTime openingTime;
+    private LocalTime closingTime;
+    
+    private Boolean isActive;
+    
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -25,7 +25,7 @@ class OrderEventConsumerTest {
     @Mock
     private org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate;
     @Mock
-    private com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
+    private com.fooddelivery.restaurant.repository.OutletRepository outletRepository;
     
     @Mock
     private org.springframework.data.redis.core.ValueOperations<String, String> valueOperations;
@@ -36,7 +36,7 @@ class OrderEventConsumerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         objectMapper = new ObjectMapper();
-        orderEventConsumer = new OrderEventConsumer(objectMapper, redisTemplate, kafkaTemplate, restaurantRepository);
+        orderEventConsumer = new OrderEventConsumer(objectMapper, redisTemplate, kafkaTemplate, outletRepository);
         org.mockito.Mockito.lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
 
