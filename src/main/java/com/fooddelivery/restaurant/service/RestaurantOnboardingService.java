@@ -85,6 +85,11 @@ public class RestaurantOnboardingService {
         return restaurantRepository.save(restaurant);
     }
     
+    public Restaurant getRestaurantById(UUID id) {
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
+    }
+    
     private boolean verifyFssai(String fssai) {
         log.info("Verifying FSSAI against external API for {}", fssai);
         if (fssai == null || fssai.length() < 10) return false;

@@ -19,30 +19,36 @@ public class OrderEventConsumer {
     private final org.springframework.kafka.core.KafkaTemplate<String, String> kafkaTemplate;
     private final com.fooddelivery.restaurant.repository.IRestaurantRepository restaurantRepository;
 
-    @KafkaListener(topics = "order-events", groupId = "restaurant-service-group")
+    @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE)
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Header(value = "eventType", required = false) String headerEventType) {
         try {
             JsonNode root = objectMapper.readTree(message);
             String jsonEventType = root.path("eventType").asText(null);
             String eventType = headerEventType != null ? headerEventType : jsonEventType;
             
-            if ("ORDER_PAID".equals(eventType)) {
+            if (com.fooddelivery.common.constants.EventType.ORDER_PAID.equals(eventType)) {
                 String orderId = root.path("orderId").asText();
                 String restaurantId = root.path("restaurantId").asText();
                 int estimatedPrepTimeMinutes = root.path("estimatedPrepTimeMinutes").asInt(15);
+                double deliveryLat = root.path("deliveryLat").asDouble(0.0);
+                double deliveryLng = root.path("deliveryLng").asDouble(0.0);
+                String deliveryAddress = root.path("deliveryAddress").asText("");
                 
                 // Store the estimated prep time in Redis for FulfillmentService to use when accepting
                 redisTemplate.opsForValue().set("order:prepTime:" + orderId, String.valueOf(estimatedPrepTimeMinutes));
+                redisTemplate.opsForValue().set("order:deliveryLat:" + orderId, String.valueOf(deliveryLat));
+                redisTemplate.opsForValue().set("order:deliveryLng:" + orderId, String.valueOf(deliveryLng));
+                redisTemplate.opsForValue().set("order:deliveryAddress:" + orderId, deliveryAddress);
                 
                 log.info("Restaurant {} received new paid order {} with estimated prep time {}m. Awaiting restaurant staff to accept/reject.", 
                         restaurantId, orderId, estimatedPrepTimeMinutes);
                 // In a real application, we would save this to a RestaurantOrder table 
                 // so the restaurant UI can fetch and display pending orders.
-            } else if ("ORDER_CANCELLED".equals(eventType) || "ORDER_DELAY_REJECTED".equals(eventType)) {
+            } else if (com.fooddelivery.common.constants.EventType.ORDER_CANCELLED.equals(eventType) || com.fooddelivery.common.constants.EventType.ORDER_DELAY_REJECTED.equals(eventType)) {
                 String orderId = root.path("orderId").asText();
                 String restaurantId = root.path("restaurantId").asText();
                 log.info("Restaurant {} received {} for order {}. Stop preparation.", restaurantId, eventType, orderId);
-            } else if ("ORDER_DELAY_APPROVED".equals(eventType)) {
+            } else if (com.fooddelivery.common.constants.EventType.ORDER_DELAY_APPROVED.equals(eventType)) {
                 String orderId = root.path("orderId").asText();
                 String restaurantId = root.path("restaurantId").asText();
                 
@@ -65,14 +71,22 @@ public class OrderEventConsumer {
                     lng = restaurant.getLocation().getX();
                 }
                 
-                String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f, \"estimatedCompletionTime\":%d, \"estimatedPrepTimeMinutes\":%d}", 
-                        orderId, restaurantId, lat, lng, estimatedCompletionTime, finalPrepTime);
+                String dLatStr = redisTemplate.opsForValue().get("order:deliveryLat:" + orderId);
+                String dLngStr = redisTemplate.opsForValue().get("order:deliveryLng:" + orderId);
+                double deliveryLat = dLatStr != null ? Double.parseDouble(dLatStr) : 0.0;
+                double deliveryLng = dLngStr != null ? Double.parseDouble(dLngStr) : 0.0;
+                String deliveryAddress = redisTemplate.opsForValue().get("order:deliveryAddress:" + orderId);
+                if (deliveryAddress == null) deliveryAddress = "";
                 
-                kafkaTemplate.send("order-events", orderId, payload);
+                String payload = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"restaurantLat\":%f, \"restaurantLng\":%f, \"estimatedCompletionTime\":%d, \"estimatedPrepTimeMinutes\":%d, \"deliveryLat\":%f, \"deliveryLng\":%f, \"deliveryAddress\":\"%s\"}", 
+                        orderId, restaurantId, lat, lng, estimatedCompletionTime, finalPrepTime, deliveryLat, deliveryLng, deliveryAddress.replace("\"", "\\\""));
+                
+                kafkaTemplate.send(com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, orderId, payload).get(3, java.util.concurrent.TimeUnit.SECONDS);
                 log.info("Published ORDER_ACCEPTED for order {} after delay approval with estimatedCompletionTime {}", orderId, estimatedCompletionTime);
             }
         } catch (Exception e) {
             log.error("Failed to process order event in RestaurantApplication", e);
+            throw new RuntimeException("Failed to process order event in RestaurantApplication", e);
         }
     }
 }

@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import java.util.concurrent.CompletableFuture;
 
 @ExtendWith(MockitoExtension.class)
 class FulfillmentServiceTest {
@@ -41,6 +43,8 @@ class FulfillmentServiceTest {
         MockitoAnnotations.openMocks(this);
         fulfillmentService = new FulfillmentService(kafkaTemplate, restaurantRepository, redisTemplate);
         org.mockito.Mockito.lenient().when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        org.mockito.Mockito.lenient().when(kafkaTemplate.send(anyString(), anyString(), anyString()))
+                .thenReturn(CompletableFuture.completedFuture(null));
     }
 
     @Test
@@ -62,10 +66,10 @@ class FulfillmentServiceTest {
         fulfillmentService.acceptOrder(restaurantId, orderId, null, null);
 
         ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
-        verify(kafkaTemplate).send(eq("order-events"), eq(orderId.toString()), payloadCaptor.capture());
+        verify(kafkaTemplate).send(eq(com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS), eq(orderId.toString()), payloadCaptor.capture());
 
         String payload = payloadCaptor.getValue();
-        assertThat(payload).contains("ORDER_ACCEPTED");
+        assertThat(payload).contains(com.fooddelivery.common.constants.EventType.ORDER_ACCEPTED);
         assertThat(payload).contains(orderId.toString());
         assertThat(payload).contains(restaurantId.toString());
         assertThat(payload).contains("12.9716"); // Lat
@@ -80,10 +84,10 @@ class FulfillmentServiceTest {
         fulfillmentService.rejectOrder(restaurantId, orderId);
 
         ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
-        verify(kafkaTemplate).send(eq("order-events"), eq(orderId.toString()), payloadCaptor.capture());
+        verify(kafkaTemplate).send(eq(com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS), eq(orderId.toString()), payloadCaptor.capture());
 
         String payload = payloadCaptor.getValue();
-        assertThat(payload).contains("ORDER_REJECTED");
+        assertThat(payload).contains(com.fooddelivery.common.constants.EventType.ORDER_REJECTED);
         assertThat(payload).contains(orderId.toString());
         assertThat(payload).contains(restaurantId.toString());
     }
@@ -96,10 +100,10 @@ class FulfillmentServiceTest {
         fulfillmentService.readyOrder(restaurantId, orderId);
 
         ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
-        verify(kafkaTemplate).send(eq("order-events"), eq(orderId.toString()), payloadCaptor.capture());
+        verify(kafkaTemplate).send(eq(com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS), eq(orderId.toString()), payloadCaptor.capture());
 
         String payload = payloadCaptor.getValue();
-        assertThat(payload).contains("ORDER_READY");
+        assertThat(payload).contains(com.fooddelivery.common.constants.EventType.ORDER_READY);
         assertThat(payload).contains(orderId.toString());
         assertThat(payload).contains(restaurantId.toString());
     }
