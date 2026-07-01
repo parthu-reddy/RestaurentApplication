@@ -5,7 +5,7 @@ The Restaurant Application provides the backend API for restaurant partners. It 
 ## Responsibilities
 
 1. **Menu Management**: CRUD operations for `restaurants` and `menu_items`.
-2. **Order Lifecycle**: Consumes `ORDER_CREATED` events from Kafka (emitted by CustomerApplication) and presents them to the restaurant dashboard.
+2. **Order Lifecycle**: Consumes `ORDER_PAID` events from Kafka (emitted by CustomerApplication) and presents them to the restaurant dashboard.
 3. **Acceptance Events**: When a restaurant manually accepts an order, it publishes an `ORDER_ACCEPTED` event back to Kafka to inform the Customer and Delivery applications.
 
 ## Flow Diagram
@@ -17,7 +17,7 @@ sequenceDiagram
     participant DB as Restaurant DB
     participant API as Restaurant API
 
-    K->>Consumer: ORDER_CREATED
+    K->>Consumer: ORDER_PAID
     Consumer->>DB: Materialize Order locally
     
     API->>API: Restaurant Partner accepts order
