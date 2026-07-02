@@ -52,7 +52,7 @@ class OrderPaidStrategyTest {
         RestaurantOrder saved = captor.getValue();
         assertThat(saved.getOrderId()).isEqualTo(orderId);
         assertThat(saved.getRestaurantId()).isEqualTo(restaurantId);
-        assertThat(saved.getStatus()).isEqualTo("PENDING");
+        assertThat(saved.getStatus()).isEqualTo("CREATED");
         assertThat(saved.getPrepTime()).isEqualTo(20);
     }
 

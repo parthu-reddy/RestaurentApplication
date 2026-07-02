@@ -40,7 +40,7 @@ class OrderCancelledStrategyTest {
 
         RestaurantOrder order = new RestaurantOrder();
         order.setOrderId(orderId);
-        order.setStatus("PENDING");
+        order.setStatus("CREATED");
 
         when(repository.findById(orderId)).thenReturn(Optional.of(order));
 

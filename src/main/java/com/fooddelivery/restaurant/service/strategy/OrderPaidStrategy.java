@@ -34,7 +34,7 @@ public class OrderPaidStrategy implements RestaurantEventStrategy {
         RestaurantOrder order = RestaurantOrder.builder()
                 .orderId(UUID.fromString(orderId))
                 .restaurantId(UUID.fromString(restaurantId))
-                .status("PENDING")
+                .status("CREATED")
                 .prepTime(estimatedPrepTimeMinutes)
                 .additionalPrepTime(0)
                 .deliveryLat(deliveryLat)

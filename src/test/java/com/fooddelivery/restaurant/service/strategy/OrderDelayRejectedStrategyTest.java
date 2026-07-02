@@ -40,7 +40,7 @@ class OrderDelayRejectedStrategyTest {
 
         RestaurantOrder order = new RestaurantOrder();
         order.setOrderId(orderId);
-        order.setStatus("DELAY_APPROVAL_PENDING");
+        order.setStatus("CREATED");
 
         when(repository.findById(orderId)).thenReturn(Optional.of(order));
 
