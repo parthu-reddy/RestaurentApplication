@@ -150,6 +150,13 @@ All fulfillment endpoints follow the pattern:
 | `ORDER_DELAY_APPROVAL_REQUESTED` | Prep time exceeds 10-minute threshold |
 | `ORDER_READY` | Food is prepared |
 
+## Background Jobs
+
+### RestaurantAcceptanceTimeoutPoller
+- Runs every **1 minute**.
+- Scans for orders in `CREATED` state older than **10 minutes**.
+- Auto-rejects these orders by publishing `ORDER_REJECTED` to trigger a customer refund.
+
 ## Database
 - **PostgreSQL** database: `restaurant_db`
 - **Flyway migrations**: `src/main/resources/db/migration/`
