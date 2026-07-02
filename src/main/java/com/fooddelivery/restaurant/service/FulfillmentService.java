@@ -31,6 +31,11 @@ public class FulfillmentService {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = restaurantOrderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
         
+        if (!"CREATED".equals(order.getStatus())) {
+            log.info("Order {} is {}. Ignoring accept request.", orderId, order.getStatus());
+            return;
+        }
+        
         int prepTime = order.getPrepTime() != null ? order.getPrepTime() : 15;
         
         com.fooddelivery.restaurant.service.state.RestaurantOrderState state = com.fooddelivery.restaurant.service.state.RestaurantOrderStateFactory.getState(order.getStatus());
@@ -113,9 +118,15 @@ public class FulfillmentService {
         
         com.fooddelivery.restaurant.entity.RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
         if (order != null) {
+            if (!"CREATED".equals(order.getStatus())) {
+                log.info("Order {} is {}. Ignoring reject request.", orderId, order.getStatus());
+                return;
+            }
             com.fooddelivery.restaurant.service.state.RestaurantOrderState state = com.fooddelivery.restaurant.service.state.RestaurantOrderStateFactory.getState(order.getStatus());
             state.reject(order);
             restaurantOrderRepository.save(order);
+        } else {
+            return;
         }
         
         try {
@@ -148,9 +159,15 @@ public class FulfillmentService {
         
         com.fooddelivery.restaurant.entity.RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
         if (order != null) {
+            if (!"ACCEPTED".equals(order.getStatus())) {
+                log.info("Order {} is {}. Ignoring ready request.", orderId, order.getStatus());
+                return;
+            }
             com.fooddelivery.restaurant.service.state.RestaurantOrderState state = com.fooddelivery.restaurant.service.state.RestaurantOrderStateFactory.getState(order.getStatus());
             state.ready(order);
             restaurantOrderRepository.save(order);
+        } else {
+            return;
         }
         
         try {
@@ -183,9 +200,15 @@ public class FulfillmentService {
         
         com.fooddelivery.restaurant.entity.RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
         if (order != null) {
+            if (!"ACCEPTED".equals(order.getStatus())) {
+                log.info("Order {} is {}. Ignoring cancel request.", orderId, order.getStatus());
+                return;
+            }
             com.fooddelivery.restaurant.service.state.RestaurantOrderState state = com.fooddelivery.restaurant.service.state.RestaurantOrderStateFactory.getState(order.getStatus());
             state.cancel(order);
             restaurantOrderRepository.save(order);
+        } else {
+            return;
         }
         
         try {

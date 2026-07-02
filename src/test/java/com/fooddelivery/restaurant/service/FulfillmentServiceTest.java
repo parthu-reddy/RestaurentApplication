@@ -48,6 +48,7 @@ class FulfillmentServiceTest {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = new com.fooddelivery.restaurant.entity.RestaurantOrder();
         order.setOrderId(orderId);
         order.setPrepTime(15);
+        order.setStatus("CREATED");
         
         org.mockito.Mockito.when(outletRepository.findById(outletId))
             .thenReturn(java.util.Optional.of(outlet));
@@ -80,6 +81,7 @@ class FulfillmentServiceTest {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = new com.fooddelivery.restaurant.entity.RestaurantOrder();
         order.setOrderId(orderId);
         order.setPrepTime(15);
+        order.setStatus("CREATED");
         
         org.mockito.Mockito.when(outletRepository.findById(outletId))
             .thenReturn(java.util.Optional.of(outlet));
@@ -103,6 +105,7 @@ class FulfillmentServiceTest {
 
         com.fooddelivery.restaurant.entity.RestaurantOrder order = new com.fooddelivery.restaurant.entity.RestaurantOrder();
         order.setOrderId(orderId);
+        order.setStatus("CREATED");
         
         org.mockito.Mockito.when(restaurantOrderRepository.findById(orderId))
             .thenReturn(java.util.Optional.of(order));
