@@ -1,64 +1,39 @@
-# Built application files
-*.apk
-*.aab
-*.app
-*.ipa
-*.exe
-*.dll
-*.so
-*.dylib
-
-# OS/Editor
-.DS_Store
-.idea/
-.vscode/
-*.swp
-*.swo
-*.iml
-*.iws
-
-# Maven / Java
+HELP.md
 target/
-*.class
-*.jar
-*.war
-*.ear
-*.log
-hs_err_pid*
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Flutter / Dart
-.dart_tool/
-.packages
-.pub-cache/
-.pub/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
 build/
-coverage/
-lib/generated_plugin_registrant.dart
-flutter_export_environment.sh
-.flutter-plugins
-.flutter-plugins-dependencies
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# Android (Flutter)
-android/.gradle
-android/build/
-android/app/build/
-android/app/release/
-android/local.properties
-android/key.properties
+### VS Code ###
+.vscode/
 
-# iOS (Flutter)
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Flutter/Generated.xcconfig
-ios/Flutter/app.flx
-ios/Flutter/app.zip
-ios/Flutter/flutter_assets/
-ios/Flutter/flutter_export_environment.sh
-ios/Pods/
-ios/.symlinks/
-ios/Runner.xcworkspace/xcuserdata/
-ios/Runner/xcuserdata/
+### Mac OS ###
+.DS_Store
 
 # Agent configuration
 .agents/scratch/
