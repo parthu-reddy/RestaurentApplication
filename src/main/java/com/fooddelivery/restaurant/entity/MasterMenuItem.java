@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "master_menu_items")
@@ -27,9 +30,14 @@ public class MasterMenuItem {
     
     private UUID brandId;
     
+    @NotBlank
     private String name;
     private String description;
     
+    @NotNull
+    @Positive
     private BigDecimal basePrice;
+    @NotNull
+    @Positive
     private Integer defaultPrepTimeMinutes;
 }

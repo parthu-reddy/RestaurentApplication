@@ -1,29 +1,13 @@
-# Restaurant Application
+# RestaurantApplication
 
-The Restaurant Application provides the backend API for restaurant partners. It allows restaurants to manage their menus, configure availability, and accept or reject incoming orders.
+The RestaurantApplication manages the restaurant partner side of the Food Delivery ecosystem. It handles restaurant onboarding, menu catalog management, and kitchen fulfillment.
 
-## Responsibilities
+## Setup & Build
+1. Build the service: `mvn clean install`
+2. Run the application: `mvn spring-boot:run`
+3. Port: `8082`
 
-1. **Menu Management**: CRUD operations for `restaurants` and `menu_items`.
-2. **Order Lifecycle**: Consumes `ORDER_PAID` events from Kafka (emitted by CustomerApplication) and presents them to the restaurant dashboard.
-3. **Acceptance Events**: When a restaurant manually accepts an order, it publishes an `ORDER_ACCEPTED` event back to Kafka to inform the Customer and Delivery applications.
-
-## Flow Diagram
-
-```mermaid
-sequenceDiagram
-    participant K as Kafka (order-events)
-    participant Consumer as OrderEventConsumer
-    participant DB as Restaurant DB
-    participant API as Restaurant API
-
-    K->>Consumer: ORDER_PAID
-    Consumer->>DB: Materialize Order locally
-    
-    API->>API: Restaurant Partner accepts order
-    API->>K: Publish ORDER_ACCEPTED
-```
-
-## Setup
-
-Requires PostgreSQL (`restaurant_db`) and Kafka. Run `mvn spring-boot:run`.
+## Key Responsibilities
+- **Restaurant Onboarding**: Allows owners to register their restaurant details.
+- **Catalog Management**: Provides CRUD operations for menus, categories, and master items.
+- **Order Fulfillment**: Allows restaurant staff to accept incoming orders and transition their state (e.g., from `RECEIVED` to `PREPARED`).

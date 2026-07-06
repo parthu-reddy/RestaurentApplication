@@ -21,6 +21,8 @@ public class Brand {
     @Id
     private UUID id;
     
+    private UUID ownerId;
+    
     private String name;
     private String gstin;
     private String pan;

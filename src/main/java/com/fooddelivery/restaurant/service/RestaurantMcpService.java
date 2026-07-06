@@ -14,28 +14,26 @@ import java.util.UUID;
 @Service
 public class RestaurantMcpService {
 
-    private final FulfillmentController fulfillmentController;
-    private final CatalogController catalogController;
-    private final RestaurantOnboardingController onboardingController;
+    private final FulfillmentService fulfillmentService;
+    private final com.fooddelivery.restaurant.service.CatalogService catalogService;
+    private final RestaurantOnboardingService onboardingService;
     private final ObjectMapper objectMapper;
 
-    public RestaurantMcpService(FulfillmentController fulfillmentController,
-                                CatalogController catalogController,
-                                RestaurantOnboardingController onboardingController,
+    public RestaurantMcpService(FulfillmentService fulfillmentService,
+                                com.fooddelivery.restaurant.service.CatalogService catalogService,
+                                RestaurantOnboardingService onboardingService,
                                 ObjectMapper objectMapper) {
-        this.fulfillmentController = fulfillmentController;
-        this.catalogController = catalogController;
-        this.onboardingController = onboardingController;
+        this.fulfillmentService = fulfillmentService;
+        this.catalogService = catalogService;
+        this.onboardingService = onboardingService;
         this.objectMapper = objectMapper;
     }
 
     @Tool(description = "Accept an incoming order. Provide restaurantId, orderId, optional additionalPrepTime (in minutes), and delayReason if additional time is needed.")
     public String acceptOrder(String restaurantId, String orderId, Integer additionalPrepTime, String delayReason) {
         try {
-            com.fooddelivery.restaurant.dto.AcceptOrderRequest req = new com.fooddelivery.restaurant.dto.AcceptOrderRequest();
-            req.setAdditionalPrepTime(additionalPrepTime);
-            req.setDelayReason(delayReason);
-            return objectMapper.writeValueAsString(fulfillmentController.acceptOrder(UUID.fromString(restaurantId), UUID.fromString(orderId), req).getBody());
+            fulfillmentService.acceptOrder(UUID.fromString(restaurantId), UUID.fromString(orderId), additionalPrepTime, delayReason);
+            return "Order accepted successfully.";
         } catch (Exception e) {
             return "Failed to accept order: " + e.getMessage();
         }
@@ -44,7 +42,8 @@ public class RestaurantMcpService {
     @Tool(description = "Reject an incoming order. Provide restaurantId and orderId.")
     public String rejectOrder(String restaurantId, String orderId) {
         try {
-            return objectMapper.writeValueAsString(fulfillmentController.rejectOrder(UUID.fromString(restaurantId), UUID.fromString(orderId)).getBody());
+            fulfillmentService.rejectOrder(UUID.fromString(restaurantId), UUID.fromString(orderId));
+            return "Order rejected successfully.";
         } catch (Exception e) {
             return "Failed to reject order: " + e.getMessage();
         }
@@ -53,7 +52,8 @@ public class RestaurantMcpService {
     @Tool(description = "Mark an accepted order as ready for pickup. Provide restaurantId and orderId.")
     public String readyOrder(String restaurantId, String orderId) {
         try {
-            return objectMapper.writeValueAsString(fulfillmentController.readyOrder(UUID.fromString(restaurantId), UUID.fromString(orderId)).getBody());
+            fulfillmentService.readyOrder(UUID.fromString(restaurantId), UUID.fromString(orderId));
+            return "Order ready successfully.";
         } catch (Exception e) {
             return "Failed to mark order as ready: " + e.getMessage();
         }
@@ -62,7 +62,8 @@ public class RestaurantMcpService {
     @Tool(description = "Cancel an order after acceptance. Provide restaurantId and orderId.")
     public String cancelOrder(String restaurantId, String orderId) {
         try {
-            return objectMapper.writeValueAsString(fulfillmentController.cancelOrder(UUID.fromString(restaurantId), UUID.fromString(orderId)).getBody());
+            fulfillmentService.cancelOrderAfterAccept(UUID.fromString(restaurantId), UUID.fromString(orderId));
+            return "Order cancelled successfully.";
         } catch (Exception e) {
             return "Failed to cancel order: " + e.getMessage();
         }
@@ -72,7 +73,7 @@ public class RestaurantMcpService {
     public String addMasterMenuItem(String brandId, String masterMenuItemJson) {
         try {
             MasterMenuItem item = objectMapper.readValue(masterMenuItemJson, MasterMenuItem.class);
-            return objectMapper.writeValueAsString(catalogController.addMasterMenuItem(UUID.fromString(brandId), item).getBody());
+            return objectMapper.writeValueAsString(catalogService.addMasterMenuItem(UUID.fromString(brandId), item));
         } catch (Exception e) {
             return "Failed to add master menu item: " + e.getMessage();
         }
@@ -81,7 +82,7 @@ public class RestaurantMcpService {
     @Tool(description = "Get master menu items for a brand. Provide brandId.")
     public String getMasterMenuItems(String brandId) {
         try {
-            return objectMapper.writeValueAsString(catalogController.getMasterMenuItems(UUID.fromString(brandId)).getBody());
+            return objectMapper.writeValueAsString(catalogService.getMasterMenuItems(UUID.fromString(brandId)));
         } catch (Exception e) {
             return "Failed to get master menu items: " + e.getMessage();
         }
@@ -91,7 +92,7 @@ public class RestaurantMcpService {
     public String addMenuOverride(String outletId, String masterMenuItemId, String overrideJson) {
         try {
             OutletMenuOverride override = objectMapper.readValue(overrideJson, OutletMenuOverride.class);
-            return objectMapper.writeValueAsString(catalogController.overrideMenuItem(UUID.fromString(outletId), UUID.fromString(masterMenuItemId), override).getBody());
+            return objectMapper.writeValueAsString(catalogService.addOrUpdateOverride(UUID.fromString(outletId), UUID.fromString(masterMenuItemId), override));
         } catch (Exception e) {
             return "Failed to add menu override: " + e.getMessage();
         }
@@ -100,7 +101,7 @@ public class RestaurantMcpService {
     @Tool(description = "Get effective menu for an outlet/restaurant. Provide restaurantId.")
     public String getEffectiveMenu(String restaurantId) {
         try {
-            return objectMapper.writeValueAsString(catalogController.getEffectiveMenu(UUID.fromString(restaurantId)).getBody());
+            return objectMapper.writeValueAsString(catalogService.getEffectiveMenuForOutlet(UUID.fromString(restaurantId)));
         } catch (Exception e) {
             return "Failed to get effective menu: " + e.getMessage();
         }
@@ -109,17 +110,21 @@ public class RestaurantMcpService {
     @Tool(description = "Get batch effective menu items. Provide restaurantId and comma separated idsStr.")
     public String getEffectiveMenuBatch(String restaurantId, String idsStr) {
         try {
-            return objectMapper.writeValueAsString(catalogController.getEffectiveMenuBatch(UUID.fromString(restaurantId), idsStr).getBody());
+            java.util.List<UUID> ids = java.util.Arrays.stream(idsStr.split(","))
+                .map(String::trim)
+                .map(UUID::fromString)
+                .collect(java.util.stream.Collectors.toList());
+            return objectMapper.writeValueAsString(catalogService.getEffectiveMenuBatch(UUID.fromString(restaurantId), ids));
         } catch (Exception e) {
             return "Failed to get batch menu items: " + e.getMessage();
         }
     }
 
-    @Tool(description = "Onboard a new brand. Provide JSON string of BrandOnboardRequest.")
-    public String onboardBrand(String brandOnboardRequestJson) {
+    @Tool(description = "Onboard a new brand. Provide JSON string of BrandOnboardRequest, and the ownerId.")
+    public String onboardBrand(String ownerId, String brandOnboardRequestJson) {
         try {
             RestaurantOnboardingController.BrandOnboardRequest req = objectMapper.readValue(brandOnboardRequestJson, RestaurantOnboardingController.BrandOnboardRequest.class);
-            return objectMapper.writeValueAsString(onboardingController.onboardBrand(req).getBody());
+            return objectMapper.writeValueAsString(onboardingService.onboardBrand(UUID.fromString(ownerId), req.getName(), req.getGstin(), req.getPan(), req.getCin(), req.getBankAccountNumber(), req.getIfscCode()));
         } catch (Exception e) {
             return "Failed to onboard brand: " + e.getMessage();
         }
@@ -129,7 +134,7 @@ public class RestaurantMcpService {
     public String onboardOutlet(String brandId, String outletOnboardRequestJson) {
         try {
             RestaurantOnboardingController.OutletOnboardRequest req = objectMapper.readValue(outletOnboardRequestJson, RestaurantOnboardingController.OutletOnboardRequest.class);
-            return objectMapper.writeValueAsString(onboardingController.onboardOutlet(UUID.fromString(brandId), req).getBody());
+            return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getOpeningTime(), req.getClosingTime()));
         } catch (Exception e) {
             return "Failed to onboard outlet: " + e.getMessage();
         }
@@ -138,7 +143,7 @@ public class RestaurantMcpService {
     @Tool(description = "Get outlets for a brand. Provide brandId.")
     public String getOutlets(String brandId) {
         try {
-            return objectMapper.writeValueAsString(onboardingController.getOutletsByBrand(UUID.fromString(brandId)).getBody());
+            return objectMapper.writeValueAsString(onboardingService.getOutletsByBrand(UUID.fromString(brandId)));
         } catch (Exception e) {
             return "Failed to get outlets: " + e.getMessage();
         }
@@ -147,7 +152,16 @@ public class RestaurantMcpService {
     @Tool(description = "Get details of a specific restaurant/outlet. Provide restaurantId.")
     public String getRestaurantDetails(String restaurantId) {
         try {
-            return objectMapper.writeValueAsString(onboardingController.getRestaurant(UUID.fromString(restaurantId)).getBody());
+            com.fooddelivery.restaurant.entity.Outlet outlet = onboardingService.getOutletById(UUID.fromString(restaurantId));
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("id", outlet.getId());
+            response.put("name", outlet.getName());
+            response.put("isActive", outlet.getIsActive());
+            if (outlet.getLocation() != null) {
+                response.put("lat", outlet.getLocation().getY());
+                response.put("lng", outlet.getLocation().getX());
+            }
+            return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
             return "Failed to get restaurant details: " + e.getMessage();
         }

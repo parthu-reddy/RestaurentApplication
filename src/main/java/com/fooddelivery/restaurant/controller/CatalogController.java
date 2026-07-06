@@ -18,37 +18,52 @@ import java.util.UUID;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
+import jakarta.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class CatalogController {
 
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
+    private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     // Phase 3: Brand uploads Master Menu
     @PostMapping("/api/v1/brands/{brandId}/master-menu")
-    public ResponseEntity<ApiResponse<MasterMenuItem>> addMasterMenuItem(@PathVariable UUID brandId, @RequestBody MasterMenuItem item) {
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
+    public ResponseEntity<ApiResponse<MasterMenuItem>> addMasterMenuItem(
+            @PathVariable UUID brandId, 
+            @Valid @RequestBody MasterMenuItem item) {
+        
         MasterMenuItem savedItem = catalogService.addMasterMenuItem(brandId, item);
         return ResponseEntity.ok(ApiResponse.success(savedItem, "Master Menu item added successfully"));
     }
 
     @GetMapping("/api/v1/brands/{brandId}/master-menu")
-    public ResponseEntity<ApiResponse<List<MasterMenuItem>>> getMasterMenuItems(@PathVariable UUID brandId) {
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
+    public ResponseEntity<ApiResponse<List<MasterMenuItem>>> getMasterMenuItems(
+            @PathVariable UUID brandId) {
+        
         List<MasterMenuItem> items = catalogService.getMasterMenuItems(brandId);
         return ResponseEntity.ok(ApiResponse.success(items, "Master Menu retrieved"));
     }
 
     // Phase 3: Outlet overrides Price or Availability
     @PostMapping("/api/v1/outlets/{outletId}/menu-overrides/{masterMenuItemId}")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal)")
     public ResponseEntity<ApiResponse<OutletMenuOverride>> overrideMenuItem(
             @PathVariable UUID outletId, 
             @PathVariable UUID masterMenuItemId, 
-            @RequestBody OutletMenuOverride override) {
+            @Valid @RequestBody OutletMenuOverride override) {
+        
         OutletMenuOverride saved = catalogService.addOrUpdateOverride(outletId, masterMenuItemId, override);
         return ResponseEntity.ok(ApiResponse.success(saved, "Menu override saved"));
     }
 
     // Customer fetching the effective menu for an Outlet
     @GetMapping("/api/v1/restaurants/{restaurantId}/catalog/items")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<List<MenuItemDTO>>> getEffectiveMenu(@PathVariable UUID restaurantId) {
         List<MenuItemDTO> items = catalogService.getEffectiveMenuForOutlet(restaurantId);
         return ResponseEntity.ok(ApiResponse.success(items, "Menu items retrieved"));
@@ -56,6 +71,7 @@ public class CatalogController {
 
     // Batch endpoint used by CustomerOrderService to validate and fetch prices
     @GetMapping("/api/v1/restaurants/{restaurantId}/menu/batch")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<MenuItemDTO>> getEffectiveMenuBatch(
             @PathVariable UUID restaurantId,
             @RequestParam("ids") String idsStr) {

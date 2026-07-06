@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "outlet_menu_overrides")
@@ -28,7 +30,10 @@ public class OutletMenuOverride {
     private UUID outletId;
     private UUID masterMenuItemId;
     
+    @Positive
     private BigDecimal overriddenPrice;
+    @NotNull
     private Boolean isAvailable;
+    @Positive
     private Integer overriddenPrepTimeMinutes;
 }

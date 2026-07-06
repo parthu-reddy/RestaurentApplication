@@ -12,12 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/v1/restaurants/{restaurantId}/fulfillment")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.principal)")
 public class FulfillmentController {
 
     private final FulfillmentService fulfillmentService;
+    private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     @PostMapping("/orders/{orderId}/accept")
     public ResponseEntity<ApiResponse<Void>> acceptOrder(
@@ -33,19 +37,28 @@ public class FulfillmentController {
     }
 
     @PostMapping("/orders/{orderId}/reject")
-    public ResponseEntity<ApiResponse<Void>> rejectOrder(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
+    public ResponseEntity<ApiResponse<Void>> rejectOrder(
+            @PathVariable UUID restaurantId, 
+            @PathVariable UUID orderId) {
+        
         fulfillmentService.rejectOrder(restaurantId, orderId);
         return ResponseEntity.ok(ApiResponse.success(null, "Order rejected by restaurant"));
     }
 
     @PostMapping("/orders/{orderId}/ready")
-    public ResponseEntity<ApiResponse<Void>> readyOrder(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
+    public ResponseEntity<ApiResponse<Void>> readyOrder(
+            @PathVariable UUID restaurantId, 
+            @PathVariable UUID orderId) {
+        
         fulfillmentService.readyOrder(restaurantId, orderId);
         return ResponseEntity.ok(ApiResponse.success(null, "Order marked as ready for pickup"));
     }
 
     @PostMapping("/orders/{orderId}/cancel")
-    public ResponseEntity<ApiResponse<Void>> cancelOrder(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
+    public ResponseEntity<ApiResponse<Void>> cancelOrder(
+            @PathVariable UUID restaurantId, 
+            @PathVariable UUID orderId) {
+        
         fulfillmentService.cancelOrderAfterAccept(restaurantId, orderId);
         return ResponseEntity.ok(ApiResponse.success(null, "Order cancelled by restaurant after acceptance"));
     }

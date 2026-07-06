@@ -42,7 +42,7 @@ public class RestaurantOnboardingService {
     private String pennyDropApiUrl;
 
     // Phase 1: Brand & Financial Setup
-    public Brand onboardBrand(String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode) {
+    public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode) {
         log.info("Starting Brand onboarding: {}, GSTIN: {}, Bank: {}", name, gstin, bankAccountNumber);
         
         if (pan != null && pan.length() != 10) {
@@ -66,6 +66,7 @@ public class RestaurantOnboardingService {
         
         Brand brand = Brand.builder()
                 .id(UUID.randomUUID())
+                .ownerId(ownerId)
                 .name(name)
                 .gstin(gstin)
                 .pan(pan)

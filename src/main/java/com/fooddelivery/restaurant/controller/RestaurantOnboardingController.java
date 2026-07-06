@@ -18,17 +18,24 @@ import java.util.Map;
 import java.util.HashMap;
 import java.time.LocalTime;
 import java.util.List;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequiredArgsConstructor
 public class RestaurantOnboardingController {
 
     private final RestaurantOnboardingService onboardingService;
+    private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     // Phase 1: Brand Onboarding
     @PostMapping("/api/v1/brands")
-    public ResponseEntity<ApiResponse<Brand>> onboardBrand(@RequestBody BrandOnboardRequest request) {
+    @PreAuthorize("hasRole('RESTAURANT')")
+    public ResponseEntity<ApiResponse<Brand>> onboardBrand(java.security.Principal principal, @Valid @RequestBody BrandOnboardRequest request) {
         Brand brand = onboardingService.onboardBrand(
+                UUID.fromString(principal.getName()),
                 request.getName(),
                 request.getGstin(),
                 request.getPan(),
@@ -41,7 +48,11 @@ public class RestaurantOnboardingController {
 
     // Phase 2: Outlet Onboarding
     @PostMapping("/api/v1/brands/{brandId}/outlets")
-    public ResponseEntity<ApiResponse<Outlet>> onboardOutlet(@PathVariable UUID brandId, @RequestBody OutletOnboardRequest request) {
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
+    public ResponseEntity<ApiResponse<Outlet>> onboardOutlet(
+            @PathVariable UUID brandId, 
+            @Valid @RequestBody OutletOnboardRequest request) {
+        
         Outlet outlet = onboardingService.onboardOutlet(
                 brandId,
                 request.getName(),
@@ -55,12 +66,16 @@ public class RestaurantOnboardingController {
     }
     
     @GetMapping("/api/v1/brands/{brandId}/outlets")
-    public ResponseEntity<ApiResponse<List<Outlet>>> getOutletsByBrand(@PathVariable UUID brandId) {
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
+    public ResponseEntity<ApiResponse<List<Outlet>>> getOutletsByBrand(
+            @PathVariable UUID brandId) {
+        
         return ResponseEntity.ok(ApiResponse.success(onboardingService.getOutletsByBrand(brandId), "Fetched outlets"));
     }
 
     // Legacy backwards compatibility: CustomerApp uses /api/v1/restaurants/{id}
     @GetMapping("/api/v1/restaurants/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getRestaurant(@PathVariable UUID id) {
         Outlet outlet = onboardingService.getOutletById(id);
         Map<String, Object> response = new HashMap<>();
@@ -76,21 +91,32 @@ public class RestaurantOnboardingController {
 
     @Data
     public static class BrandOnboardRequest {
+        @NotBlank
         private String name;
+        @NotBlank
         private String gstin;
+        @NotBlank
         private String pan;
         private String cin;
+        @NotBlank
         private String bankAccountNumber;
+        @NotBlank
         private String ifscCode;
     }
 
     @Data
     public static class OutletOnboardRequest {
+        @NotBlank
         private String name;
+        @NotBlank
         private String fssaiLicenseNumber;
+        @NotNull
         private Double lat;
+        @NotNull
         private Double lng;
+        @NotNull
         private LocalTime openingTime;
+        @NotNull
         private LocalTime closingTime;
     }
 }
