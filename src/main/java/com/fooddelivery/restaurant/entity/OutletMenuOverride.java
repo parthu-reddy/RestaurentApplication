@@ -24,7 +24,6 @@ import jakarta.validation.constraints.Positive;
 public class OutletMenuOverride {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     
     private UUID outletId;
@@ -36,4 +35,7 @@ public class OutletMenuOverride {
     private Boolean isAvailable;
     @Positive
     private Integer overriddenPrepTimeMinutes;
+
+    @jakarta.persistence.Version
+    private Integer version;
 }

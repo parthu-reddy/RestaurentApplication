@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Version;
 
 @Entity
 @Table(name = "restaurant_orders")
@@ -27,6 +28,9 @@ public class RestaurantOrder {
     private UUID restaurantId;
 
     private String status;
+
+    @Version
+    private Integer version;
 
     private Integer prepTime;
     

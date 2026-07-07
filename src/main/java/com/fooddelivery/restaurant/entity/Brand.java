@@ -35,4 +35,7 @@ public class Brand {
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @jakarta.persistence.Version
+    private Integer version;
 }

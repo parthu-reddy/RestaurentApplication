@@ -1,7 +1,9 @@
+-- Source: V1__init_schema.sql
 CREATE EXTENSION IF NOT EXISTS postgis;
 
 CREATE TABLE brands (
     id UUID PRIMARY KEY,
+    owner_id UUID,
     name VARCHAR(255) NOT NULL,
     gstin VARCHAR(15),
     pan VARCHAR(10),
@@ -44,3 +46,50 @@ CREATE TABLE outlet_menu_overrides (
     is_available BOOLEAN,
     overridden_prep_time_minutes INTEGER
 );
+
+
+-- Source: V2__add_outbox.sql
+CREATE TABLE outbox_events (
+    id UUID PRIMARY KEY,
+    aggregate_type VARCHAR(50) NOT NULL,
+    aggregate_id VARCHAR(50) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    payload JSONB NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'UNPROCESSED',
+    processed_at TIMESTAMP,
+    error_message VARCHAR(1000)
+);
+
+
+-- Source: V3__add_restaurant_orders.sql
+CREATE TABLE restaurant_orders (
+    order_id UUID PRIMARY KEY,
+    restaurant_id UUID,
+    status VARCHAR(50),
+    prep_time INTEGER,
+    additional_prep_time INTEGER,
+    delivery_lat DOUBLE PRECISION,
+    delivery_lng DOUBLE PRECISION,
+    delivery_address VARCHAR(255)
+);
+
+
+-- Source: V4__add_timestamps.sql
+ALTER TABLE restaurant_orders
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+
+-- Source: V5__add_version_column.sql
+ALTER TABLE restaurant_orders ADD COLUMN version INTEGER DEFAULT 0;
+ALTER TABLE brands ADD COLUMN version INTEGER DEFAULT 0;
+ALTER TABLE outlets ADD COLUMN version INTEGER DEFAULT 0;
+ALTER TABLE master_menu_items ADD COLUMN version INTEGER DEFAULT 0;
+ALTER TABLE outlet_menu_overrides ADD COLUMN version INTEGER DEFAULT 0;
+
+
+-- Source: V10__add_retry_count_to_outbox.sql
+ALTER TABLE outbox_events ADD COLUMN IF NOT EXISTS retry_count INT DEFAULT 0;
+
+

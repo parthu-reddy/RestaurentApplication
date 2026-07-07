@@ -25,7 +25,6 @@ import jakarta.validation.constraints.Positive;
 public class MasterMenuItem {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     
     private UUID brandId;
@@ -40,4 +39,7 @@ public class MasterMenuItem {
     @NotNull
     @Positive
     private Integer defaultPrepTimeMinutes;
+
+    @jakarta.persistence.Version
+    private Integer version;
 }

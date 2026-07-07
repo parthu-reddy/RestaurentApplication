@@ -42,4 +42,7 @@ public class Outlet {
     
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @jakarta.persistence.Version
+    private Integer version;
 }

@@ -75,7 +75,6 @@ public class RestaurantOnboardingController {
 
     // Legacy backwards compatibility: CustomerApp uses /api/v1/restaurants/{id}
     @GetMapping("/api/v1/restaurants/{id}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getRestaurant(@PathVariable UUID id) {
         Outlet outlet = onboardingService.getOutletById(id);
         Map<String, Object> response = new HashMap<>();

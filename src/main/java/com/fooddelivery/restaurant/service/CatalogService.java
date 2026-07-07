@@ -44,6 +44,9 @@ public class CatalogService {
     public OutletMenuOverride addOrUpdateOverride(UUID outletId, UUID masterMenuItemId, OutletMenuOverride override) {
         Optional<OutletMenuOverride> existing = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId);
         OutletMenuOverride target = existing.orElse(new OutletMenuOverride());
+        if (target.getId() == null) {
+            target.setId(UUID.randomUUID());
+        }
         
         target.setOutletId(outletId);
         target.setMasterMenuItemId(masterMenuItemId);

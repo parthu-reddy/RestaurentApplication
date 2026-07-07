@@ -63,7 +63,6 @@ public class CatalogController {
 
     // Customer fetching the effective menu for an Outlet
     @GetMapping("/api/v1/restaurants/{restaurantId}/catalog/items")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<List<MenuItemDTO>>> getEffectiveMenu(@PathVariable UUID restaurantId) {
         List<MenuItemDTO> items = catalogService.getEffectiveMenuForOutlet(restaurantId);
         return ResponseEntity.ok(ApiResponse.success(items, "Menu items retrieved"));
@@ -71,7 +70,6 @@ public class CatalogController {
 
     // Batch endpoint used by CustomerOrderService to validate and fetch prices
     @GetMapping("/api/v1/restaurants/{restaurantId}/menu/batch")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<MenuItemDTO>> getEffectiveMenuBatch(
             @PathVariable UUID restaurantId,
             @RequestParam("ids") String idsStr) {
