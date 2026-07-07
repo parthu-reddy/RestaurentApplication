@@ -35,6 +35,8 @@ public class Outlet {
     @Column(columnDefinition = "geometry(Point, 4326)")
     private Point location;
     
+    private String bannerUrl;
+    
     private LocalTime openingTime;
     private LocalTime closingTime;
     

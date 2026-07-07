@@ -56,7 +56,7 @@ class RestaurantOnboardingServiceTest {
         when(brandRepository.save(any(Brand.class))).thenAnswer(i -> i.getArguments()[0]);
 
         Brand brand = restaurantOnboardingService.onboardBrand(
-                UUID.randomUUID(), "Test Brand", "123456789012345", "ABCDE1234F", "U12345MH2023PTC123456", "123456789", "HDFC0001234"
+                UUID.randomUUID(), "Test Brand", "123456789012345", "ABCDE1234F", "U12345MH2023PTC123456", "123456789", "HDFC0001234", null
         );
 
         assertNotNull(brand);
@@ -68,7 +68,7 @@ class RestaurantOnboardingServiceTest {
     @Test
     void testOnboardBrand_InvalidPan() {
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardBrand(
-                UUID.randomUUID(), "Test Brand", "123456789012345", "SHORT", "U12345MH2023PTC123456", "123456789", "HDFC0001234"
+                UUID.randomUUID(), "Test Brand", "123456789012345", "SHORT", "U12345MH2023PTC123456", "123456789", "HDFC0001234", null
         ));
     }
     
@@ -87,7 +87,7 @@ class RestaurantOnboardingServiceTest {
         when(outletRepository.save(any(Outlet.class))).thenAnswer(i -> i.getArguments()[0]);
 
         Outlet outlet = restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, LocalTime.of(9, 0), LocalTime.of(22, 0)
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, LocalTime.of(9, 0), LocalTime.of(22, 0), null
         );
 
         assertNotNull(outlet);
@@ -107,7 +107,7 @@ class RestaurantOnboardingServiceTest {
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
 
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, LocalTime.of(9, 0), LocalTime.of(22, 0)
+                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, LocalTime.of(9, 0), LocalTime.of(22, 0), null
         ));
     }
 }

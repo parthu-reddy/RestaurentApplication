@@ -80,6 +80,7 @@ public class CatalogService {
                 .price(override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
                 .isAvailable(override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true) // Default available
                 .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
+                .imageUrl(master.getImageUrl())
                 .build();
         }).collect(Collectors.toList());
     }
@@ -109,6 +110,7 @@ public class CatalogService {
                     .price(override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
                     .isAvailable(override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true)
                     .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
+                    .imageUrl(master.getImageUrl())
                     .build();
         }).collect(Collectors.toList());
     }

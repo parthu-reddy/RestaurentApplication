@@ -41,7 +41,8 @@ public class RestaurantOnboardingController {
                 request.getPan(),
                 request.getCin(),
                 request.getBankAccountNumber(),
-                request.getIfscCode()
+                request.getIfscCode(),
+                request.getLogoUrl()
         );
         return ResponseEntity.ok(ApiResponse.success(brand, "Brand onboarded successfully"));
     }
@@ -60,7 +61,8 @@ public class RestaurantOnboardingController {
                 request.getLat(),
                 request.getLng(),
                 request.getOpeningTime(),
-                request.getClosingTime()
+                request.getClosingTime(),
+                request.getBannerUrl()
         );
         return ResponseEntity.ok(ApiResponse.success(outlet, "Outlet onboarded successfully"));
     }
@@ -85,6 +87,10 @@ public class RestaurantOnboardingController {
             response.put("lat", outlet.getLocation().getY());
             response.put("lng", outlet.getLocation().getX());
         }
+        response.put("bannerUrl", outlet.getBannerUrl());
+        
+        Brand brand = onboardingService.getBrandById(outlet.getBrandId());
+        response.put("logoUrl", brand.getLogoUrl());
         return ResponseEntity.ok(ApiResponse.success(response, "Restaurant fetched successfully"));
     }
 
@@ -101,6 +107,7 @@ public class RestaurantOnboardingController {
         private String bankAccountNumber;
         @NotBlank
         private String ifscCode;
+        private String logoUrl;
     }
 
     @Data
@@ -117,5 +124,6 @@ public class RestaurantOnboardingController {
         private LocalTime openingTime;
         @NotNull
         private LocalTime closingTime;
+        private String bannerUrl;
     }
 }

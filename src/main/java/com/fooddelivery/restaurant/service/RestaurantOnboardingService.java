@@ -42,7 +42,7 @@ public class RestaurantOnboardingService {
     private String pennyDropApiUrl;
 
     // Phase 1: Brand & Financial Setup
-    public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode) {
+    public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, String logoUrl) {
         log.info("Starting Brand onboarding: {}, GSTIN: {}, Bank: {}", name, gstin, bankAccountNumber);
         
         if (pan != null && pan.length() != 10) {
@@ -73,6 +73,7 @@ public class RestaurantOnboardingService {
                 .cin(cin)
                 .bankAccountNumber(bankAccountNumber)
                 .bankIfsc(ifscCode)
+                .logoUrl(logoUrl)
                 .isGstinVerified(true)
                 .isBankVerified(true)
                 .createdAt(LocalDateTime.now())
@@ -83,7 +84,7 @@ public class RestaurantOnboardingService {
     }
     
     // Phase 2: Outlet & Geospatial Setup
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, LocalTime openingTime, LocalTime closingTime) {
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, LocalTime openingTime, LocalTime closingTime, String bannerUrl) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
         
         Brand brand = brandRepository.findById(brandId)
@@ -113,6 +114,7 @@ public class RestaurantOnboardingService {
                 .location(locationPoint)
                 .openingTime(openingTime)
                 .closingTime(closingTime)
+                .bannerUrl(bannerUrl)
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

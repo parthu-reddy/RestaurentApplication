@@ -30,6 +30,8 @@ public class Brand {
     private String bankAccountNumber;
     private String bankIfsc;
     
+    private String logoUrl;
+    
     private Boolean isGstinVerified;
     private Boolean isBankVerified;
     

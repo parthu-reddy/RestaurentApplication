@@ -33,6 +33,8 @@ public class MasterMenuItem {
     private String name;
     private String description;
     
+    private String imageUrl;
+    
     @NotNull
     @Positive
     private BigDecimal basePrice;

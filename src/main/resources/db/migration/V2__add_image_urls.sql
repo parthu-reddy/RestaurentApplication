@@ -1,0 +1,3 @@
+ALTER TABLE brands ADD COLUMN logo_url VARCHAR(1024);
+ALTER TABLE outlets ADD COLUMN banner_url VARCHAR(1024);
+ALTER TABLE master_menu_items ADD COLUMN image_url VARCHAR(1024);

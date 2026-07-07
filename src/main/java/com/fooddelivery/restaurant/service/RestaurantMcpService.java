@@ -124,7 +124,7 @@ public class RestaurantMcpService {
     public String onboardBrand(String ownerId, String brandOnboardRequestJson) {
         try {
             RestaurantOnboardingController.BrandOnboardRequest req = objectMapper.readValue(brandOnboardRequestJson, RestaurantOnboardingController.BrandOnboardRequest.class);
-            return objectMapper.writeValueAsString(onboardingService.onboardBrand(UUID.fromString(ownerId), req.getName(), req.getGstin(), req.getPan(), req.getCin(), req.getBankAccountNumber(), req.getIfscCode()));
+            return objectMapper.writeValueAsString(onboardingService.onboardBrand(UUID.fromString(ownerId), req.getName(), req.getGstin(), req.getPan(), req.getCin(), req.getBankAccountNumber(), req.getIfscCode(), req.getLogoUrl()));
         } catch (Exception e) {
             return "Failed to onboard brand: " + e.getMessage();
         }
@@ -134,7 +134,7 @@ public class RestaurantMcpService {
     public String onboardOutlet(String brandId, String outletOnboardRequestJson) {
         try {
             RestaurantOnboardingController.OutletOnboardRequest req = objectMapper.readValue(outletOnboardRequestJson, RestaurantOnboardingController.OutletOnboardRequest.class);
-            return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getOpeningTime(), req.getClosingTime()));
+            return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getOpeningTime(), req.getClosingTime(), req.getBannerUrl()));
         } catch (Exception e) {
             return "Failed to onboard outlet: " + e.getMessage();
         }
@@ -161,6 +161,9 @@ public class RestaurantMcpService {
                 response.put("lat", outlet.getLocation().getY());
                 response.put("lng", outlet.getLocation().getX());
             }
+            response.put("bannerUrl", outlet.getBannerUrl());
+            com.fooddelivery.restaurant.entity.Brand brand = onboardingService.getBrandById(outlet.getBrandId());
+            response.put("logoUrl", brand.getLogoUrl());
             return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
             return "Failed to get restaurant details: " + e.getMessage();
