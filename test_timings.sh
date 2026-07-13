@@ -1,0 +1,1 @@
+curl -s -X POST -H "Content-Type: application/json" -d '{"categoryId": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "timings": [{"openingTime": "08:00:00", "closingTime": "20:00:00"}]}' http://192.168.64.1:8080/api/v1/outlets/3fa85f64-5717-4562-b3fc-2c963f66afa6/categories/timings
