@@ -42,6 +42,13 @@ public class Outlet {
     
     private Boolean isActive;
     
+    private String cuisine;
+    private Double rating;
+    private Integer reviewsCount;
+    private Integer deliveryTime;
+    private Double deliveryFee;
+    private String tags;
+    
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

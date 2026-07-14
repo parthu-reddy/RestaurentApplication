@@ -47,6 +47,20 @@ public class RestaurantOnboardingController {
         return ResponseEntity.ok(ApiResponse.success(brand, "Brand onboarded successfully"));
     }
 
+    @GetMapping("/api/v1/brands")
+    @PreAuthorize("hasRole('RESTAURANT')")
+    public ResponseEntity<ApiResponse<List<Brand>>> getBrands(java.security.Principal principal) {
+        List<Brand> brands = onboardingService.getBrands(UUID.fromString(principal.getName()));
+        return ResponseEntity.ok(ApiResponse.success(brands, "Brands retrieved successfully"));
+    }
+
+    @GetMapping("/api/v1/outlets")
+    @PreAuthorize("hasRole('RESTAURANT')")
+    public ResponseEntity<ApiResponse<List<Outlet>>> getOutlets(java.security.Principal principal) {
+        List<Outlet> outlets = onboardingService.getOutletsByOwner(UUID.fromString(principal.getName()));
+        return ResponseEntity.ok(ApiResponse.success(outlets, "Outlets retrieved successfully"));
+    }
+
     // Phase 2: Outlet Onboarding
     @PostMapping("/api/v1/brands/{brandId}/outlets")
     @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
@@ -62,7 +76,13 @@ public class RestaurantOnboardingController {
                 request.getLng(),
                 request.getOpeningTime(),
                 request.getClosingTime(),
-                request.getBannerUrl()
+                request.getBannerUrl(),
+                request.getCuisine(),
+                request.getRating(),
+                request.getReviewsCount(),
+                request.getDeliveryTime(),
+                request.getDeliveryFee(),
+                request.getTags()
         );
         return ResponseEntity.ok(ApiResponse.success(outlet, "Outlet onboarded successfully"));
     }
@@ -92,6 +112,66 @@ public class RestaurantOnboardingController {
         Brand brand = onboardingService.getBrandById(outlet.getBrandId());
         response.put("logoUrl", brand.getLogoUrl());
         return ResponseEntity.ok(ApiResponse.success(response, "Restaurant fetched successfully"));
+    }
+
+    @GetMapping("/api/v1/restaurants/nearby")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getNearbyRestaurants(
+            @org.springframework.web.bind.annotation.RequestParam double lat, 
+            @org.springframework.web.bind.annotation.RequestParam double lng,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "5.0") double radius) {
+        
+        List<Outlet> nearbyOutlets = onboardingService.getNearbyOutlets(lat, lng, radius);
+        
+        List<Map<String, Object>> responseList = nearbyOutlets.stream().map(outlet -> {
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", outlet.getId());
+            response.put("name", outlet.getName());
+            response.put("isActive", outlet.getIsActive());
+            if (outlet.getLocation() != null) {
+                response.put("lat", outlet.getLocation().getY());
+                response.put("lng", outlet.getLocation().getX());
+                
+                // approximate distance
+                double rEarth = 6371.0;
+                double dLat = Math.toRadians(outlet.getLocation().getY() - lat);
+                double dLon = Math.toRadians(outlet.getLocation().getX() - lng);
+                double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                           Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(outlet.getLocation().getY())) *
+                           Math.sin(dLon/2) * Math.sin(dLon/2);
+                double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                double distance = rEarth * c;
+                response.put("distance", Math.round(distance * 10.0) / 10.0);
+            } else {
+                response.put("distance", 1.5);
+            }
+            
+            // Use real DB values, fallback to dummies if null (for old records)
+            response.put("image", outlet.getBannerUrl() != null ? outlet.getBannerUrl() : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80");
+            response.put("cuisine", outlet.getCuisine() != null ? outlet.getCuisine() : "Multi Cuisine");
+            response.put("rating", outlet.getRating() != null ? outlet.getRating() : 0.0);
+            response.put("reviewsCount", outlet.getReviewsCount() != null ? outlet.getReviewsCount() : 0);
+            response.put("deliveryTime", outlet.getDeliveryTime() != null ? outlet.getDeliveryTime() : 30);
+            response.put("deliveryFee", outlet.getDeliveryFee() != null ? outlet.getDeliveryFee() : 0.0);
+            
+            if (outlet.getTags() != null && !outlet.getTags().isEmpty()) {
+                response.put("tags", java.util.Arrays.asList(outlet.getTags().split(",")));
+            } else {
+                response.put("tags", List.of());
+            }
+            
+            try {
+                Brand brand = onboardingService.getBrandById(outlet.getBrandId());
+                response.put("logoUrl", brand.getLogoUrl());
+                if (outlet.getBannerUrl() == null && brand.getLogoUrl() != null) {
+                    response.put("image", brand.getLogoUrl());
+                }
+            } catch (Exception e) {
+                // Ignore missing brand
+            }
+            return response;
+        }).collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(ApiResponse.success(responseList, "Nearby restaurants fetched"));
     }
 
     @Data
@@ -125,5 +205,12 @@ public class RestaurantOnboardingController {
         @NotNull
         private LocalTime closingTime;
         private String bannerUrl;
+        
+        private String cuisine;
+        private Double rating;
+        private Integer reviewsCount;
+        private Integer deliveryTime;
+        private Double deliveryFee;
+        private String tags;
     }
 }

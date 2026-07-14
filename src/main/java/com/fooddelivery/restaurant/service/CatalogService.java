@@ -57,6 +57,11 @@ public class CatalogService {
         return outletMenuOverrideRepository.save(target);
     }
 
+    @Transactional(readOnly = true)
+    public List<OutletMenuOverride> getOverrides(UUID outletId) {
+        return outletMenuOverrideRepository.findByOutletId(outletId);
+    }
+
     // Resolves the effective menu for an outlet (Master items + Overrides)
     @Transactional(readOnly = true)
     public List<MenuItemDTO> getEffectiveMenuForOutlet(UUID outletId) {

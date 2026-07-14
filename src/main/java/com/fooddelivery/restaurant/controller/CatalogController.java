@@ -61,6 +61,13 @@ public class CatalogController {
         return ResponseEntity.ok(ApiResponse.success(saved, "Menu override saved"));
     }
 
+    @GetMapping("/api/v1/outlets/{outletId}/menu-overrides")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal)")
+    public ResponseEntity<ApiResponse<List<OutletMenuOverride>>> getOverrides(
+            @PathVariable UUID outletId) {
+        return ResponseEntity.ok(ApiResponse.success(catalogService.getOverrides(outletId), "Menu overrides retrieved"));
+    }
+
     // Customer fetching the effective menu for an Outlet
     @GetMapping("/api/v1/restaurants/{restaurantId}/catalog/items")
     public ResponseEntity<ApiResponse<List<MenuItemDTO>>> getEffectiveMenu(@PathVariable UUID restaurantId) {

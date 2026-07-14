@@ -84,7 +84,7 @@ public class RestaurantOnboardingService {
     }
     
     // Phase 2: Outlet & Geospatial Setup
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, LocalTime openingTime, LocalTime closingTime, String bannerUrl) {
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, LocalTime openingTime, LocalTime closingTime, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, Double deliveryFee, String tags) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
         
         Brand brand = brandRepository.findById(brandId)
@@ -115,6 +115,12 @@ public class RestaurantOnboardingService {
                 .openingTime(openingTime)
                 .closingTime(closingTime)
                 .bannerUrl(bannerUrl)
+                .cuisine(cuisine)
+                .rating(rating != null ? rating : 0.0)
+                .reviewsCount(reviewsCount != null ? reviewsCount : 0)
+                .deliveryTime(deliveryTime)
+                .deliveryFee(deliveryFee)
+                .tags(tags)
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -169,5 +175,22 @@ public class RestaurantOnboardingService {
             log.warn("Penny Drop API failed, mocking true", e);
             return true;
         }
+    }
+    public List<Outlet> getNearbyOutlets(double lat, double lng, double radiusInKm) {
+        double radiusInMeters = radiusInKm * 1000.0;
+        return outletRepository.findNearbyOutlets(lat, lng, radiusInMeters);
+    }
+
+    public List<Brand> getBrands(UUID ownerId) {
+        return brandRepository.findByOwnerId(ownerId);
+    }
+
+    public List<Outlet> getOutletsByOwner(UUID ownerId) {
+        List<Brand> brands = brandRepository.findByOwnerId(ownerId);
+        if (brands.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        List<UUID> brandIds = brands.stream().map(Brand::getId).collect(java.util.stream.Collectors.toList());
+        return outletRepository.findByBrandIdIn(brandIds);
     }
 }

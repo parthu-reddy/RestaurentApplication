@@ -23,6 +23,12 @@ public class FulfillmentController {
     private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
+    @org.springframework.web.bind.annotation.GetMapping("/orders")
+    public ResponseEntity<ApiResponse<java.util.List<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getRestaurantOrders(
+            @PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(ApiResponse.success(fulfillmentService.getOrdersByRestaurant(restaurantId), "Orders retrieved"));
+    }
+
     @PostMapping("/orders/{orderId}/accept")
     public ResponseEntity<ApiResponse<Void>> acceptOrder(
             @PathVariable UUID restaurantId, 

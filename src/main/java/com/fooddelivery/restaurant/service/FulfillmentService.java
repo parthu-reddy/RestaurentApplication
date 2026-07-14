@@ -17,6 +17,10 @@ public class FulfillmentService {
     private final com.fooddelivery.restaurant.repository.RestaurantOrderRepository restaurantOrderRepository;
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
+    public java.util.List<com.fooddelivery.restaurant.entity.RestaurantOrder> getOrdersByRestaurant(UUID restaurantId) {
+        return restaurantOrderRepository.findByRestaurantId(restaurantId);
+    }
+
     @Transactional
     public void acceptOrder(UUID restaurantId, UUID orderId, Integer additionalPrepTime, String delayReason) {
         log.info("Restaurant {} accepting order {} with additional prep time {} and reason {}", 

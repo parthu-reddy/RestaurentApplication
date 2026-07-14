@@ -11,4 +11,5 @@ import java.util.UUID;
 @Repository
 public interface RestaurantOrderRepository extends JpaRepository<RestaurantOrder, UUID> {
     List<RestaurantOrder> findByStatusAndCreatedAtBefore(String status, LocalDateTime time);
+    List<RestaurantOrder> findByRestaurantId(UUID restaurantId);
 }
