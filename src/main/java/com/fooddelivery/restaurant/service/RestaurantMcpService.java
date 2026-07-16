@@ -134,7 +134,7 @@ public class RestaurantMcpService {
     public String onboardOutlet(String brandId, String outletOnboardRequestJson) {
         try {
             RestaurantOnboardingController.OutletOnboardRequest req = objectMapper.readValue(outletOnboardRequestJson, RestaurantOnboardingController.OutletOnboardRequest.class);
-            return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getOpeningTime(), req.getClosingTime(), req.getBannerUrl(), req.getCuisine(), req.getRating(), req.getReviewsCount(), req.getDeliveryTime(), req.getDeliveryFee(), req.getTags()));
+            return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getTimings(), req.getBannerUrl(), req.getCuisine(), req.getRating(), req.getReviewsCount(), req.getDeliveryTime(), req.getDeliveryFee(), req.getTags()));
         } catch (Exception e) {
             return "Failed to onboard outlet: " + e.getMessage();
         }

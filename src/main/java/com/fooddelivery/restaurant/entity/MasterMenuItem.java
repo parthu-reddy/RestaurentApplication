@@ -29,6 +29,8 @@ public class MasterMenuItem {
     
     private UUID brandId;
     
+    private UUID categoryId;
+    
     @NotBlank
     private String name;
     private String description;

@@ -13,7 +13,7 @@ public class RestaurantGlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()
-            .map(error -> error.getDefaultMessage())
+            .map(error -> error.getField() + " " + error.getDefaultMessage())
             .findFirst()
             .orElse("Validation error");
         return ResponseEntity.badRequest().body(ApiResponse.error(message));

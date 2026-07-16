@@ -37,8 +37,8 @@ public class Outlet {
     
     private String bannerUrl;
     
-    private LocalTime openingTime;
-    private LocalTime closingTime;
+    @jakarta.persistence.OneToMany(mappedBy = "outlet", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<OutletTiming> timings = new java.util.ArrayList<>();
     
     private Boolean isActive;
     

@@ -74,8 +74,7 @@ public class RestaurantOnboardingController {
                 request.getFssaiLicenseNumber(),
                 request.getLat(),
                 request.getLng(),
-                request.getOpeningTime(),
-                request.getClosingTime(),
+                request.getTimings(),
                 request.getBannerUrl(),
                 request.getCuisine(),
                 request.getRating(),
@@ -87,12 +86,32 @@ public class RestaurantOnboardingController {
         return ResponseEntity.ok(ApiResponse.success(outlet, "Outlet onboarded successfully"));
     }
     
+    @org.springframework.web.bind.annotation.PutMapping("/api/v1/outlets/{outletId}/timings")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal)")
+    public ResponseEntity<ApiResponse<Void>> updateOutletTimings(
+            @PathVariable UUID outletId,
+            @Valid @RequestBody OutletTimingsUpdateRequest request) {
+        
+        onboardingService.updateOutletTimings(outletId, request.getTimings());
+        return ResponseEntity.ok(ApiResponse.success(null, "Outlet timings updated successfully"));
+    }
+    
     @GetMapping("/api/v1/brands/{brandId}/outlets")
     @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
     public ResponseEntity<ApiResponse<List<Outlet>>> getOutletsByBrand(
             @PathVariable UUID brandId) {
         
         return ResponseEntity.ok(ApiResponse.success(onboardingService.getOutletsByBrand(brandId), "Fetched outlets"));
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/api/v1/outlets/{outletId}/status")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal)")
+    public ResponseEntity<ApiResponse<Void>> updateOutletStatus(
+            @PathVariable UUID outletId,
+            @Valid @RequestBody OutletStatusUpdateRequest request) {
+        
+        onboardingService.updateOutletStatus(outletId, request.getIsActive());
+        return ResponseEntity.ok(ApiResponse.success(null, "Outlet status updated successfully"));
     }
 
     // Legacy backwards compatibility: CustomerApp uses /api/v1/restaurants/{id}
@@ -103,6 +122,29 @@ public class RestaurantOnboardingController {
         response.put("id", outlet.getId());
         response.put("name", outlet.getName());
         response.put("isActive", outlet.getIsActive());
+        
+        boolean isOpen = false;
+        if (outlet.getTimings() != null && !outlet.getTimings().isEmpty()) {
+            java.time.LocalTime now = java.time.LocalTime.now(java.time.ZoneId.of("Asia/Kolkata"));
+            for (com.fooddelivery.restaurant.entity.OutletTiming timing : outlet.getTimings()) {
+                java.time.LocalTime start = timing.getOpeningTime();
+                java.time.LocalTime end = timing.getClosingTime();
+                if (start.isBefore(end) || start.equals(end)) {
+                    if (!now.isBefore(start) && !now.isAfter(end)) {
+                        isOpen = true;
+                        break;
+                    }
+                } else {
+                    if (!now.isBefore(start) || !now.isAfter(end)) {
+                        isOpen = true;
+                        break;
+                    }
+                }
+            }
+        } else {
+            isOpen = false; // default to closed if no specific timings are configured
+        }
+        response.put("isOpen", isOpen);
         if (outlet.getLocation() != null) {
             response.put("lat", outlet.getLocation().getY());
             response.put("lng", outlet.getLocation().getX());
@@ -127,6 +169,7 @@ public class RestaurantOnboardingController {
             response.put("id", outlet.getId());
             response.put("name", outlet.getName());
             response.put("isActive", outlet.getIsActive());
+            response.put("isOpen", true); // Filtered by native query
             if (outlet.getLocation() != null) {
                 response.put("lat", outlet.getLocation().getY());
                 response.put("lng", outlet.getLocation().getX());
@@ -201,9 +244,7 @@ public class RestaurantOnboardingController {
         @NotNull
         private Double lng;
         @NotNull
-        private LocalTime openingTime;
-        @NotNull
-        private LocalTime closingTime;
+        private List<TimingRequest> timings;
         private String bannerUrl;
         
         private String cuisine;
@@ -212,5 +253,25 @@ public class RestaurantOnboardingController {
         private Integer deliveryTime;
         private Double deliveryFee;
         private String tags;
+    }
+
+    @Data
+    public static class OutletStatusUpdateRequest {
+        @NotNull
+        @com.fasterxml.jackson.annotation.JsonProperty("isActive")
+        private Boolean isActive;
+    }
+    @Data
+    public static class TimingRequest {
+        @NotNull
+        private LocalTime openingTime;
+        @NotNull
+        private LocalTime closingTime;
+    }
+
+    @Data
+    public static class OutletTimingsUpdateRequest {
+        @NotNull
+        private List<TimingRequest> timings;
     }
 }

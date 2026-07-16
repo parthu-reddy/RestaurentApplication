@@ -20,4 +20,6 @@ public class MenuItemDTO {
     private Boolean isAvailable;
     private Integer prepTimeMinutes;
     private String imageUrl;
+    private UUID categoryId;
+    private String categoryName;
 }

@@ -86,8 +86,12 @@ class RestaurantOnboardingServiceTest {
                 .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
         when(outletRepository.save(any(Outlet.class))).thenAnswer(i -> i.getArguments()[0]);
 
+        com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr = new com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest();
+        tr.setOpeningTime(LocalTime.of(9, 0));
+        tr.setClosingTime(LocalTime.of(22, 0));
+
         Outlet outlet = restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, LocalTime.of(9, 0), LocalTime.of(22, 0), null, "Cuisine", 4.5, 100, 30, 0.0, "Tag"
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, 0.0, "Tag"
         );
 
         assertNotNull(outlet);
@@ -106,8 +110,12 @@ class RestaurantOnboardingServiceTest {
                 
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
 
+        com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr = new com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest();
+        tr.setOpeningTime(LocalTime.of(9, 0));
+        tr.setClosingTime(LocalTime.of(22, 0));
+
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, LocalTime.of(9, 0), LocalTime.of(22, 0), null, "Cuisine", 4.5, 100, 30, 0.0, "Tag"
+                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, 0.0, "Tag"
         ));
     }
 }

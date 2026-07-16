@@ -7,6 +7,12 @@ import com.fooddelivery.restaurant.entity.OutletMenuOverride;
 import com.fooddelivery.restaurant.repository.MasterMenuItemRepository;
 import com.fooddelivery.restaurant.repository.OutletMenuOverrideRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
+import com.fooddelivery.restaurant.repository.CategoryRepository;
+import com.fooddelivery.restaurant.repository.OutletCategoryTimingRepository;
+import com.fooddelivery.restaurant.entity.Category;
+import com.fooddelivery.restaurant.entity.OutletCategoryTiming;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +31,19 @@ public class CatalogService {
     private final MasterMenuItemRepository masterMenuItemRepository;
     private final OutletMenuOverrideRepository outletMenuOverrideRepository;
     private final OutletRepository outletRepository;
+    private final CategoryRepository categoryRepository;
+    private final OutletCategoryTimingRepository outletCategoryTimingRepository;
 
     @Transactional
     public MasterMenuItem addMasterMenuItem(UUID brandId, MasterMenuItem item) {
+        List<Outlet> outlets = outletRepository.findByBrandId(brandId);
+        if (outlets.isEmpty()) {
+            throw new IllegalStateException("Cannot create a menu without registering at least one outlet first.");
+        }
+        if (item.getCategoryId() != null) {
+            Category cat = categoryRepository.findById(item.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid categoryId provided"));
+        }
         item.setBrandId(brandId);
         if (item.getId() == null) {
             item.setId(UUID.randomUUID());
@@ -70,12 +86,49 @@ public class CatalogService {
                 
         List<MasterMenuItem> masterItems = masterMenuItemRepository.findByBrandId(outlet.getBrandId());
         List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
+        List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
+        List<Category> allCategories = categoryRepository.findAll();
         
+        Map<UUID, String> categoryNames = allCategories.stream()
+            .collect(Collectors.toMap(Category::getId, Category::getName));
+            
         Map<UUID, OutletMenuOverride> overrideMap = overrides.stream()
             .collect(Collectors.toMap(OutletMenuOverride::getMasterMenuItemId, o -> o, (o1, o2) -> o1));
             
+        Map<UUID, List<OutletCategoryTiming>> timingsByCategory = categoryTimings.stream()
+            .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
+            
+        LocalTime now = LocalTime.now(ZoneId.of("Asia/Kolkata"));
+            
         return masterItems.stream().map(master -> {
             OutletMenuOverride override = overrideMap.get(master.getId());
+            boolean isAvail = override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true;
+            
+            // Evaluate category timings
+            if (isAvail && master.getCategoryId() != null) {
+                List<OutletCategoryTiming> timings = timingsByCategory.get(master.getCategoryId());
+                if (timings != null && !timings.isEmpty()) {
+                    boolean categoryOpen = false;
+                    for (OutletCategoryTiming timing : timings) {
+                        LocalTime start = timing.getOpeningTime();
+                        LocalTime end = timing.getClosingTime();
+                        if (start.isBefore(end) || start.equals(end)) {
+                            if (!now.isBefore(start) && !now.isAfter(end)) {
+                                categoryOpen = true;
+                                break;
+                            }
+                        } else { // cross-midnight
+                            if (!now.isBefore(start) || !now.isAfter(end)) {
+                                categoryOpen = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!categoryOpen) {
+                        isAvail = false; // Override to false if category is currently closed
+                    }
+                }
+            }
                 
             return MenuItemDTO.builder()
                 .id(master.getId())
@@ -83,9 +136,11 @@ public class CatalogService {
                 .name(master.getName())
                 .description(master.getDescription())
                 .price(override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
-                .isAvailable(override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true) // Default available
+                .isAvailable(isAvail)
                 .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
                 .imageUrl(master.getImageUrl())
+                .categoryId(master.getCategoryId())
+                .categoryName(master.getCategoryId() != null ? categoryNames.get(master.getCategoryId()) : null)
                 .build();
         }).collect(Collectors.toList());
     }
@@ -98,14 +153,51 @@ public class CatalogService {
                 
         List<MasterMenuItem> masterItems = masterMenuItemRepository.findByIdIn(itemIds);
         List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
+        List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
+        List<Category> allCategories = categoryRepository.findAll();
+        
+        Map<UUID, String> categoryNames = allCategories.stream()
+            .collect(Collectors.toMap(Category::getId, Category::getName));
         
         Map<UUID, OutletMenuOverride> overrideMap = overrides.stream()
             .collect(Collectors.toMap(OutletMenuOverride::getMasterMenuItemId, o -> o, (o1, o2) -> o1));
+            
+        Map<UUID, List<OutletCategoryTiming>> timingsByCategory = categoryTimings.stream()
+            .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
+            
+        LocalTime now = LocalTime.now(ZoneId.of("Asia/Kolkata"));
             
         return masterItems.stream()
             .filter(master -> master.getBrandId().equals(outlet.getBrandId()))
             .map(master -> {
                 OutletMenuOverride override = overrideMap.get(master.getId());
+                boolean isAvail = override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true;
+                
+                // Evaluate category timings
+                if (isAvail && master.getCategoryId() != null) {
+                    List<OutletCategoryTiming> timings = timingsByCategory.get(master.getCategoryId());
+                    if (timings != null && !timings.isEmpty()) {
+                        boolean categoryOpen = false;
+                        for (OutletCategoryTiming timing : timings) {
+                            LocalTime start = timing.getOpeningTime();
+                            LocalTime end = timing.getClosingTime();
+                            if (start.isBefore(end) || start.equals(end)) {
+                                if (!now.isBefore(start) && !now.isAfter(end)) {
+                                    categoryOpen = true;
+                                    break;
+                                }
+                            } else { // cross-midnight
+                                if (!now.isBefore(start) || !now.isAfter(end)) {
+                                    categoryOpen = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!categoryOpen) {
+                            isAvail = false; // Override to false if category is currently closed
+                        }
+                    }
+                }
                     
                 return MenuItemDTO.builder()
                     .id(master.getId())
@@ -113,9 +205,11 @@ public class CatalogService {
                     .name(master.getName())
                     .description(master.getDescription())
                     .price(override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
-                    .isAvailable(override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true)
+                    .isAvailable(isAvail)
                     .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
                     .imageUrl(master.getImageUrl())
+                    .categoryId(master.getCategoryId())
+                    .categoryName(master.getCategoryId() != null ? categoryNames.get(master.getCategoryId()) : null)
                     .build();
         }).collect(Collectors.toList());
     }

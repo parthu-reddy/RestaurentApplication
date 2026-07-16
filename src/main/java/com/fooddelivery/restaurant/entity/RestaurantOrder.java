@@ -13,6 +13,7 @@ import java.util.UUID;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
+import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "restaurant_orders")
@@ -41,6 +42,9 @@ public class RestaurantOrder {
     private Double deliveryLng;
     
     private String deliveryAddress;
+
+    @Column(columnDefinition = "TEXT")
+    private String itemsJson;
     
     private LocalDateTime createdAt;
     

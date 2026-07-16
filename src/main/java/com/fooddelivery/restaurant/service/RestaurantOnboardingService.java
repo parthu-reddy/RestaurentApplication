@@ -45,6 +45,11 @@ public class RestaurantOnboardingService {
     public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, String logoUrl) {
         log.info("Starting Brand onboarding: {}, GSTIN: {}, Bank: {}", name, gstin, bankAccountNumber);
         
+        List<Brand> existingBrands = brandRepository.findByOwnerId(ownerId);
+        if (!existingBrands.isEmpty()) {
+            throw new IllegalArgumentException("A user can only register one brand.");
+        }
+        
         if (pan != null && pan.length() != 10) {
             throw new IllegalArgumentException("Invalid PAN. Must be 10 characters.");
         }
@@ -84,7 +89,8 @@ public class RestaurantOnboardingService {
     }
     
     // Phase 2: Outlet & Geospatial Setup
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, LocalTime openingTime, LocalTime closingTime, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, Double deliveryFee, String tags) {
+    @org.springframework.transaction.annotation.Transactional
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, Double deliveryFee, String tags) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
         
         Brand brand = brandRepository.findById(brandId)
@@ -112,8 +118,6 @@ public class RestaurantOnboardingService {
                 .name(name)
                 .fssaiLicenseNumber(fssai)
                 .location(locationPoint)
-                .openingTime(openingTime)
-                .closingTime(closingTime)
                 .bannerUrl(bannerUrl)
                 .cuisine(cuisine)
                 .rating(rating != null ? rating : 0.0)
@@ -126,7 +130,55 @@ public class RestaurantOnboardingService {
                 .updatedAt(LocalDateTime.now())
                 .build();
                 
+        List<com.fooddelivery.restaurant.entity.OutletTiming> timings = new java.util.ArrayList<>();
+        if (timingsReq != null) {
+            for (com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr : timingsReq) {
+                com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder()
+                        .id(UUID.randomUUID())
+                        .outlet(outlet)
+                        .openingTime(tr.getOpeningTime())
+                        .closingTime(tr.getClosingTime())
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build();
+                timings.add(timing);
+            }
+        }
+        outlet.setTimings(timings);
+                
         return outletRepository.save(outlet);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void updateOutletStatus(UUID outletId, boolean isActive) {
+        Outlet outlet = outletRepository.findById(outletId)
+                .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
+        outlet.setIsActive(isActive);
+        outlet.setUpdatedAt(LocalDateTime.now());
+        outletRepository.save(outlet);
+    }
+    
+    @org.springframework.transaction.annotation.Transactional
+    public void updateOutletTimings(UUID outletId, List<com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest> timingsReq) {
+        Outlet outlet = outletRepository.findById(outletId)
+                .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
+                
+        outlet.getTimings().clear();
+        if (timingsReq != null) {
+            for (com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr : timingsReq) {
+                com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder()
+                        .id(UUID.randomUUID())
+                        .outlet(outlet)
+                        .openingTime(tr.getOpeningTime())
+                        .closingTime(tr.getClosingTime())
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build();
+                outlet.getTimings().add(timing);
+            }
+        }
+        outlet.setUpdatedAt(LocalDateTime.now());
+        outletRepository.save(outlet);
     }
     
     public Brand getBrandById(UUID id) {
