@@ -43,6 +43,12 @@ public class RestaurantOrder {
     
     private String deliveryAddress;
 
+    private String pickupOtp;
+
+    private String riderName;
+    
+    private String riderPhone;
+
     @Column(columnDefinition = "TEXT")
     private String itemsJson;
     

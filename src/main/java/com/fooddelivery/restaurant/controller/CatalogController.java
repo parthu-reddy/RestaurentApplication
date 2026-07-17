@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +48,17 @@ public class CatalogController {
         
         List<MasterMenuItem> items = catalogService.getMasterMenuItems(brandId);
         return ResponseEntity.ok(ApiResponse.success(items, "Master Menu retrieved"));
+    }
+
+    @PutMapping("/api/v1/brands/{brandId}/master-menu/{itemId}")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
+    public ResponseEntity<ApiResponse<MasterMenuItem>> editMasterMenuItem(
+            @PathVariable UUID brandId,
+            @PathVariable UUID itemId,
+            @Valid @RequestBody MasterMenuItem item) {
+            
+        MasterMenuItem updated = catalogService.editMasterMenuItem(brandId, itemId, item);
+        return ResponseEntity.ok(ApiResponse.success(updated, "Master Menu item updated successfully"));
     }
 
     // Phase 3: Outlet overrides Price or Availability

@@ -1,0 +1,2 @@
+CREATE INDEX idx_brand_category_timings_brand_id ON brand_category_timings(brand_id);
+CREATE INDEX idx_brand_category_timings_category_id ON brand_category_timings(category_id);

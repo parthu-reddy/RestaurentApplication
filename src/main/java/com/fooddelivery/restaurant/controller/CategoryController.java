@@ -4,7 +4,9 @@ import com.fooddelivery.common.dto.ApiResponse;
 import com.fooddelivery.restaurant.dto.CategoryDTO;
 import com.fooddelivery.restaurant.service.CategoryService;
 import com.fooddelivery.restaurant.service.OutletCategoryTimingService;
+import com.fooddelivery.restaurant.service.BrandCategoryTimingService;
 import com.fooddelivery.restaurant.dto.SetOutletCategoryTimingRequest;
+import com.fooddelivery.restaurant.dto.SetBrandCategoryTimingRequest;
 import com.fooddelivery.restaurant.dto.TimingDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     private final OutletCategoryTimingService outletCategoryTimingService;
+    private final BrandCategoryTimingService brandCategoryTimingService;
 
     @GetMapping("/api/v1/categories")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategories() {
@@ -53,5 +56,20 @@ public class CategoryController {
             @PathVariable UUID outletId, @Valid @RequestBody SetOutletCategoryTimingRequest request) {
         List<TimingDTO> timings = outletCategoryTimingService.setTimings(outletId, request);
         return ResponseEntity.ok(ApiResponse.success(timings, "Outlet category timings set successfully"));
+    }
+
+    @GetMapping("/api/v1/brands/{brandId}/categories/{categoryId}/timings")
+    public ResponseEntity<ApiResponse<List<TimingDTO>>> getBrandCategoryTimings(
+            @PathVariable UUID brandId, @PathVariable UUID categoryId) {
+        List<TimingDTO> timings = brandCategoryTimingService.getTimings(brandId, categoryId);
+        return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings retrieved"));
+    }
+
+    @PostMapping("/api/v1/brands/{brandId}/categories/timings")
+    @PreAuthorize("hasRole('RESTAURANT') or hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<TimingDTO>>> setBrandCategoryTimings(
+            @PathVariable UUID brandId, @Valid @RequestBody SetBrandCategoryTimingRequest request) {
+        List<TimingDTO> timings = brandCategoryTimingService.setTimings(brandId, request);
+        return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings set successfully"));
     }
 }

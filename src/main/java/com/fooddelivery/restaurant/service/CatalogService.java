@@ -9,8 +9,10 @@ import com.fooddelivery.restaurant.repository.OutletMenuOverrideRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
 import com.fooddelivery.restaurant.repository.CategoryRepository;
 import com.fooddelivery.restaurant.repository.OutletCategoryTimingRepository;
+import com.fooddelivery.restaurant.repository.BrandCategoryTimingRepository;
 import com.fooddelivery.restaurant.entity.Category;
 import com.fooddelivery.restaurant.entity.OutletCategoryTiming;
+import com.fooddelivery.restaurant.entity.BrandCategoryTiming;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,7 @@ public class CatalogService {
     private final OutletRepository outletRepository;
     private final CategoryRepository categoryRepository;
     private final OutletCategoryTimingRepository outletCategoryTimingRepository;
+    private final BrandCategoryTimingRepository brandCategoryTimingRepository;
 
     @Transactional
     public MasterMenuItem addMasterMenuItem(UUID brandId, MasterMenuItem item) {
@@ -57,6 +60,32 @@ public class CatalogService {
     }
 
     @Transactional
+    public MasterMenuItem editMasterMenuItem(UUID brandId, UUID itemId, MasterMenuItem updatedItem) {
+        MasterMenuItem existingItem = masterMenuItemRepository.findById(itemId)
+            .orElseThrow(() -> new IllegalArgumentException("Menu item not found"));
+            
+        if (!existingItem.getBrandId().equals(brandId)) {
+            throw new IllegalArgumentException("Menu item does not belong to this brand");
+        }
+        
+        if (updatedItem.getCategoryId() != null) {
+            Category cat = categoryRepository.findById(updatedItem.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid categoryId provided"));
+            existingItem.setCategoryId(updatedItem.getCategoryId());
+        } else {
+            existingItem.setCategoryId(null);
+        }
+        
+        if (updatedItem.getName() != null) existingItem.setName(updatedItem.getName());
+        if (updatedItem.getDescription() != null) existingItem.setDescription(updatedItem.getDescription());
+        if (updatedItem.getImageUrl() != null) existingItem.setImageUrl(updatedItem.getImageUrl());
+        if (updatedItem.getBasePrice() != null) existingItem.setBasePrice(updatedItem.getBasePrice());
+        if (updatedItem.getDefaultPrepTimeMinutes() != null) existingItem.setDefaultPrepTimeMinutes(updatedItem.getDefaultPrepTimeMinutes());
+        
+        return masterMenuItemRepository.save(existingItem);
+    }
+
+    @Transactional
     public OutletMenuOverride addOrUpdateOverride(UUID outletId, UUID masterMenuItemId, OutletMenuOverride override) {
         Optional<OutletMenuOverride> existing = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId);
         OutletMenuOverride target = existing.orElse(new OutletMenuOverride());
@@ -66,7 +95,9 @@ public class CatalogService {
         
         target.setOutletId(outletId);
         target.setMasterMenuItemId(masterMenuItemId);
-        if (override.getOverriddenPrice() != null) target.setOverriddenPrice(override.getOverriddenPrice());
+        
+        target.setOverriddenPrice(override.getOverriddenPrice());
+        
         if (override.getIsAvailable() != null) target.setIsAvailable(override.getIsAvailable());
         if (override.getOverriddenPrepTimeMinutes() != null) target.setOverriddenPrepTimeMinutes(override.getOverriddenPrepTimeMinutes());
         
@@ -87,6 +118,7 @@ public class CatalogService {
         List<MasterMenuItem> masterItems = masterMenuItemRepository.findByBrandId(outlet.getBrandId());
         List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
         List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
+        List<BrandCategoryTiming> brandTimings = brandCategoryTimingRepository.findByBrandId(outlet.getBrandId());
         List<Category> allCategories = categoryRepository.findAll();
         
         Map<UUID, String> categoryNames = allCategories.stream()
@@ -98,6 +130,9 @@ public class CatalogService {
         Map<UUID, List<OutletCategoryTiming>> timingsByCategory = categoryTimings.stream()
             .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
             
+        Map<UUID, List<BrandCategoryTiming>> brandTimingsByCategory = brandTimings.stream()
+            .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
+            
         LocalTime now = LocalTime.now(ZoneId.of("Asia/Kolkata"));
             
         return masterItems.stream().map(master -> {
@@ -107,23 +142,47 @@ public class CatalogService {
             // Evaluate category timings
             if (isAvail && master.getCategoryId() != null) {
                 List<OutletCategoryTiming> timings = timingsByCategory.get(master.getCategoryId());
-                if (timings != null && !timings.isEmpty()) {
+                
+                boolean hasOutletTimings = timings != null && !timings.isEmpty();
+                boolean hasBrandTimings = brandTimingsByCategory.containsKey(master.getCategoryId()) && !brandTimingsByCategory.get(master.getCategoryId()).isEmpty();
+                
+                if (hasOutletTimings || hasBrandTimings) {
                     boolean categoryOpen = false;
-                    for (OutletCategoryTiming timing : timings) {
-                        LocalTime start = timing.getOpeningTime();
-                        LocalTime end = timing.getClosingTime();
-                        if (start.isBefore(end) || start.equals(end)) {
-                            if (!now.isBefore(start) && !now.isAfter(end)) {
-                                categoryOpen = true;
-                                break;
+                    
+                    if (hasOutletTimings) {
+                        for (OutletCategoryTiming timing : timings) {
+                            LocalTime start = timing.getOpeningTime();
+                            LocalTime end = timing.getClosingTime();
+                            if (start.isBefore(end) || start.equals(end)) {
+                                if (!now.isBefore(start) && !now.isAfter(end)) {
+                                    categoryOpen = true;
+                                    break;
+                                }
+                            } else { // cross-midnight
+                                if (!now.isBefore(start) || !now.isAfter(end)) {
+                                    categoryOpen = true;
+                                    break;
+                                }
                             }
-                        } else { // cross-midnight
-                            if (!now.isBefore(start) || !now.isAfter(end)) {
-                                categoryOpen = true;
-                                break;
+                        }
+                    } else if (hasBrandTimings) {
+                        for (BrandCategoryTiming timing : brandTimingsByCategory.get(master.getCategoryId())) {
+                            LocalTime start = timing.getOpeningTime();
+                            LocalTime end = timing.getClosingTime();
+                            if (start.isBefore(end) || start.equals(end)) {
+                                if (!now.isBefore(start) && !now.isAfter(end)) {
+                                    categoryOpen = true;
+                                    break;
+                                }
+                            } else { // cross-midnight
+                                if (!now.isBefore(start) || !now.isAfter(end)) {
+                                    categoryOpen = true;
+                                    break;
+                                }
                             }
                         }
                     }
+                    
                     if (!categoryOpen) {
                         isAvail = false; // Override to false if category is currently closed
                     }
@@ -154,6 +213,7 @@ public class CatalogService {
         List<MasterMenuItem> masterItems = masterMenuItemRepository.findByIdIn(itemIds);
         List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
         List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
+        List<BrandCategoryTiming> brandTimings = brandCategoryTimingRepository.findByBrandId(outlet.getBrandId());
         List<Category> allCategories = categoryRepository.findAll();
         
         Map<UUID, String> categoryNames = allCategories.stream()
@@ -163,6 +223,9 @@ public class CatalogService {
             .collect(Collectors.toMap(OutletMenuOverride::getMasterMenuItemId, o -> o, (o1, o2) -> o1));
             
         Map<UUID, List<OutletCategoryTiming>> timingsByCategory = categoryTimings.stream()
+            .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
+            
+        Map<UUID, List<BrandCategoryTiming>> brandTimingsByCategory = brandTimings.stream()
             .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
             
         LocalTime now = LocalTime.now(ZoneId.of("Asia/Kolkata"));
@@ -176,23 +239,47 @@ public class CatalogService {
                 // Evaluate category timings
                 if (isAvail && master.getCategoryId() != null) {
                     List<OutletCategoryTiming> timings = timingsByCategory.get(master.getCategoryId());
-                    if (timings != null && !timings.isEmpty()) {
+                    
+                    boolean hasOutletTimings = timings != null && !timings.isEmpty();
+                    boolean hasBrandTimings = brandTimingsByCategory.containsKey(master.getCategoryId()) && !brandTimingsByCategory.get(master.getCategoryId()).isEmpty();
+                    
+                    if (hasOutletTimings || hasBrandTimings) {
                         boolean categoryOpen = false;
-                        for (OutletCategoryTiming timing : timings) {
-                            LocalTime start = timing.getOpeningTime();
-                            LocalTime end = timing.getClosingTime();
-                            if (start.isBefore(end) || start.equals(end)) {
-                                if (!now.isBefore(start) && !now.isAfter(end)) {
-                                    categoryOpen = true;
-                                    break;
+                        
+                        if (hasOutletTimings) {
+                            for (OutletCategoryTiming timing : timings) {
+                                LocalTime start = timing.getOpeningTime();
+                                LocalTime end = timing.getClosingTime();
+                                if (start.isBefore(end) || start.equals(end)) {
+                                    if (!now.isBefore(start) && !now.isAfter(end)) {
+                                        categoryOpen = true;
+                                        break;
+                                    }
+                                } else { // cross-midnight
+                                    if (!now.isBefore(start) || !now.isAfter(end)) {
+                                        categoryOpen = true;
+                                        break;
+                                    }
                                 }
-                            } else { // cross-midnight
-                                if (!now.isBefore(start) || !now.isAfter(end)) {
-                                    categoryOpen = true;
-                                    break;
+                            }
+                        } else if (hasBrandTimings) {
+                            for (BrandCategoryTiming timing : brandTimingsByCategory.get(master.getCategoryId())) {
+                                LocalTime start = timing.getOpeningTime();
+                                LocalTime end = timing.getClosingTime();
+                                if (start.isBefore(end) || start.equals(end)) {
+                                    if (!now.isBefore(start) && !now.isAfter(end)) {
+                                        categoryOpen = true;
+                                        break;
+                                    }
+                                } else { // cross-midnight
+                                    if (!now.isBefore(start) || !now.isAfter(end)) {
+                                        categoryOpen = true;
+                                        break;
+                                    }
                                 }
                             }
                         }
+                        
                         if (!categoryOpen) {
                             isAvail = false; // Override to false if category is currently closed
                         }
