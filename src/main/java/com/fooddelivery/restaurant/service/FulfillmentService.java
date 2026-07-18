@@ -75,11 +75,13 @@ public class FulfillmentService {
                 if (additionalPrepTime != null) {
                     order.setAdditionalPrepTime(additionalPrepTime);
                 }
-                state.accept(order);
-                restaurantOrderRepository.save(order);
                 
                 int finalPrepTime = prepTime + (additionalPrepTime != null ? additionalPrepTime : 0);
                 long estimatedCompletionTime = System.currentTimeMillis() + (finalPrepTime * 60 * 1000L);
+                
+                order.setEstimatedCompletionTime(estimatedCompletionTime);
+                state.accept(order);
+                restaurantOrderRepository.save(order);
                 
                 double deliveryLat = order.getDeliveryLat() != null ? order.getDeliveryLat() : 0.0;
                 double deliveryLng = order.getDeliveryLng() != null ? order.getDeliveryLng() : 0.0;

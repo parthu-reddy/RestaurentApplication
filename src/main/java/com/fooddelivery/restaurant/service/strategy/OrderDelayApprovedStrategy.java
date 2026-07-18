@@ -78,6 +78,7 @@ public class OrderDelayApprovedStrategy implements RestaurantEventStrategy {
         outboxEventRepository.save(outbox);
         
         order.setStatus("ACCEPTED");
+        order.setEstimatedCompletionTime(estimatedCompletionTime);
         restaurantOrderRepository.save(order);
         log.info("Saved ORDER_ACCEPTED to outbox for order {} after delay approval with estimatedCompletionTime {}", orderId, estimatedCompletionTime);
     }

@@ -36,6 +36,8 @@ public class RestaurantOrder {
     private Integer prepTime;
     
     private Integer additionalPrepTime;
+    
+    private Long estimatedCompletionTime;
 
     private Double deliveryLat;
     
