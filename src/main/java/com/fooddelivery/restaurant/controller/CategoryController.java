@@ -32,15 +32,30 @@ public class CategoryController {
 
     @GetMapping("/api/v1/categories")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategories() {
-        List<CategoryDTO> categories = categoryService.getActiveCategories();
+        List<CategoryDTO> categories = categoryService.getActiveCategories(null);
         return ResponseEntity.ok(ApiResponse.success(categories, "Categories retrieved"));
     }
 
     @PostMapping("/api/v1/categories")
-    @PreAuthorize("hasRole('RESTAURANT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
-        CategoryDTO created = categoryService.createCategory(categoryDTO);
+        CategoryDTO created = categoryService.createCategory(categoryDTO, null);
         return ResponseEntity.ok(ApiResponse.success(created, "Category created successfully"));
+    }
+
+    @GetMapping("/api/v1/brands/{brandId}/categories")
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getBrandCategories(@PathVariable UUID brandId) {
+        List<CategoryDTO> categories = categoryService.getActiveCategories(brandId);
+        return ResponseEntity.ok(ApiResponse.success(categories, "Brand categories retrieved"));
+    }
+
+    @PostMapping("/api/v1/brands/{brandId}/categories")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
+    public ResponseEntity<ApiResponse<CategoryDTO>> createBrandCategory(
+            @PathVariable UUID brandId,
+            @Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO created = categoryService.createCategory(categoryDTO, brandId);
+        return ResponseEntity.ok(ApiResponse.success(created, "Brand category created successfully"));
     }
 
     @GetMapping("/api/v1/outlets/{outletId}/categories/{categoryId}/timings")
@@ -51,7 +66,7 @@ public class CategoryController {
     }
 
     @PostMapping("/api/v1/outlets/{outletId}/categories/timings")
-    @PreAuthorize("hasRole('RESTAURANT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal))")
     public ResponseEntity<ApiResponse<List<TimingDTO>>> setOutletCategoryTimings(
             @PathVariable UUID outletId, @Valid @RequestBody SetOutletCategoryTimingRequest request) {
         List<TimingDTO> timings = outletCategoryTimingService.setTimings(outletId, request);
@@ -66,7 +81,7 @@ public class CategoryController {
     }
 
     @PostMapping("/api/v1/brands/{brandId}/categories/timings")
-    @PreAuthorize("hasRole('RESTAURANT') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
     public ResponseEntity<ApiResponse<List<TimingDTO>>> setBrandCategoryTimings(
             @PathVariable UUID brandId, @Valid @RequestBody SetBrandCategoryTimingRequest request) {
         List<TimingDTO> timings = brandCategoryTimingService.setTimings(brandId, request);

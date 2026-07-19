@@ -39,10 +39,6 @@ public class CatalogService {
 
     @Transactional
     public MasterMenuItem addMasterMenuItem(UUID brandId, MasterMenuItem item) {
-        List<Outlet> outlets = outletRepository.findByBrandId(brandId);
-        if (outlets.isEmpty()) {
-            throw new IllegalStateException("Cannot create a menu without registering at least one outlet first.");
-        }
         if (item.getCategoryId() != null) {
             Category cat = categoryRepository.findById(item.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid categoryId provided"));
@@ -50,6 +46,9 @@ public class CatalogService {
         item.setBrandId(brandId);
         if (item.getId() == null) {
             item.setId(UUID.randomUUID());
+        }
+        if (item.getDefaultPrepTimeMinutes() == null) {
+            item.setDefaultPrepTimeMinutes(15);
         }
         return masterMenuItemRepository.save(item);
     }
@@ -119,7 +118,7 @@ public class CatalogService {
         List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
         List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
         List<BrandCategoryTiming> brandTimings = brandCategoryTimingRepository.findByBrandId(outlet.getBrandId());
-        List<Category> allCategories = categoryRepository.findAll();
+        List<Category> allCategories = categoryRepository.findActiveCategoriesForBrand(outlet.getBrandId());
         
         Map<UUID, String> categoryNames = allCategories.stream()
             .collect(Collectors.toMap(Category::getId, Category::getName));
@@ -214,7 +213,7 @@ public class CatalogService {
         List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
         List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
         List<BrandCategoryTiming> brandTimings = brandCategoryTimingRepository.findByBrandId(outlet.getBrandId());
-        List<Category> allCategories = categoryRepository.findAll();
+        List<Category> allCategories = categoryRepository.findActiveCategoriesForBrand(outlet.getBrandId());
         
         Map<UUID, String> categoryNames = allCategories.stream()
             .collect(Collectors.toMap(Category::getId, Category::getName));

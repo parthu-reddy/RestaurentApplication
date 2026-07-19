@@ -7,6 +7,9 @@ import com.fooddelivery.restaurant.entity.OutletMenuOverride;
 import com.fooddelivery.restaurant.repository.MasterMenuItemRepository;
 import com.fooddelivery.restaurant.repository.OutletMenuOverrideRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
+import com.fooddelivery.restaurant.repository.CategoryRepository;
+import com.fooddelivery.restaurant.repository.OutletCategoryTimingRepository;
+import com.fooddelivery.restaurant.repository.BrandCategoryTimingRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,6 +37,15 @@ class CatalogServiceTest {
 
     @Mock
     private OutletRepository outletRepository;
+
+    @Mock
+    private CategoryRepository categoryRepository;
+
+    @Mock
+    private OutletCategoryTimingRepository outletCategoryTimingRepository;
+
+    @Mock
+    private BrandCategoryTimingRepository brandCategoryTimingRepository;
 
     @InjectMocks
     private CatalogService catalogService;
@@ -66,6 +79,10 @@ class CatalogServiceTest {
         override.setOverriddenPrepTimeMinutes(20);
 
         when(outletMenuOverrideRepository.findByOutletId(outletId)).thenReturn(Arrays.asList(override));
+
+        when(outletCategoryTimingRepository.findByOutletId(outletId)).thenReturn(Collections.emptyList());
+        when(brandCategoryTimingRepository.findByBrandId(brandId)).thenReturn(Collections.emptyList());
+        when(categoryRepository.findActiveCategoriesForBrand(brandId)).thenReturn(Collections.emptyList());
 
         List<MenuItemDTO> effectiveMenu = catalogService.getEffectiveMenuForOutlet(outletId);
         

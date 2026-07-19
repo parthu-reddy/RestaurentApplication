@@ -28,6 +28,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     
+    @jakarta.persistence.Column(name = "brand_id")
+    private UUID brandId;
+    
     @NotBlank
     @Size(min = 2, max = 100)
     private String name;

@@ -18,6 +18,8 @@ public class CategoryDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private UUID id;
     
+    private UUID brandId;
+    
     @NotBlank(message = "Category name is required")
     @Size(min = 2, max = 100, message = "Category name must be between 2 and 100 characters")
     private String name;

@@ -15,11 +15,18 @@ public class CategoryService {
     
     private final CategoryRepository categoryRepository;
     
-    @Cacheable("categories")
-    public List<CategoryDTO> getActiveCategories() {
-        return categoryRepository.findByActiveTrue().stream()
+    @Cacheable(value = "categories", key = "#brandId != null ? #brandId.toString() : 'global'")
+    public List<CategoryDTO> getActiveCategories(java.util.UUID brandId) {
+        List<com.fooddelivery.restaurant.entity.Category> categories;
+        if (brandId != null) {
+            categories = categoryRepository.findActiveCategoriesForBrand(brandId);
+        } else {
+            categories = categoryRepository.findByActiveTrueAndBrandIdIsNull();
+        }
+        return categories.stream()
                 .map(cat -> CategoryDTO.builder()
                         .id(cat.getId())
+                        .brandId(cat.getBrandId())
                         .name(cat.getName())
                         .description(cat.getDescription())
                         .timings(cat.getTimings() != null ? cat.getTimings().stream()
@@ -33,40 +40,35 @@ public class CategoryService {
     }
 
     @org.springframework.cache.annotation.CacheEvict(value = "categories", allEntries = true)
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO, java.util.UUID brandId) {
         com.fooddelivery.restaurant.entity.Category category = new com.fooddelivery.restaurant.entity.Category();
-        category.setId(java.util.UUID.randomUUID());
         category.setName(categoryDTO.getName());
         category.setDescription(categoryDTO.getDescription());
+        category.setBrandId(brandId);
         category.setActive(true);
 
         if (categoryDTO.getTimings() != null && !categoryDTO.getTimings().isEmpty()) {
             java.util.List<com.fooddelivery.restaurant.entity.CategoryTiming> timings = categoryDTO.getTimings().stream().map(dto -> {
                 com.fooddelivery.restaurant.entity.CategoryTiming timing = new com.fooddelivery.restaurant.entity.CategoryTiming();
-                timing.setId(java.util.UUID.randomUUID());
                 timing.setCategory(category);
                 timing.setOpeningTime(dto.getOpeningTime());
                 timing.setClosingTime(dto.getClosingTime());
-                timing.setCreatedAt(java.time.LocalDateTime.now());
-                timing.setUpdatedAt(java.time.LocalDateTime.now());
                 return timing;
             }).collect(Collectors.toList());
             category.setTimings(timings);
         } else {
             com.fooddelivery.restaurant.entity.CategoryTiming defaultTiming = new com.fooddelivery.restaurant.entity.CategoryTiming();
-            defaultTiming.setId(java.util.UUID.randomUUID());
             defaultTiming.setCategory(category);
-            defaultTiming.setOpeningTime(java.time.LocalTime.MIN);
-            defaultTiming.setClosingTime(java.time.LocalTime.of(23, 59, 59));
-            defaultTiming.setCreatedAt(java.time.LocalDateTime.now());
-            defaultTiming.setUpdatedAt(java.time.LocalDateTime.now());
-            category.setTimings(List.of(defaultTiming));
+            defaultTiming.setOpeningTime(java.time.LocalTime.of(9, 0));
+            defaultTiming.setClosingTime(java.time.LocalTime.of(22, 0));
+            category.setTimings(java.util.List.of(defaultTiming));
         }
 
         com.fooddelivery.restaurant.entity.Category saved = categoryRepository.save(category);
 
         return CategoryDTO.builder()
                 .id(saved.getId())
+                .brandId(saved.getBrandId())
                 .name(saved.getName())
                 .description(saved.getDescription())
                 .timings(saved.getTimings() != null ? saved.getTimings().stream()

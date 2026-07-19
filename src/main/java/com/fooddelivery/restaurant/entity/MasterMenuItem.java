@@ -40,7 +40,6 @@ public class MasterMenuItem {
     @NotNull
     @Positive
     private BigDecimal basePrice;
-    @NotNull
     @Positive
     private Integer defaultPrepTimeMinutes;
 

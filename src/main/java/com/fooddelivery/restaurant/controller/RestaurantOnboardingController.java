@@ -114,6 +114,16 @@ public class RestaurantOnboardingController {
         return ResponseEntity.ok(ApiResponse.success(null, "Outlet status updated successfully"));
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/api/v1/outlets/{outletId}/settings")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal)")
+    public ResponseEntity<ApiResponse<Void>> updateOutletSettings(
+            @PathVariable UUID outletId,
+            @Valid @RequestBody OutletSettingsUpdateRequest request) {
+        
+        onboardingService.updateOutletSettings(outletId, request.getDefaultPrepTimeSeconds());
+        return ResponseEntity.ok(ApiResponse.success(null, "Outlet settings updated successfully"));
+    }
+
     // Legacy backwards compatibility: CustomerApp uses /api/v1/restaurants/{id}
     @GetMapping("/api/v1/restaurants/{id}")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getRestaurant(@PathVariable UUID id) {
@@ -122,6 +132,7 @@ public class RestaurantOnboardingController {
         response.put("id", outlet.getId());
         response.put("name", outlet.getName());
         response.put("isActive", outlet.getIsActive());
+        response.put("defaultPrepTimeSeconds", outlet.getDefaultPrepTimeSeconds() != null ? outlet.getDefaultPrepTimeSeconds() : 900);
         
         boolean isOpen = false;
         if (outlet.getTimings() != null && !outlet.getTimings().isEmpty()) {
@@ -169,6 +180,7 @@ public class RestaurantOnboardingController {
             response.put("id", outlet.getId());
             response.put("name", outlet.getName());
             response.put("isActive", outlet.getIsActive());
+            response.put("defaultPrepTimeSeconds", outlet.getDefaultPrepTimeSeconds() != null ? outlet.getDefaultPrepTimeSeconds() : 900);
             response.put("isOpen", true); // Filtered by native query
             if (outlet.getLocation() != null) {
                 response.put("lat", outlet.getLocation().getY());
@@ -260,6 +272,12 @@ public class RestaurantOnboardingController {
         @NotNull
         @com.fasterxml.jackson.annotation.JsonProperty("isActive")
         private Boolean isActive;
+    }
+    
+    @Data
+    public static class OutletSettingsUpdateRequest {
+        @NotNull
+        private Integer defaultPrepTimeSeconds;
     }
     @Data
     public static class TimingRequest {

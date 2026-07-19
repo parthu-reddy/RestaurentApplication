@@ -42,6 +42,9 @@ public class Outlet {
     
     private Boolean isActive;
     
+    @Column(name = "default_prep_time_seconds")
+    private Integer defaultPrepTimeSeconds;
+    
     private String cuisine;
     private Double rating;
     private Integer reviewsCount;

@@ -5,10 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataIntegrityViolationException;import org.springframework.security.access.AccessDeniedException;
 
 @RestControllerAdvice
 public class RestaurantGlobalExceptionHandler {
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(AccessDeniedException ex) {
+        return ResponseEntity.status(403).body(ApiResponse.error("Access denied: " + ex.getMessage()));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Void>> handleValidationException(MethodArgumentNotValidException ex) {
@@ -21,7 +26,8 @@ public class RestaurantGlobalExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        return ResponseEntity.badRequest().body(ApiResponse.error("Operation failed: Unique constraint violation (e.g., duplicate data)."));
+        ex.printStackTrace();
+        return ResponseEntity.badRequest().body(ApiResponse.error("Operation failed: Unique constraint violation (e.g., duplicate data). " + ex.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -36,6 +42,7 @@ public class RestaurantGlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Void>> handleRuntime(RuntimeException ex) {
+        ex.printStackTrace();
         return ResponseEntity.status(500).body(ApiResponse.error("Internal error: " + ex.getMessage()));
     }
 }

@@ -126,6 +126,7 @@ public class RestaurantOnboardingService {
                 .deliveryFee(deliveryFee)
                 .tags(tags)
                 .isActive(true)
+                .defaultPrepTimeSeconds(900)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -154,6 +155,17 @@ public class RestaurantOnboardingService {
         Outlet outlet = outletRepository.findById(outletId)
                 .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
         outlet.setIsActive(isActive);
+        outlet.setUpdatedAt(LocalDateTime.now());
+        outletRepository.save(outlet);
+    }
+
+    @org.springframework.transaction.annotation.Transactional
+    public void updateOutletSettings(UUID outletId, Integer defaultPrepTimeSeconds) {
+        Outlet outlet = outletRepository.findById(outletId)
+                .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
+        if (defaultPrepTimeSeconds != null && defaultPrepTimeSeconds > 0) {
+            outlet.setDefaultPrepTimeSeconds(defaultPrepTimeSeconds);
+        }
         outlet.setUpdatedAt(LocalDateTime.now());
         outletRepository.save(outlet);
     }
