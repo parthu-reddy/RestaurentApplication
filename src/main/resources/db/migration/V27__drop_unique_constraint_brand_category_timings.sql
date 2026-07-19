@@ -1,1 +1,0 @@
-ALTER TABLE brand_category_timings DROP CONSTRAINT uq_brand_category;

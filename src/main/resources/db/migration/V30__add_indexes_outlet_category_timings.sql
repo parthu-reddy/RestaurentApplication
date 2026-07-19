@@ -1,2 +1,0 @@
-CREATE INDEX idx_outlet_category_timings_outlet_id ON outlet_category_timings(outlet_id);
-CREATE INDEX idx_outlet_category_timings_category_id ON outlet_category_timings(category_id);
