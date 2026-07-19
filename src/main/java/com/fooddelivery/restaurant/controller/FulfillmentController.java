@@ -63,9 +63,20 @@ public class FulfillmentController {
     @PostMapping("/orders/{orderId}/cancel")
     public ResponseEntity<ApiResponse<Void>> cancelOrder(
             @PathVariable UUID restaurantId, 
-            @PathVariable UUID orderId) {
-        
+            @PathVariable UUID orderId,
+            @org.springframework.web.bind.annotation.RequestBody(required = false) java.util.Map<String, String> request) {
+        String reason = request != null ? request.get("reason") : null;
         fulfillmentService.cancelOrderAfterAccept(restaurantId, orderId);
-        return ResponseEntity.ok(ApiResponse.success(null, "Order cancelled by restaurant after acceptance"));
+        return ResponseEntity.ok(ApiResponse.success(null, "Order cancelled"));
+    }
+
+    @PostMapping("/orders/{orderId}/dispatch")
+    public ResponseEntity<ApiResponse<Void>> dispatchOrder(
+            @PathVariable UUID restaurantId,
+            @PathVariable UUID orderId,
+            @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> request) {
+        String deliveryOtp = request.get("deliveryOtp"); // UI uses deliveryOtp for pickupOtp
+        fulfillmentService.dispatchOrder(restaurantId, orderId, deliveryOtp);
+        return ResponseEntity.ok(ApiResponse.success(null, "Order dispatched"));
     }
 }

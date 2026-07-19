@@ -126,6 +126,7 @@ CREATE TABLE restaurant_orders (
     status VARCHAR(50),
     prep_time INTEGER CHECK (prep_time >= 0),
     additional_prep_time INTEGER CHECK (additional_prep_time >= 0),
+    delivery_otp VARCHAR(255),
     delivery_lat DOUBLE PRECISION CHECK (delivery_lat >= -90 AND delivery_lat <= 90),
     delivery_lng DOUBLE PRECISION CHECK (delivery_lng >= -180 AND delivery_lng <= 180),
     delivery_address VARCHAR(255),

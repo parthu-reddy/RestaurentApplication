@@ -240,4 +240,43 @@ public class FulfillmentService {
             throw new RuntimeException("Failed to publish event to Kafka", e);
         }
     }
+
+    @Transactional
+    public void dispatchOrder(UUID restaurantId, UUID orderId, String otp) {
+        com.fooddelivery.restaurant.entity.RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            if (otp == null || otp.isEmpty()) {
+                throw new RuntimeException("OTP is required");
+            }
+            if (!otp.equals(order.getPickupOtp()) && !otp.equals(order.getDeliveryOtp())) {
+                throw new RuntimeException("Invalid OTP");
+            }
+
+            order.setStatus("DISPATCHED");
+            restaurantOrderRepository.save(order);
+
+            try {
+                com.fasterxml.jackson.databind.node.ObjectNode payloadNode = objectMapper.createObjectNode();
+                payloadNode.put("eventType", com.fooddelivery.common.constants.EventType.ORDER_STATUS_UPDATED);
+                payloadNode.put("orderId", orderId.toString());
+                payloadNode.put("status", "DISPATCHED");
+                String payload = objectMapper.writeValueAsString(payloadNode);
+
+                com.fooddelivery.common.outbox.entity.OutboxEventEntity outbox = com.fooddelivery.common.outbox.entity.OutboxEventEntity.builder()
+                        .id(java.util.UUID.randomUUID())
+                        .aggregateType(com.fooddelivery.common.constants.AppConstants.AGGREGATE_ORDER)
+                        .aggregateId(orderId.toString())
+                        .eventType(com.fooddelivery.common.constants.EventType.ORDER_STATUS_UPDATED)
+                        .payload(payload)
+                        .createdAt(java.time.LocalDateTime.now())
+                        .status(com.fooddelivery.common.constants.AppConstants.OUTBOX_STATUS_UNPROCESSED)
+                        .build();
+                outboxEventRepository.save(outbox);
+                log.info("Order {} dispatched from restaurant {}", orderId, restaurantId);
+            } catch (Exception e) {
+                log.error("Failed to save dispatch outbox event", e);
+                throw new RuntimeException("Failed to save dispatch outbox event", e);
+            }
+        }
+    }
 }

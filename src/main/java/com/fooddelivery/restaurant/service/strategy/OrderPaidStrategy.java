@@ -27,6 +27,7 @@ public class OrderPaidStrategy implements RestaurantEventStrategy {
         String deliveryAddress = root.path("deliveryAddress").asText("");
         String itemsJson = root.path("itemsJson").asText("[]");
         String pickupOtp = root.path("pickupOtp").asText("");
+        String deliveryOtp = root.path("deliveryOtp").asText("");
         
         if (restaurantOrderRepository.existsById(UUID.fromString(orderId))) {
             log.info("Duplicate ORDER_PAID event received for order {}. Ignoring.", orderId);
@@ -43,6 +44,7 @@ public class OrderPaidStrategy implements RestaurantEventStrategy {
                 .deliveryLng(deliveryLng)
                 .deliveryAddress(deliveryAddress)
                 .pickupOtp(pickupOtp)
+                .deliveryOtp(deliveryOtp)
                 .itemsJson(itemsJson)
                 .build();
         restaurantOrderRepository.save(order);

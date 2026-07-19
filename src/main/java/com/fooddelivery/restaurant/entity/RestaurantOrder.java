@@ -46,6 +46,8 @@ public class RestaurantOrder {
     private String deliveryAddress;
 
     private String pickupOtp;
+    
+    private String deliveryOtp;
 
     private String riderName;
     
