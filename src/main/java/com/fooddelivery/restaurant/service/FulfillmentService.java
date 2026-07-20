@@ -33,7 +33,27 @@ public class FulfillmentService {
             com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
             com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
             com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.READY));
+            com.fooddelivery.restaurant.entity.OrderStatus.READY,
+            com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED));
+    }
+
+    public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, String date, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
+        java.util.List<com.fooddelivery.restaurant.entity.OrderStatus> activeStatuses = java.util.Arrays.asList(
+            com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
+            com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
+            com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
+            com.fooddelivery.restaurant.entity.OrderStatus.READY,
+            com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED
+        );
+
+        if (date != null && !date.trim().isEmpty()) {
+            java.time.LocalDate localDate = java.time.LocalDate.parse(date);
+            java.time.LocalDateTime start = localDate.atStartOfDay();
+            java.time.LocalDateTime end = localDate.atTime(java.time.LocalTime.MAX);
+            return restaurantOrderRepository.findByRestaurantIdAndStatusNotInAndCreatedAtBetween(restaurantId, activeStatuses, start, end, pageable);
+        }
+        return restaurantOrderRepository.findByRestaurantIdAndStatusNotIn(restaurantId, activeStatuses, pageable);
     }
 
     @Transactional

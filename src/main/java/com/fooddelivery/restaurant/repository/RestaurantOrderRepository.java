@@ -14,4 +14,18 @@ public interface RestaurantOrderRepository extends JpaRepository<RestaurantOrder
     List<RestaurantOrder> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime time);
     List<RestaurantOrder> findByRestaurantId(UUID restaurantId);
     List<RestaurantOrder> findByRestaurantIdAndStatusIn(UUID restaurantId, List<OrderStatus> statuses);
+
+    org.springframework.data.domain.Page<RestaurantOrder> findByRestaurantIdAndStatusNotInAndCreatedAtBetween(
+        UUID restaurantId, 
+        List<OrderStatus> statuses, 
+        LocalDateTime start, 
+        LocalDateTime end, 
+        org.springframework.data.domain.Pageable pageable
+    );
+
+    org.springframework.data.domain.Page<RestaurantOrder> findByRestaurantIdAndStatusNotIn(
+        UUID restaurantId, 
+        List<OrderStatus> statuses, 
+        org.springframework.data.domain.Pageable pageable
+    );
 }

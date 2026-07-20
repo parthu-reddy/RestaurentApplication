@@ -35,6 +35,15 @@ public class FulfillmentController {
         return ResponseEntity.ok(ApiResponse.success(fulfillmentService.getActiveOrdersByRestaurant(restaurantId), "Active orders retrieved"));
     }
 
+    @org.springframework.web.bind.annotation.GetMapping("/orders/history")
+    public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getHistoricalRestaurantOrders(
+            @PathVariable UUID restaurantId,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String date,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(ApiResponse.success(fulfillmentService.getHistoricalOrdersByRestaurant(restaurantId, date, page, size), "Historical orders retrieved"));
+    }
+
     @PostMapping("/orders/{orderId}/accept")
     public ResponseEntity<ApiResponse<Void>> acceptOrder(
             @PathVariable UUID restaurantId, 
