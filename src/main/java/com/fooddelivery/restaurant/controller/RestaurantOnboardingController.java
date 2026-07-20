@@ -229,6 +229,30 @@ public class RestaurantOnboardingController {
         return ResponseEntity.ok(ApiResponse.success(responseList, "Nearby restaurants fetched"));
     }
 
+    @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getAllOutletsWithLocation() {
+        List<Outlet> outlets = onboardingService.getAllOutlets();
+        
+        List<Map<String, Object>> responseList = outlets.stream().map(outlet -> {
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", outlet.getId());
+            response.put("name", outlet.getName());
+            response.put("isActive", outlet.getIsActive());
+            
+            if (outlet.getLocation() != null) {
+                response.put("lat", outlet.getLocation().getY());
+                response.put("lng", outlet.getLocation().getX());
+            } else {
+                response.put("lat", 0.0);
+                response.put("lng", 0.0);
+            }
+            return response;
+        }).collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(ApiResponse.success(responseList, "All restaurants with locations fetched"));
+    }
+
+
     @Data
     public static class BrandOnboardRequest {
         @NotBlank
