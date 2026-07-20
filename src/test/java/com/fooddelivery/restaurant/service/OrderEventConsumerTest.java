@@ -1,20 +1,24 @@
 package com.fooddelivery.restaurant.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fooddelivery.common.constants.EventType;
+import com.fooddelivery.restaurant.entity.OrderStatus;
+import com.fooddelivery.restaurant.entity.RestaurantOrder;
+import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
+import com.fooddelivery.restaurant.service.state.RestaurantActionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import com.fooddelivery.restaurant.service.strategy.RestaurantEventStrategy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderEventConsumerTest {
@@ -22,38 +26,47 @@ class OrderEventConsumerTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private RestaurantEventStrategy mockPaidStrategy;
+    private RestaurantOrderRepository restaurantOrderRepository;
+
+    @Mock
+    private RestaurantActionService actionService;
 
     private OrderEventConsumer orderEventConsumer;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         objectMapper = new ObjectMapper();
-        
-        when(mockPaidStrategy.getEventType()).thenReturn("ORDER_PAID");
-
-        orderEventConsumer = new OrderEventConsumer(objectMapper, new RestaurantEventStrategy[]{mockPaidStrategy});
+        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, actionService);
     }
 
     @Test
-    void consumeOrderEvent_ShouldProcessOrderCreatedEvent() throws Exception {
+    void consumeOrderEvent_ShouldProcessOrderPaidEvent() throws Exception {
         UUID orderId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
         
         String message = String.format("{\"eventType\":\"ORDER_PAID\", \"orderId\":\"%s\", \"restaurantId\":\"%s\"}", 
                 orderId, restaurantId);
 
+        when(restaurantOrderRepository.existsById(orderId)).thenReturn(false);
+
         assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, null));
         
-        verify(mockPaidStrategy).process(any());
+        ArgumentCaptor<RestaurantOrder> captor = ArgumentCaptor.forClass(RestaurantOrder.class);
+        verify(actionService).saveOrder(captor.capture());
+        
+        RestaurantOrder capturedOrder = captor.getValue();
+        assertEquals(orderId, capturedOrder.getOrderId());
+        assertEquals(restaurantId, capturedOrder.getRestaurantId());
+        assertEquals(OrderStatus.CREATED, capturedOrder.getStatus());
     }
 
     @Test
-    void consumeOrderEvent_ShouldIgnoreOtherEvents() throws Exception {
+    void consumeOrderEvent_ShouldIgnoreOtherEventsIfOrderNotFound() throws Exception {
         UUID orderId = UUID.randomUUID();
         
-        String message = String.format("{\"eventType\":\"ORDER_ACCEPTED\", \"orderId\":\"%s\"}", orderId);
+        String message = String.format("{\"eventType\":\"ORDER_CANCELLED\", \"orderId\":\"%s\"}", orderId);
+
+        when(restaurantOrderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, null));
     }

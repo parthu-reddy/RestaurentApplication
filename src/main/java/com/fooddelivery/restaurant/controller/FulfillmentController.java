@@ -29,6 +29,12 @@ public class FulfillmentController {
         return ResponseEntity.ok(ApiResponse.success(fulfillmentService.getOrdersByRestaurant(restaurantId), "Orders retrieved"));
     }
 
+    @org.springframework.web.bind.annotation.GetMapping("/orders/active")
+    public ResponseEntity<ApiResponse<java.util.List<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getActiveRestaurantOrders(
+            @PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(ApiResponse.success(fulfillmentService.getActiveOrdersByRestaurant(restaurantId), "Active orders retrieved"));
+    }
+
     @PostMapping("/orders/{orderId}/accept")
     public ResponseEntity<ApiResponse<Void>> acceptOrder(
             @PathVariable UUID restaurantId, 

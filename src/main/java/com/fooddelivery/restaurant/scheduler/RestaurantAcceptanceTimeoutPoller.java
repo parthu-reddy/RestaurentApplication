@@ -22,7 +22,7 @@ public class RestaurantAcceptanceTimeoutPoller {
     @Scheduled(fixedDelay = 60000)
     public void pollAcceptanceTimeouts() {
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(10);
-        List<RestaurantOrder> unacceptedOrders = orderRepository.findByStatusAndCreatedAtBefore("CREATED", threshold);
+        List<RestaurantOrder> unacceptedOrders = orderRepository.findByStatusAndCreatedAtBefore(com.fooddelivery.restaurant.entity.OrderStatus.CREATED, threshold);
         
         if (!unacceptedOrders.isEmpty()) {
             log.info("Found {} unaccepted restaurant orders older than 10 minutes. Auto-rejecting...", unacceptedOrders.size());

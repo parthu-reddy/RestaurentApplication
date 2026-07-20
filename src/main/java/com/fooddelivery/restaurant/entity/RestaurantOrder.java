@@ -27,8 +27,8 @@ public class RestaurantOrder {
     private UUID orderId;
 
     private UUID restaurantId;
-
-    private String status;
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    private OrderStatus status;
 
     @Version
     private Integer version;
