@@ -28,8 +28,8 @@ public class RestaurantAcceptanceTimeoutPoller {
             log.info("Found {} unaccepted restaurant orders older than 10 minutes. Auto-rejecting...", unacceptedOrders.size());
             for (RestaurantOrder order : unacceptedOrders) {
                 try {
-                    fulfillmentService.rejectOrder(order.getRestaurantId(), order.getOrderId());
-                    log.info("Auto-rejected restaurant order {}", order.getOrderId());
+                    fulfillmentService.rejectOrder(order.getRestaurantId(), order.getOrderId(), "Timeout: Order not accepted in time");
+                    log.info("Successfully rejected order {} due to timeout", order.getOrderId());
                 } catch (Exception e) {
                     log.error("Failed to auto-reject order {}", order.getOrderId(), e);
                 }

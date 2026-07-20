@@ -56,6 +56,6 @@ class FulfillmentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("Order rejected by restaurant"));
 
-        verify(fulfillmentService).rejectOrder(restaurantId, orderId);
+        verify(fulfillmentService).rejectOrder(restaurantId, orderId, null);
     }
 }

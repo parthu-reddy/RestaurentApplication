@@ -39,10 +39,10 @@ public class RestaurantMcpService {
         }
     }
 
-    @Tool(description = "Reject an incoming order. Provide restaurantId and orderId.")
-    public String rejectOrder(String restaurantId, String orderId) {
+    @Tool(description = "Reject an incoming order. Provide restaurantId and orderId, and an optional rejectReason.")
+    public String rejectOrder(String restaurantId, String orderId, String rejectReason) {
         try {
-            fulfillmentService.rejectOrder(UUID.fromString(restaurantId), UUID.fromString(orderId));
+            fulfillmentService.rejectOrder(UUID.fromString(restaurantId), UUID.fromString(orderId), rejectReason);
             return "Order rejected successfully.";
         } catch (Exception e) {
             return "Failed to reject order: " + e.getMessage();
@@ -59,10 +59,10 @@ public class RestaurantMcpService {
         }
     }
 
-    @Tool(description = "Cancel an order after acceptance. Provide restaurantId and orderId.")
-    public String cancelOrder(String restaurantId, String orderId) {
+    @Tool(description = "Cancel an order after acceptance. Provide restaurantId and orderId, and an optional cancelReason.")
+    public String cancelOrder(String restaurantId, String orderId, String cancelReason) {
         try {
-            fulfillmentService.cancelOrderAfterAccept(UUID.fromString(restaurantId), UUID.fromString(orderId));
+            fulfillmentService.cancelOrderAfterAccept(UUID.fromString(restaurantId), UUID.fromString(orderId), cancelReason);
             return "Order cancelled successfully.";
         } catch (Exception e) {
             return "Failed to cancel order: " + e.getMessage();

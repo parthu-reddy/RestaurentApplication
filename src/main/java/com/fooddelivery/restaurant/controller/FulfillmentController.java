@@ -60,10 +60,20 @@ public class FulfillmentController {
     @PostMapping("/orders/{orderId}/reject")
     public ResponseEntity<ApiResponse<Void>> rejectOrder(
             @PathVariable UUID restaurantId, 
+            @PathVariable UUID orderId,
+            @org.springframework.web.bind.annotation.RequestBody(required = false) java.util.Map<String, String> request) {
+        String reason = request != null ? request.get("reason") : null;
+        fulfillmentService.rejectOrder(restaurantId, orderId, reason);
+        return ResponseEntity.ok(ApiResponse.success(null, "Order rejected by restaurant"));
+    }
+
+    @PostMapping("/orders/{orderId}/prepare")
+    public ResponseEntity<ApiResponse<Void>> prepareOrder(
+            @PathVariable UUID restaurantId, 
             @PathVariable UUID orderId) {
         
-        fulfillmentService.rejectOrder(restaurantId, orderId);
-        return ResponseEntity.ok(ApiResponse.success(null, "Order rejected by restaurant"));
+        fulfillmentService.prepareOrder(restaurantId, orderId);
+        return ResponseEntity.ok(ApiResponse.success(null, "Order preparation started"));
     }
 
     @PostMapping("/orders/{orderId}/ready")
@@ -81,7 +91,7 @@ public class FulfillmentController {
             @PathVariable UUID orderId,
             @org.springframework.web.bind.annotation.RequestBody(required = false) java.util.Map<String, String> request) {
         String reason = request != null ? request.get("reason") : null;
-        fulfillmentService.cancelOrderAfterAccept(restaurantId, orderId);
+        fulfillmentService.cancelOrderAfterAccept(restaurantId, orderId, reason);
         return ResponseEntity.ok(ApiResponse.success(null, "Order cancelled"));
     }
 

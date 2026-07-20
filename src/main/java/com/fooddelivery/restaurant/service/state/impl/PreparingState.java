@@ -9,20 +9,20 @@ import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AcceptedState implements RestaurantOrderState {
+public class PreparingState implements RestaurantOrderState {
     
     @Override
-    public void prepare(RestaurantOrderContext ctx) {
+    public void ready(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
-        order.setStatus(OrderStatus.PREPARING);
+        order.setStatus(OrderStatus.READY);
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_PREPARING);
+        payloadNode.put("eventType", EventType.ORDER_READY);
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         
-        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_PREPARING, payloadNode);
+        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_READY, payloadNode);
     }
 
     @Override
@@ -45,6 +45,6 @@ public class AcceptedState implements RestaurantOrderState {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.CANCELLED);
         ctx.getActionService().saveOrder(order);
-        log.info("Order {} cancelled while in ACCEPTED state", order.getOrderId());
+        log.info("Order {} cancelled while in PREPARING state", order.getOrderId());
     }
 }

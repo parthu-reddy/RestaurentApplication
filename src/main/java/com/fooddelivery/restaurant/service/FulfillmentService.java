@@ -31,8 +31,10 @@ public class FulfillmentService {
     public java.util.List<RestaurantOrder> getActiveOrdersByRestaurant(UUID restaurantId) {
         return restaurantOrderRepository.findByRestaurantIdAndStatusIn(restaurantId, java.util.Arrays.asList(
             com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
+            com.fooddelivery.restaurant.entity.OrderStatus.PAID,
             com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
             com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
+            com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
             com.fooddelivery.restaurant.entity.OrderStatus.READY,
             com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED));
     }
@@ -41,8 +43,10 @@ public class FulfillmentService {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
         java.util.List<com.fooddelivery.restaurant.entity.OrderStatus> activeStatuses = java.util.Arrays.asList(
             com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
+            com.fooddelivery.restaurant.entity.OrderStatus.PAID,
             com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
             com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
+            com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
             com.fooddelivery.restaurant.entity.OrderStatus.READY,
             com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED
         );
@@ -94,7 +98,28 @@ public class FulfillmentService {
     }
 
     @Transactional
-    public void rejectOrder(UUID restaurantId, UUID orderId) {
+    public void prepareOrder(UUID restaurantId, UUID orderId) {
+        log.info("Restaurant {} preparing order {}", restaurantId, orderId);
+        
+        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
+        if (order != null) {
+            RestaurantOrderContext ctx = RestaurantOrderContext.builder()
+                    .order(order)
+                    .actionService(actionService)
+                    .restaurantId(restaurantId)
+                    .build();
+            
+            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
+            try {
+                state.prepare(ctx);
+            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+                log.error("Illegal state transition for order {}", orderId, e);
+            }
+        }
+    }
+
+    @Transactional
+    public void rejectOrder(UUID restaurantId, UUID orderId, String reason) {
         log.info("Restaurant {} rejecting order {}", restaurantId, orderId);
         
         RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
@@ -103,6 +128,7 @@ public class FulfillmentService {
                     .order(order)
                     .actionService(actionService)
                     .restaurantId(restaurantId)
+                    .rejectReason(reason)
                     .build();
                     
             RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
@@ -136,7 +162,7 @@ public class FulfillmentService {
     }
 
     @Transactional
-    public void cancelOrderAfterAccept(UUID restaurantId, UUID orderId) {
+    public void cancelOrderAfterAccept(UUID restaurantId, UUID orderId, String reason) {
         log.info("Restaurant {} cancelling order {} after acceptance", restaurantId, orderId);
         
         RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
@@ -145,6 +171,7 @@ public class FulfillmentService {
                     .order(order)
                     .actionService(actionService)
                     .restaurantId(restaurantId)
+                    .cancelReason(reason)
                     .build();
                     
             RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());

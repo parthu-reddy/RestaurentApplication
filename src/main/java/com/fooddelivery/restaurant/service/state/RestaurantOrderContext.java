@@ -17,6 +17,8 @@ public class RestaurantOrderContext {
     // Additional parameters for API requests
     private Integer additionalPrepTime;
     private String delayReason;
+    private String cancelReason;
+    private String rejectReason;
     
     // Additional contextual data
     private double restaurantLat;

@@ -79,6 +79,7 @@ public class CreatedState implements RestaurantOrderState {
         payloadNode.put("eventType", EventType.ORDER_REJECTED);
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
+        payloadNode.put("reason", ctx.getRejectReason() != null ? ctx.getRejectReason() : "");
         
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_REJECTED, payloadNode);
     }

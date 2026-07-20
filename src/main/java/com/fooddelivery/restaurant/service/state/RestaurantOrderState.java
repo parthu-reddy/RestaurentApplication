@@ -12,6 +12,10 @@ public interface RestaurantOrderState {
     default void accept(RestaurantOrderContext ctx) {
         throw new IllegalStateTransitionException("Cannot accept order in state: " + ctx.getOrder().getStatus());
     }
+    
+    default void prepare(RestaurantOrderContext ctx) {
+        throw new IllegalStateTransitionException("Cannot prepare order in state: " + ctx.getOrder().getStatus());
+    }
 
     default void reject(RestaurantOrderContext ctx) {
         throw new IllegalStateTransitionException("Cannot reject order in state: " + ctx.getOrder().getStatus());
