@@ -15,12 +15,15 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
 import jakarta.persistence.Column;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Entity
 @Table(name = "restaurant_orders")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class RestaurantOrder {
 
     @Id
@@ -29,6 +32,19 @@ public class RestaurantOrder {
     private UUID restaurantId;
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     private OrderStatus status;
+
+    public void setStatus(OrderStatus status) {
+        if (this.status != null && status != null) {
+            if (status.getSequence() < this.status.getSequence()) {
+                log.error("Invalid state transition: Attempted to move restaurant order {} backward from {} to {}", this.orderId, this.status, status);
+                throw new IllegalStateException("Cannot move order status backward from " + this.status + " to " + status);
+            }
+        }
+        if (this.status != status) {
+            log.info("Restaurant order {} status changing from {} to {}", this.orderId, this.status, status);
+        }
+        this.status = status;
+    }
 
     @Version
     private Integer version;

@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import com.fooddelivery.restaurant.client.KycClient;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,16 +30,7 @@ public class RestaurantOnboardingService {
 
     private final BrandRepository brandRepository;
     private final OutletRepository outletRepository;
-    private final RestTemplate restTemplate;
-
-    @Value("${kyb.fssai.api.url:http://localhost:8080/mock/fssai}")
-    private String fssaiApiUrl;
-
-    @Value("${kyb.gstin.api.url:http://localhost:8080/mock/gstin}")
-    private String gstinApiUrl;
-
-    @Value("${kyb.pennydrop.api.url:http://localhost:8080/mock/pennydrop}")
-    private String pennyDropApiUrl;
+    private final KycClient kycClient;
 
     // Phase 1: Brand & Financial Setup
     public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, String logoUrl) {
@@ -209,7 +200,7 @@ public class RestaurantOnboardingService {
         log.info("Verifying FSSAI against API for {}", fssai);
         if (fssai == null || fssai.length() != 14) return false;
         try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(fssaiApiUrl + "?fssai=" + fssai, Map.class);
+            ResponseEntity<Map> response = kycClient.verifyFssai(fssai);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
             log.warn("FSSAI API failed, mocking true", e);
@@ -221,7 +212,7 @@ public class RestaurantOnboardingService {
         log.info("Verifying GSTIN against API for {}", gstin);
         if (gstin == null || gstin.length() != 15) return false;
         try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(gstinApiUrl + "?gstin=" + gstin, Map.class);
+            ResponseEntity<Map> response = kycClient.verifyGstin(gstin);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
             log.warn("GSTIN API failed, mocking true", e);
@@ -233,7 +224,7 @@ public class RestaurantOnboardingService {
         log.info("Penny Drop Verification A/C: {}, IFSC: {}", bankAccountNumber, ifscCode);
         if (bankAccountNumber == null || ifscCode == null || bankAccountNumber.length() < 9) return false;
         try {
-            ResponseEntity<Map> response = restTemplate.getForEntity(pennyDropApiUrl + "?account=" + bankAccountNumber + "&ifsc=" + ifscCode, Map.class);
+            ResponseEntity<Map> response = kycClient.verifyBankAccount(bankAccountNumber, ifscCode);
             return response.getStatusCode().is2xxSuccessful();
         } catch (Exception e) {
             log.warn("Penny Drop API failed, mocking true", e);

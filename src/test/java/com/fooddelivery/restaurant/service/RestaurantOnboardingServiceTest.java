@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.RestTemplate;
+import com.fooddelivery.restaurant.client.KycClient;
 
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -34,23 +34,20 @@ class RestaurantOnboardingServiceTest {
     private OutletRepository outletRepository;
 
     @Mock
-    private RestTemplate restTemplate;
+    private KycClient kycClient;
 
     @InjectMocks
     private RestaurantOnboardingService restaurantOnboardingService;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(restaurantOnboardingService, "fssaiApiUrl", "http://mock/fssai");
-        ReflectionTestUtils.setField(restaurantOnboardingService, "gstinApiUrl", "http://mock/gstin");
-        ReflectionTestUtils.setField(restaurantOnboardingService, "pennyDropApiUrl", "http://mock/pennydrop");
     }
 
     @Test
     void testOnboardBrand_Success() {
-        when(restTemplate.getForEntity(contains("gstin="), eq(java.util.Map.class)))
+        when(kycClient.verifyGstin(anyString()))
                 .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
-        when(restTemplate.getForEntity(contains("account="), eq(java.util.Map.class)))
+        when(kycClient.verifyBankAccount(anyString(), anyString()))
                 .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
         
         when(brandRepository.save(any(Brand.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -82,7 +79,7 @@ class RestaurantOnboardingServiceTest {
                 .build();
                 
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
-        when(restTemplate.getForEntity(contains("fssai="), eq(java.util.Map.class)))
+        when(kycClient.verifyFssai(anyString()))
                 .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
         when(outletRepository.save(any(Outlet.class))).thenAnswer(i -> i.getArguments()[0]);
 

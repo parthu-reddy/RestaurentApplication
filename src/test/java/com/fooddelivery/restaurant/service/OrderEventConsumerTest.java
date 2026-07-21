@@ -13,6 +13,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionCallback;
+
 import java.util.UUID;
 import java.util.Optional;
 
@@ -31,12 +34,19 @@ class OrderEventConsumerTest {
     @Mock
     private RestaurantActionService actionService;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
     private OrderEventConsumer orderEventConsumer;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, actionService);
+        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, actionService, transactionTemplate);
+        lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
+            TransactionCallback<?> callback = invocation.getArgument(0);
+            return callback.doInTransaction(null);
+        });
     }
 
     @Test

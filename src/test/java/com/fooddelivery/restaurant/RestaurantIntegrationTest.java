@@ -9,6 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@org.junit.jupiter.api.Disabled("Disabled as there is no Postgres instance for testing locally and Testcontainers are forbidden by rule.")
 public class RestaurantIntegrationTest extends BaseIntegrationTest {
 
     @Test

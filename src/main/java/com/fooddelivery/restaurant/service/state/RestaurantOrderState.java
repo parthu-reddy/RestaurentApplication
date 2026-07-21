@@ -1,6 +1,7 @@
 package com.fooddelivery.restaurant.service.state;
 
 import com.fooddelivery.restaurant.exception.IllegalStateTransitionException;
+import com.fooddelivery.common.enums.OrderStatus;
 
 public interface RestaurantOrderState {
     
@@ -42,6 +43,10 @@ public interface RestaurantOrderState {
         throw new IllegalStateTransitionException("Cannot process ORDER_CANCELLED in state: " + ctx.getOrder().getStatus());
     }
 
+    default void handleOrderCancelledByCustomer(RestaurantOrderContext ctx) {
+        throw new IllegalStateTransitionException("Cannot process ORDER_CANCELLED_BY_CUSTOMER in state: " + ctx.getOrder().getStatus());
+    }
+
     default void handleDelayApproved(RestaurantOrderContext ctx) {
         throw new IllegalStateTransitionException("Cannot process ORDER_DELAY_APPROVED in state: " + ctx.getOrder().getStatus());
     }
@@ -58,8 +63,47 @@ public interface RestaurantOrderState {
         // Driver picked up, etc.
     }
 
+    default void handleOrderStatusSync(RestaurantOrderContext ctx) {
+        String targetStatusStr = ctx.getEventPayload().path("status").asText(null);
+        if (targetStatusStr != null) {
+            try {
+                if (OrderStatus.PAYMENT_SUCCESS.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.PAID.name();
+                } else if (OrderStatus.PAYMENT_FAILED.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED.name();
+                } else if (OrderStatus.AWAITING_DELAY_APPROVAL.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD.name();
+                } else if (OrderStatus.READY_FOR_PICKUP.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.READY.name();
+                } else if (OrderStatus.OUT_FOR_DELIVERY.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED.name();
+                } else if (OrderStatus.CANCELLED_BY_RESTAURANT.name().equals(targetStatusStr) || 
+                           OrderStatus.CANCELLED_BY_CUSTOMER.name().equals(targetStatusStr) || 
+                           OrderStatus.CANCELLED_AND_REFUNDED.name().equals(targetStatusStr) || 
+                           OrderStatus.PARTIALLY_REFUNDED.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED.name();
+                }
+                
+                com.fooddelivery.restaurant.entity.OrderStatus targetStatus = com.fooddelivery.restaurant.entity.OrderStatus.valueOf(targetStatusStr);
+                com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
+                
+                if (targetStatus.getSequence() < order.getStatus().getSequence()) {
+                    // Gracefully ignore outdated backward state syncs
+                    return;
+                }
+                
+                order.setStatus(targetStatus);
+                ctx.getActionService().saveOrder(order);
+            } catch (IllegalArgumentException e) {
+                // Invalid status string, ignore
+            }
+        }
+    }
+
     default void handleDispatchFailed(RestaurantOrderContext ctx) {
-        // Could cancel the order
+        com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
+        order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED);
+        ctx.getActionService().saveOrder(order);
     }
 
     default void handleDeliveryFailed(RestaurantOrderContext ctx) {

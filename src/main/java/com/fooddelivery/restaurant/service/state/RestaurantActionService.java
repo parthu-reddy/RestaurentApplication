@@ -28,18 +28,19 @@ public class RestaurantActionService {
         orderRepository.save(order);
     }
 
-    public void publishEvent(String aggregateId, String eventType, ObjectNode payloadNode) {
+    public void publishEvent(String aggregateId, com.fooddelivery.common.constants.EventType eventType, ObjectNode payloadNode) {
         try {
             String payload = objectMapper.writeValueAsString(payloadNode);
             OutboxEventEntity outboxEvent = OutboxEventEntity.builder()
                     .id(UUID.randomUUID())
-                    .aggregateType(AppConstants.AGGREGATE_ORDER)
+                    .aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER)
                     .aggregateId(aggregateId)
                     .eventType(eventType)
                     .payload(payload)
                     .createdAt(LocalDateTime.now())
                     .status(OutboxStatus.UNPROCESSED)
                     .build();
+            log.info("Triggering event: {} for aggregate: {}", eventType, aggregateId);
             outboxEventRepository.save(outboxEvent);
             log.info("Saved {} outbox event for order {}", eventType, aggregateId);
         } catch (Exception e) {

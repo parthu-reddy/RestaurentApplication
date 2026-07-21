@@ -18,7 +18,7 @@ public class AcceptedState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_PREPARING);
+        payloadNode.put("eventType", EventType.ORDER_PREPARING.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         
@@ -32,7 +32,7 @@ public class AcceptedState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_CANCELLED_BY_RESTAURANT);
+        payloadNode.put("eventType", EventType.ORDER_CANCELLED_BY_RESTAURANT.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         payloadNode.put("reason", ctx.getCancelReason() != null ? ctx.getCancelReason() : "");

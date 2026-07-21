@@ -18,7 +18,7 @@ public class ReadyState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_CANCELLED_BY_RESTAURANT);
+        payloadNode.put("eventType", EventType.ORDER_CANCELLED_BY_RESTAURANT.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         payloadNode.put("reason", ctx.getCancelReason() != null ? ctx.getCancelReason() : "");
@@ -41,7 +41,7 @@ public class ReadyState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
 
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_STATUS_UPDATED);
+        payloadNode.put("eventType", EventType.ORDER_STATUS_UPDATED.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("status", OrderStatus.DISPATCHED.name());
         
@@ -57,7 +57,7 @@ public class ReadyState implements RestaurantOrderState {
     @Override
     public void handleOrderStatusUpdated(RestaurantOrderContext ctx) {
         String newStatusStr = ctx.getEventPayload().path("status").asText("");
-        if (OrderStatus.DISPATCHED.name().equals(newStatusStr) || "OUT_FOR_DELIVERY".equals(newStatusStr)) {
+        if (OrderStatus.DISPATCHED.name().equals(newStatusStr) || com.fooddelivery.common.enums.OrderStatus.OUT_FOR_DELIVERY.name().equals(newStatusStr)) {
             RestaurantOrder order = ctx.getOrder();
             order.setStatus(OrderStatus.DISPATCHED);
             ctx.getActionService().saveOrder(order);

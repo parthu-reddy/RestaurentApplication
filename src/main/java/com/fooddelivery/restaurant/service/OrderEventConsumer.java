@@ -27,83 +27,110 @@ public class OrderEventConsumer {
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final RestaurantActionService actionService;
 
-    @Transactional
+    private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
+
     @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE)
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Header(value = "eventType", required = false) String headerEventType) {
-        try {
-            JsonNode root = objectMapper.readTree(message);
-            String jsonEventType = root.path("eventType").asText(null);
-            String eventType = headerEventType != null ? headerEventType : jsonEventType;
-            
-            if (eventType == null) {
-                log.warn("Event type is missing in order event: {}", message);
-                return;
-            }
-            
-            String orderIdStr = root.path("orderId").asText(null);
-            if (orderIdStr == null) {
-                log.warn("Order ID is missing in order event: {}", message);
-                return;
-            }
-            
-            UUID orderId = UUID.fromString(orderIdStr);
-            
-            // Handle ORDER_PAID as a special case for creating the initial order entity
-            if (EventType.ORDER_PAID.equals(eventType)) {
-                handleOrderPaid(root, orderId);
-                return;
-            }
-            
-            RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
-            if (order == null) {
-                log.warn("Order {} not found for event type: {}", orderId, eventType);
-                return;
-            }
-            
-            RestaurantOrderContext ctx = RestaurantOrderContext.builder()
-                    .order(order)
-                    .eventPayload(root)
-                    .actionService(actionService)
-                    .build();
-            
-            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
-            
+        log.info("Consumed event from {}: {}", com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, message);
+        
+        int retries = 0;
+        boolean success = false;
+        while (!success && retries < 5) { // 5 retries for optimistic locking
             try {
-                switch (eventType) {
-                    case EventType.ORDER_CANCELLED:
-                        state.handleOrderCancelled(ctx);
-                        break;
-                    case EventType.ORDER_DELAY_APPROVED:
-                        state.handleDelayApproved(ctx);
-                        break;
-                    case EventType.ORDER_DELAY_REJECTED:
-                        state.handleDelayRejected(ctx);
-                        break;
-                    case EventType.DRIVER_ASSIGNED:
-                        state.handleDriverAssigned(ctx);
-                        break;
-                    case EventType.ORDER_STATUS_UPDATED:
-                        state.handleOrderStatusUpdated(ctx);
-                        break;
-                    case EventType.DISPATCH_FAILED:
-                        state.handleDispatchFailed(ctx);
-                        break;
-                    case EventType.DELIVERY_FAILED:
-                        state.handleDeliveryFailed(ctx);
-                        break;
-                    case EventType.ORDER_DELIVERED:
-                        state.handleOrderDelivered(ctx);
-                        break;
-                    default:
-                        log.info("Event {} not handled by state machine. Ignoring.", eventType);
+                transactionTemplate.execute(status -> {
+                    try {
+                        JsonNode root = objectMapper.readTree(message);
+                        String jsonEventType = root.path("eventType").asText(null);
+                        String eventType = headerEventType != null ? headerEventType : jsonEventType;
+                        
+                        if (eventType == null) {
+                            log.warn("Event type is missing in order event: {}", message);
+                            return null;
+                        }
+                        
+                        String orderIdStr = root.path("orderId").asText(null);
+                        if (orderIdStr == null) {
+                            log.warn("Order ID is missing in order event: {}", message);
+                            return null;
+                        }
+                        
+                        UUID orderId = UUID.fromString(orderIdStr);
+                        
+                        // Handle ORDER_PAID as a special case for creating the initial order entity
+                        if (EventType.ORDER_PAID.name().equals(eventType)) {
+                            handleOrderPaid(root, orderId);
+                            return null;
+                        }
+                        
+                        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
+                        if (order == null) {
+                            log.warn("Order {} not found for event type: {}", orderId, eventType);
+                            return null;
+                        }
+                        
+                        RestaurantOrderContext ctx = RestaurantOrderContext.builder()
+                                .order(order)
+                                .eventPayload(root)
+                                .actionService(actionService)
+                                .build();
+                        RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
+                        
+                        try {
+                            switch (EventType.valueOf(eventType)) {
+                                case ORDER_CANCELLED:
+                                    state.handleOrderCancelled(ctx);
+                                    break;
+                                case ORDER_CANCELLED_BY_CUSTOMER:
+                                    state.handleOrderCancelledByCustomer(ctx);
+                                    break;
+                                case ORDER_DELAY_APPROVED:
+                                    state.handleDelayApproved(ctx);
+                                    break;
+                                case ORDER_DELAY_REJECTED:
+                                    state.handleDelayRejected(ctx);
+                                    break;
+                                case DRIVER_ASSIGNED:
+                                    state.handleDriverAssigned(ctx);
+                                    break;
+                                case ORDER_STATUS_UPDATED:
+                                    state.handleOrderStatusUpdated(ctx);
+                                    break;
+                                case ORDER_STATUS_SYNC:
+                                    state.handleOrderStatusSync(ctx);
+                                    break;
+                                case DISPATCH_FAILED:
+                                    state.handleDispatchFailed(ctx);
+                                    break;
+                                case DELIVERY_FAILED:
+                                    state.handleDeliveryFailed(ctx);
+                                    break;
+                                case ORDER_DELIVERED:
+                                    state.handleOrderDelivered(ctx);
+                                    break;
+                                default:
+                                    log.info("Event {} not handled by state machine. Ignoring.", eventType);
+                            }
+                        } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+                            log.warn("Illegal state transition for event {} on order {}", eventType, orderId, e);
+                        }
+                        return null;
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error executing order event logic", e);
+                    }
+                });
+                success = true;
+            } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+                retries++;
+                if (retries >= 5) {
+                    log.error("Failed to process order event after 5 retries due to optimistic locking", e);
+                    throw e;
                 }
-            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
-                log.warn("Illegal state transition for event {} on order {}", eventType, orderId, e);
+                log.warn("Optimistic locking failure in consumeOrderEvent. Retrying {}/5", retries);
+                try { Thread.sleep((long) (Math.pow(2, retries) * 100)); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+            } catch (Exception e) {
+                log.error("Failed to process order event in RestaurantApplication", e);
+                throw new RuntimeException("Failed to process order event in RestaurantApplication", e);
             }
-            
-        } catch (Exception e) {
-            log.error("Failed to process order event in RestaurantApplication", e);
-            throw new RuntimeException("Failed to process order event in RestaurantApplication", e);
         }
     }
     

@@ -22,7 +22,7 @@ public class CreatedState implements RestaurantOrderState {
             ctx.getActionService().saveOrder(order);
             
             ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-            payloadNode.put("eventType", EventType.ORDER_DELAY_APPROVAL_REQUESTED);
+            payloadNode.put("eventType", EventType.ORDER_DELAY_APPROVAL_REQUESTED.name());
             payloadNode.put("orderId", order.getOrderId().toString());
             payloadNode.put("restaurantId", order.getRestaurantId().toString());
             payloadNode.put("additionalPrepTimeMinutes", additionalPrepTime);
@@ -53,7 +53,7 @@ public class CreatedState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_ACCEPTED);
+        payloadNode.put("eventType", EventType.ORDER_ACCEPTED.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         payloadNode.put("restaurantLat", ctx.getRestaurantLat());
@@ -76,7 +76,7 @@ public class CreatedState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_REJECTED);
+        payloadNode.put("eventType", EventType.ORDER_REJECTED.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         payloadNode.put("reason", ctx.getRejectReason() != null ? ctx.getRejectReason() : "");
@@ -90,5 +90,13 @@ public class CreatedState implements RestaurantOrderState {
         order.setStatus(OrderStatus.CANCELLED);
         ctx.getActionService().saveOrder(order);
         log.info("Order {} cancelled while in CREATED state", order.getOrderId());
+    }
+
+    @Override
+    public void handleOrderCancelledByCustomer(RestaurantOrderContext ctx) {
+        RestaurantOrder order = ctx.getOrder();
+        order.setStatus(OrderStatus.CANCELLED);
+        ctx.getActionService().saveOrder(order);
+        log.info("Order {} cancelled by customer while in CREATED state", order.getOrderId());
     }
 }
