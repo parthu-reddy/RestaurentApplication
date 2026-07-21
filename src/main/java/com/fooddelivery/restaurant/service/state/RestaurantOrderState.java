@@ -67,9 +67,9 @@ public interface RestaurantOrderState {
         String targetStatusStr = ctx.getEventPayload().path("status").asText(null);
         if (targetStatusStr != null) {
             try {
-                if (OrderStatus.PAYMENT_SUCCESS.name().equals(targetStatusStr)) {
+                if (OrderStatus.PAID.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.PAID.name();
-                } else if (OrderStatus.PAYMENT_FAILED.name().equals(targetStatusStr)) {
+                } else if (OrderStatus.CANCELLED.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED.name();
                 } else if (OrderStatus.AWAITING_DELAY_APPROVAL.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD.name();
@@ -78,7 +78,7 @@ public interface RestaurantOrderState {
                 } else if (OrderStatus.OUT_FOR_DELIVERY.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED.name();
                 } else if (OrderStatus.CANCELLED_BY_RESTAURANT.name().equals(targetStatusStr) || 
-                           OrderStatus.CANCELLED_BY_CUSTOMER.name().equals(targetStatusStr) || 
+                           OrderStatus.CANCELLED.name().equals(targetStatusStr) || 
                            OrderStatus.CANCELLED_AND_REFUNDED.name().equals(targetStatusStr) || 
                            OrderStatus.PARTIALLY_REFUNDED.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED.name();
