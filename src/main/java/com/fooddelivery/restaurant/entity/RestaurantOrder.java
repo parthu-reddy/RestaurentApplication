@@ -65,8 +65,12 @@ public class RestaurantOrder {
     
     private String deliveryOtp;
 
+    private UUID deliveryExecutiveId;
+
+    @jakarta.persistence.Transient
     private String riderName;
     
+    @jakarta.persistence.Transient
     private String riderPhone;
 
     @Column(columnDefinition = "TEXT")

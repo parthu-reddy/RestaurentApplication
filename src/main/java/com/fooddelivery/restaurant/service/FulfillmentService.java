@@ -23,13 +23,15 @@ public class FulfillmentService {
     private final OutletRepository outletRepository;
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final RestaurantActionService actionService;
+    private final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient;
 
     public java.util.List<RestaurantOrder> getOrdersByRestaurant(UUID restaurantId) {
         return restaurantOrderRepository.findByRestaurantId(restaurantId);
     }
 
+
     public java.util.List<RestaurantOrder> getActiveOrdersByRestaurant(UUID restaurantId) {
-        return restaurantOrderRepository.findByRestaurantIdAndStatusIn(restaurantId, java.util.Arrays.asList(
+        java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findByRestaurantIdAndStatusIn(restaurantId, java.util.Arrays.asList(
             com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
             com.fooddelivery.restaurant.entity.OrderStatus.PAID,
             com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
@@ -37,6 +39,30 @@ public class FulfillmentService {
             com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
             com.fooddelivery.restaurant.entity.OrderStatus.READY,
             com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED));
+            
+        populateDriverDetails(orders, true);
+        return orders;
+    }
+
+    private void populateDriverDetails(Iterable<RestaurantOrder> orders, boolean includePhone) {
+        for (RestaurantOrder order : orders) {
+            if (order.getDeliveryExecutiveId() != null) {
+                try {
+                    org.springframework.http.ResponseEntity<java.util.Map<String, Object>> response = deliveryClient.getDriverById(order.getDeliveryExecutiveId());
+                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                        java.util.Map<String, Object> driver = response.getBody();
+                        if (driver.containsKey("fullName")) {
+                            order.setRiderName(driver.get("fullName").toString());
+                        }
+                        if (includePhone && driver.containsKey("phoneNumber")) {
+                            order.setRiderPhone(driver.get("phoneNumber").toString());
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to fetch driver details for driver ID: " + order.getDeliveryExecutiveId(), e);
+                }
+            }
+        }
     }
 
     public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, String date, int page, int size) {
@@ -51,13 +77,18 @@ public class FulfillmentService {
             com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED
         );
 
+        org.springframework.data.domain.Page<RestaurantOrder> resultPage;
         if (date != null && !date.trim().isEmpty()) {
             java.time.LocalDate localDate = java.time.LocalDate.parse(date);
             java.time.LocalDateTime start = localDate.atStartOfDay();
             java.time.LocalDateTime end = localDate.atTime(java.time.LocalTime.MAX);
-            return restaurantOrderRepository.findByRestaurantIdAndStatusNotInAndCreatedAtBetween(restaurantId, activeStatuses, start, end, pageable);
+            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotInAndCreatedAtBetween(restaurantId, activeStatuses, start, end, pageable);
+        } else {
+            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotIn(restaurantId, activeStatuses, pageable);
         }
-        return restaurantOrderRepository.findByRestaurantIdAndStatusNotIn(restaurantId, activeStatuses, pageable);
+        
+        populateDriverDetails(resultPage.getContent(), false);
+        return resultPage;
     }
 
     @Transactional
@@ -94,6 +125,7 @@ public class FulfillmentService {
             }
         } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
             log.error("Illegal state transition for order {}", orderId, e);
+            throw e;
         }
     }
 
@@ -114,6 +146,7 @@ public class FulfillmentService {
                 state.prepare(ctx);
             } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
+                throw e;
             }
         }
     }
@@ -136,6 +169,7 @@ public class FulfillmentService {
                 state.reject(ctx);
             } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
+                throw e;
             }
         }
     }
@@ -157,6 +191,7 @@ public class FulfillmentService {
                 state.ready(ctx);
             } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
+                throw e;
             }
         }
     }
@@ -179,26 +214,9 @@ public class FulfillmentService {
                 state.cancel(ctx);
             } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
+                throw e;
             }
         }
     }
 
-    @Transactional
-    public void dispatchOrder(UUID restaurantId, UUID orderId, String otp) {
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            RestaurantOrderContext ctx = RestaurantOrderContext.builder()
-                    .order(order)
-                    .actionService(actionService)
-                    .restaurantId(restaurantId)
-                    .build();
-                    
-            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
-            try {
-                state.dispatch(ctx, otp);
-            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
-                log.error("Illegal state transition for order {}", orderId, e);
-            }
-        }
-    }
 }

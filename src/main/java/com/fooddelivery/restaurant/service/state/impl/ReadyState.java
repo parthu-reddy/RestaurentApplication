@@ -26,33 +26,6 @@ public class ReadyState implements RestaurantOrderState {
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_CANCELLED_BY_RESTAURANT, payloadNode);
     }
 
-    @Override
-    public void dispatch(RestaurantOrderContext ctx, String otp) {
-        RestaurantOrder order = ctx.getOrder();
-        
-        if (otp == null || otp.isEmpty()) {
-            throw new RuntimeException("OTP is required");
-        }
-        if (!otp.equals(order.getPickupOtp()) && !otp.equals(order.getDeliveryOtp())) {
-            throw new RuntimeException("Invalid OTP");
-        }
-
-        order.setStatus(OrderStatus.DISPATCHED);
-        ctx.getActionService().saveOrder(order);
-
-        ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_STATUS_UPDATED.name());
-        payloadNode.put("orderId", order.getOrderId().toString());
-        payloadNode.put("status", OrderStatus.DISPATCHED.name());
-        
-        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_STATUS_UPDATED, payloadNode);
-        log.info("Order {} dispatched from restaurant {}", order.getOrderId(), order.getRestaurantId());
-    }
-
-    @Override
-    public void handleDriverAssigned(RestaurantOrderContext ctx) {
-        log.info("Driver assigned for order {}", ctx.getOrder().getOrderId());
-    }
 
     @Override
     public void handleOrderStatusUpdated(RestaurantOrderContext ctx) {

@@ -30,10 +30,6 @@ public interface RestaurantOrderState {
         throw new IllegalStateTransitionException("Cannot cancel order in state: " + ctx.getOrder().getStatus());
     }
 
-    default void dispatch(RestaurantOrderContext ctx, String otp) {
-        throw new IllegalStateTransitionException("Cannot dispatch order in state: " + ctx.getOrder().getStatus());
-    }
-
     // Kafka Event Handlers
     default void handleOrderPaid(RestaurantOrderContext ctx) {
         throw new IllegalStateTransitionException("Cannot process ORDER_PAID in state: " + ctx.getOrder().getStatus());
@@ -56,7 +52,19 @@ public interface RestaurantOrderState {
     }
 
     default void handleDriverAssigned(RestaurantOrderContext ctx) {
-        // Generally safe to ignore if already terminal
+        com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
+        if (order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED || 
+            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED || 
+            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.REJECTED ||
+            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED) {
+            return;
+        }
+        
+        com.fasterxml.jackson.databind.JsonNode payload = ctx.getEventPayload();
+        if (payload != null && payload.has("driverId")) {
+            order.setDeliveryExecutiveId(java.util.UUID.fromString(payload.path("driverId").asText()));
+            ctx.getActionService().saveOrder(order);
+        }
     }
 
     default void handleOrderStatusUpdated(RestaurantOrderContext ctx) {

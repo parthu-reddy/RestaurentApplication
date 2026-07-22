@@ -246,6 +246,9 @@ public class RestaurantOnboardingController {
                 response.put("lat", 0.0);
                 response.put("lng", 0.0);
             }
+            
+            // Removed dummy phone number as it is no longer required in UI
+            
             return response;
         }).collect(java.util.stream.Collectors.toList());
         

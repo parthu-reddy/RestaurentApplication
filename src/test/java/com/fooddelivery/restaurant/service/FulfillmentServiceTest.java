@@ -31,11 +31,14 @@ class FulfillmentServiceTest {
     @Mock
     private RestaurantActionService actionService;
 
+    @Mock
+    private com.fooddelivery.restaurant.client.DeliveryClient deliveryClient;
+
     private FulfillmentService fulfillmentService;
 
     @BeforeEach
     void setUp() {
-        fulfillmentService = new FulfillmentService(outletRepository, restaurantOrderRepository, actionService);
+        fulfillmentService = new FulfillmentService(outletRepository, restaurantOrderRepository, actionService, deliveryClient);
     }
 
     @Test
