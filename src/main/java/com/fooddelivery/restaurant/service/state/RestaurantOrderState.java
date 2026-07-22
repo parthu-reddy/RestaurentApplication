@@ -83,7 +83,7 @@ public interface RestaurantOrderState {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD.name();
                 } else if (OrderStatus.READY_FOR_PICKUP.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.READY.name();
-                } else if (OrderStatus.OUT_FOR_DELIVERY.name().equals(targetStatusStr)) {
+                } else if (com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED.name();
                 } else if (OrderStatus.CANCELLED_BY_RESTAURANT.name().equals(targetStatusStr) || 
                            OrderStatus.CANCELLED.name().equals(targetStatusStr) || 
