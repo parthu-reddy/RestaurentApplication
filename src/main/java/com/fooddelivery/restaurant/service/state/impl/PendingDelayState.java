@@ -43,4 +43,10 @@ public class PendingDelayState implements RestaurantOrderState {
         ctx.getActionService().saveOrder(order);
         log.info("Order {} cancelled while in ON_HOLD state", order.getOrderId());
     }
+
+    @Override
+    public void reject(RestaurantOrderContext ctx) {
+        log.info("Order {} rejected by restaurant while in ON_HOLD state", ctx.getOrder().getOrderId());
+        createdState.reject(ctx);
+    }
 }

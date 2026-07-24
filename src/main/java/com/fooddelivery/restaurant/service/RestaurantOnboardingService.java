@@ -240,6 +240,12 @@ public class RestaurantOnboardingService {
         return outletRepository.findNearbyOutlets(lat, lng, radiusInMeters);
     }
 
+    public List<Outlet> getNearbyOutletsByBrand(UUID brandId, double lat, double lng, double radiusInKm) {
+        double radiusInMeters = radiusInKm * 1000.0;
+        return outletRepository.findNearbyOutletsByBrand(brandId, lat, lng, radiusInMeters);
+    }
+
+
     public List<Brand> getBrands(UUID ownerId) {
         return brandRepository.findByOwnerId(ownerId);
     }

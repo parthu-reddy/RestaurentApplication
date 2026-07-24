@@ -14,6 +14,7 @@ public class DispatchedState implements RestaurantOrderState {
     public void handleOrderDelivered(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.DELIVERED);
+        order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED);
         ctx.getActionService().saveOrder(order);
         log.info("Order {} transitioned to DELIVERED", order.getOrderId());
     }
@@ -22,6 +23,7 @@ public class DispatchedState implements RestaurantOrderState {
     public void handleDeliveryFailed(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.DELIVERY_FAILED);
+        order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.FAILED);
         ctx.getActionService().saveOrder(order);
         log.info("Order {} transitioned to DELIVERY_FAILED", order.getOrderId());
     }
@@ -34,6 +36,11 @@ public class DispatchedState implements RestaurantOrderState {
             if (newStatus == OrderStatus.DELIVERED || newStatus == OrderStatus.DELIVERY_FAILED) {
                 RestaurantOrder order = ctx.getOrder();
                 order.setStatus(newStatus);
+                if (newStatus == OrderStatus.DELIVERED) {
+                    order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED);
+                } else if (newStatus == OrderStatus.DELIVERY_FAILED) {
+                    order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.FAILED);
+                }
                 ctx.getActionService().saveOrder(order);
                 log.info("Order {} transitioned to {}", order.getOrderId(), newStatus);
             }

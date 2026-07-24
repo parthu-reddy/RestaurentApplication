@@ -161,6 +161,7 @@ public class RestaurantOnboardingController {
             response.put("lng", outlet.getLocation().getX());
         }
         response.put("bannerUrl", outlet.getBannerUrl());
+        response.put("deliveryFee", outlet.getDeliveryFee() != null ? outlet.getDeliveryFee() : 0.0);
         
         Brand brand = onboardingService.getBrandById(outlet.getBrandId());
         response.put("logoUrl", brand.getLogoUrl());
@@ -175,13 +176,18 @@ public class RestaurantOnboardingController {
         
         List<Outlet> nearbyOutlets = onboardingService.getNearbyOutlets(lat, lng, radius);
         
-        List<Map<String, Object>> responseList = nearbyOutlets.stream().map(outlet -> {
+        List<Map<String, Object>> responseList = new java.util.ArrayList<>();
+        Map<UUID, Brand> brandCache = new HashMap<>();
+
+        for (Outlet outlet : nearbyOutlets) {
             Map<String, Object> response = new HashMap<>();
             response.put("id", outlet.getId());
             response.put("name", outlet.getName());
             response.put("isActive", outlet.getIsActive());
             response.put("defaultPrepTimeSeconds", outlet.getDefaultPrepTimeSeconds() != null ? outlet.getDefaultPrepTimeSeconds() : 900);
             response.put("isOpen", true); // Filtered by native query
+            
+            double distance = 1.5;
             if (outlet.getLocation() != null) {
                 response.put("lat", outlet.getLocation().getY());
                 response.put("lng", outlet.getLocation().getX());
@@ -194,7 +200,7 @@ public class RestaurantOnboardingController {
                            Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(outlet.getLocation().getY())) *
                            Math.sin(dLon/2) * Math.sin(dLon/2);
                 double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                double distance = rEarth * c;
+                distance = rEarth * c;
                 response.put("distance", Math.round(distance * 10.0) / 10.0);
             } else {
                 response.put("distance", 1.5);
@@ -215,18 +221,91 @@ public class RestaurantOnboardingController {
             }
             
             try {
-                Brand brand = onboardingService.getBrandById(outlet.getBrandId());
+                Brand brand = brandCache.computeIfAbsent(outlet.getBrandId(), id -> onboardingService.getBrandById(id));
                 response.put("logoUrl", brand.getLogoUrl());
+                response.put("brandId", brand.getId());
+                response.put("brandName", brand.getName());
                 if (outlet.getBannerUrl() == null && brand.getLogoUrl() != null) {
                     response.put("image", brand.getLogoUrl());
                 }
             } catch (Exception e) {
                 // Ignore missing brand
             }
-            return response;
-        }).collect(java.util.stream.Collectors.toList());
+
+            responseList.add(response);
+        }
+        
+        // Sort by distance (since DB groups by brand, we sort the final list by distance)
+        responseList.sort(java.util.Comparator.comparingDouble(m -> (Double) m.get("distance")));
         
         return ResponseEntity.ok(ApiResponse.success(responseList, "Nearby restaurants fetched"));
+    }
+
+    @GetMapping("/api/v1/restaurants/brands/{brandId}/outlets")
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getBrandOutlets(
+            @PathVariable UUID brandId,
+            @org.springframework.web.bind.annotation.RequestParam double lat, 
+            @org.springframework.web.bind.annotation.RequestParam double lng,
+            @org.springframework.web.bind.annotation.RequestParam(defaultValue = "5.0") double radius) {
+        
+        List<Outlet> nearbyOutlets = onboardingService.getNearbyOutletsByBrand(brandId, lat, lng, radius);
+        
+        List<Map<String, Object>> responseList = nearbyOutlets.stream()
+            .map(outlet -> {
+                Map<String, Object> response = new HashMap<>();
+                response.put("id", outlet.getId());
+                response.put("name", outlet.getName());
+                response.put("isActive", outlet.getIsActive());
+                response.put("defaultPrepTimeSeconds", outlet.getDefaultPrepTimeSeconds() != null ? outlet.getDefaultPrepTimeSeconds() : 900);
+                response.put("isOpen", true); // Filtered by native query
+                
+                double distance = 1.5;
+                if (outlet.getLocation() != null) {
+                    response.put("lat", outlet.getLocation().getY());
+                    response.put("lng", outlet.getLocation().getX());
+                    
+                    double rEarth = 6371.0;
+                    double dLat = Math.toRadians(outlet.getLocation().getY() - lat);
+                    double dLon = Math.toRadians(outlet.getLocation().getX() - lng);
+                    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                               Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(outlet.getLocation().getY())) *
+                               Math.sin(dLon/2) * Math.sin(dLon/2);
+                    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    distance = rEarth * c;
+                    response.put("distance", Math.round(distance * 10.0) / 10.0);
+                } else {
+                    response.put("distance", 1.5);
+                }
+                
+                response.put("image", outlet.getBannerUrl() != null ? outlet.getBannerUrl() : "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80");
+                response.put("cuisine", outlet.getCuisine() != null ? outlet.getCuisine() : "Multi Cuisine");
+                response.put("rating", outlet.getRating() != null ? outlet.getRating() : 0.0);
+                response.put("reviewsCount", outlet.getReviewsCount() != null ? outlet.getReviewsCount() : 0);
+                response.put("deliveryTime", outlet.getDeliveryTime() != null ? outlet.getDeliveryTime() : 30);
+                response.put("deliveryFee", outlet.getDeliveryFee() != null ? outlet.getDeliveryFee() : 0.0);
+                
+                if (outlet.getTags() != null && !outlet.getTags().isEmpty()) {
+                    response.put("tags", java.util.Arrays.asList(outlet.getTags().split(",")));
+                } else {
+                    response.put("tags", List.of());
+                }
+                
+                try {
+                    Brand brand = onboardingService.getBrandById(outlet.getBrandId());
+                    response.put("logoUrl", brand.getLogoUrl());
+                    response.put("brandId", brand.getId());
+                    response.put("brandName", brand.getName());
+                    if (outlet.getBannerUrl() == null && brand.getLogoUrl() != null) {
+                        response.put("image", brand.getLogoUrl());
+                    }
+                } catch (Exception e) {}
+                
+                return response;
+            })
+            .sorted(java.util.Comparator.comparingDouble(m -> (Double) m.get("distance")))
+            .collect(java.util.stream.Collectors.toList());
+            
+        return ResponseEntity.ok(ApiResponse.success(responseList, "Brand outlets fetched"));
     }
 
     @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")

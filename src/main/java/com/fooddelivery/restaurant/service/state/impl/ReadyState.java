@@ -28,11 +28,20 @@ public class ReadyState implements RestaurantOrderState {
 
 
     @Override
+    public void handleDriverAtRestaurant(RestaurantOrderContext ctx) {
+        RestaurantOrder order = ctx.getOrder();
+        order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.AT_RESTAURANT);
+        ctx.getActionService().saveOrder(order);
+        log.info("Driver is at restaurant for order {}", order.getOrderId());
+    }
+
+    @Override
     public void handleOrderStatusUpdated(RestaurantOrderContext ctx) {
         String newStatusStr = ctx.getEventPayload().path("status").asText("");
-        if (OrderStatus.DISPATCHED.name().equals(newStatusStr) || com.fooddelivery.common.enums.OrderStatus.PICKED_UP.name().equals(newStatusStr)) {
+        if (OrderStatus.DISPATCHED.name().equals(newStatusStr) || com.fooddelivery.common.enums.OrderStatus.PICKED_UP.name().equals(newStatusStr) || "OUT_FOR_DELIVERY".equals(newStatusStr)) {
             RestaurantOrder order = ctx.getOrder();
             order.setStatus(OrderStatus.DISPATCHED);
+            order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY);
             ctx.getActionService().saveOrder(order);
             log.info("Order {} transitioned to DISPATCHED", order.getOrderId());
         }

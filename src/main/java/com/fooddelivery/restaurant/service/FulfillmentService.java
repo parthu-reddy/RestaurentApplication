@@ -33,7 +33,7 @@ public class FulfillmentService {
     public java.util.List<RestaurantOrder> getActiveOrdersByRestaurant(UUID restaurantId) {
         java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findByRestaurantIdAndStatusIn(restaurantId, java.util.Arrays.asList(
             com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.PAID,
+            com.fooddelivery.restaurant.entity.OrderStatus.PENDING_ACCEPTANCE,
             com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
             com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
             com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
@@ -69,7 +69,7 @@ public class FulfillmentService {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
         java.util.List<com.fooddelivery.restaurant.entity.OrderStatus> activeStatuses = java.util.Arrays.asList(
             com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.PAID,
+            com.fooddelivery.restaurant.entity.OrderStatus.PENDING_ACCEPTANCE,
             com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
             com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
             com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
@@ -123,7 +123,7 @@ public class FulfillmentService {
             } else {
                 state.accept(ctx);
             }
-        } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+        } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
             log.error("Illegal state transition for order {}", orderId, e);
             throw e;
         }
@@ -144,7 +144,7 @@ public class FulfillmentService {
             RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
             try {
                 state.prepare(ctx);
-            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
                 throw e;
             }
@@ -167,7 +167,7 @@ public class FulfillmentService {
             RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
             try {
                 state.reject(ctx);
-            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
                 throw e;
             }
@@ -189,7 +189,7 @@ public class FulfillmentService {
             RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
             try {
                 state.ready(ctx);
-            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
                 throw e;
             }
@@ -212,7 +212,7 @@ public class FulfillmentService {
             RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
             try {
                 state.cancel(ctx);
-            } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
                 log.error("Illegal state transition for order {}", orderId, e);
                 throw e;
             }

@@ -18,9 +18,15 @@ public class RestaurantAcceptanceTimeoutPoller {
 
     private final RestaurantOrderRepository orderRepository;
     private final FulfillmentService fulfillmentService;
+    private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
 
     @Scheduled(fixedDelay = 60000)
     public void pollAcceptanceTimeouts() {
+        Boolean locked = redisTemplate.opsForValue().setIfAbsent("lock:pollAcceptanceTimeouts", "1", java.time.Duration.ofSeconds(50));
+        if (!Boolean.TRUE.equals(locked)) {
+            return;
+        }
+
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(10);
         List<RestaurantOrder> unacceptedOrders = orderRepository.findByStatusAndCreatedAtBefore(com.fooddelivery.restaurant.entity.OrderStatus.CREATED, threshold);
         

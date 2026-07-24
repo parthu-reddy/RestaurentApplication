@@ -2,7 +2,7 @@ package com.fooddelivery.restaurant.entity;
 
 public enum OrderStatus {
     CREATED(10),
-    PAID(20),
+    PENDING_ACCEPTANCE(20),
     ON_HOLD(30),
     ACCEPTED(40),
     PREPARING(50),

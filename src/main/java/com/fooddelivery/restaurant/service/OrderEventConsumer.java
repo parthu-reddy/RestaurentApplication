@@ -120,6 +120,9 @@ public class OrderEventConsumer {
                                 case DRIVER_ASSIGNED:
                                     state.handleDriverAssigned(ctx);
                                     break;
+                                case ORDER_AT_RESTAURANT:
+                                    state.handleDriverAtRestaurant(ctx);
+                                    break;
                                 case ORDER_STATUS_UPDATED:
                                     state.handleOrderStatusUpdated(ctx);
                                     break;
@@ -138,7 +141,7 @@ public class OrderEventConsumer {
                                 default:
                                     log.info("Event {} not handled by state machine. Ignoring.", eventType);
                             }
-                        } catch (com.fooddelivery.restaurant.exception.IllegalStateTransitionException e) {
+                        } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
                             log.warn("Illegal state transition for event {} on order {}", eventType, orderId, e);
                         }
                         return null;

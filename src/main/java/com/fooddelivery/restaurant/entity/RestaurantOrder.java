@@ -14,6 +14,9 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Version;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import com.fooddelivery.common.constants.PaymentIntentStatus;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +48,14 @@ public class RestaurantOrder {
         }
         this.status = status;
     }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_status")
+    private com.fooddelivery.common.enums.DeliveryStatus deliveryStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status")
+    private PaymentIntentStatus paymentStatus;
 
     @Version
     private Integer version;

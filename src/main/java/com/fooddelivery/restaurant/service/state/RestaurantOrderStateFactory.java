@@ -26,6 +26,7 @@ public class RestaurantOrderStateFactory {
 
     static {
         stateMap.put(OrderStatus.CREATED, CREATED);
+        stateMap.put(OrderStatus.PENDING_ACCEPTANCE, CREATED); // Pending acceptance maps to CreatedState in Restaurant App
         stateMap.put(OrderStatus.ON_HOLD, PENDING_DELAY);
         stateMap.put(OrderStatus.ACCEPTED, ACCEPTED);
         stateMap.put(OrderStatus.PREPARING, PREPARING);
