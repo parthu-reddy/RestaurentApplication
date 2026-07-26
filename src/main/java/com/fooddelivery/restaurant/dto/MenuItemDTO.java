@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuItemDTO {
+public class MenuItemDTO implements Serializable {
     private UUID id;
     private UUID restaurantId; // outletId
     private String name;

@@ -13,4 +13,7 @@ public interface DeliveryClient {
 
     @GetMapping("/api/v1/internal/admin/delivery/drivers/{driverId}")
     ResponseEntity<Map<String, Object>> getDriverById(@PathVariable("driverId") UUID driverId);
+
+    @org.springframework.web.bind.annotation.PostMapping("/api/v1/internal/admin/delivery/drivers/batch")
+    ResponseEntity<java.util.List<Map<String, Object>>> getDriversByIds(@org.springframework.web.bind.annotation.RequestBody java.util.List<UUID> driverIds);
 }

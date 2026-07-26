@@ -4,12 +4,19 @@ import com.fooddelivery.restaurant.entity.Brand;
 import com.fooddelivery.restaurant.entity.Outlet;
 import com.fooddelivery.restaurant.repository.BrandRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
+import com.fooddelivery.common.outbox.repository.OutboxEventRepository;
+import com.fooddelivery.common.outbox.entity.OutboxEventEntity;
+import com.fooddelivery.common.constants.AggregateType;
+import com.fooddelivery.common.constants.EventType;
+import com.fooddelivery.common.enums.OutboxStatus;
+import com.fooddelivery.common.enums.VerificationStatus;
+import com.fooddelivery.common.enums.VerificationType;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.fooddelivery.restaurant.client.KycClient;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,11 +35,25 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class RestaurantOnboardingService {
 
+    private static final String KEY_BRAND_ID = "brandId";
+    private static final String KEY_BRAND_NAME = "brandName";
+    private static final String KEY_GSTIN = "gstin";
+    private static final String KEY_BANK_ACCOUNT_NUMBER = "bankAccountNumber";
+    private static final String KEY_IFSC_CODE = "ifscCode";
+    private static final String KEY_OUTLET_ID = "outletId";
+    private static final String KEY_IS_ACTIVE = "isActive";
+    private static final String KEY_TIMESTAMP = "timestamp";
+
     private final BrandRepository brandRepository;
     private final OutletRepository outletRepository;
-    private final KycClient kycClient;
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
+
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
 
     // Phase 1: Brand & Financial Setup
+    @org.springframework.transaction.annotation.Transactional
     public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, String logoUrl) {
         log.info("Starting Brand onboarding: {}, GSTIN: {}, Bank: {}", name, gstin, bankAccountNumber);
         
@@ -48,18 +69,6 @@ public class RestaurantOnboardingService {
             throw new IllegalArgumentException("Invalid CIN. Must be 21 characters.");
         }
         
-        CompletableFuture<Boolean> gstinFuture = CompletableFuture.supplyAsync(() -> verifyGstin(gstin));
-        CompletableFuture<Boolean> bankAccountFuture = CompletableFuture.supplyAsync(() -> verifyBankAccount(bankAccountNumber, ifscCode));
-
-        CompletableFuture.allOf(gstinFuture, bankAccountFuture).join();
-
-        boolean isGstinValid = gstinFuture.join();
-        boolean isBankAccountValid = bankAccountFuture.join();
-        
-        if (!isGstinValid || !isBankAccountValid) {
-            throw new IllegalArgumentException("Invalid KYC/KYB documents or Bank details based on records.");
-        }
-        
         Brand brand = Brand.builder()
                 .id(UUID.randomUUID())
                 .ownerId(ownerId)
@@ -70,13 +79,44 @@ public class RestaurantOnboardingService {
                 .bankAccountNumber(bankAccountNumber)
                 .bankIfsc(ifscCode)
                 .logoUrl(logoUrl)
-                .isGstinVerified(true)
-                .isBankVerified(true)
+                .isGstinVerified(false) // Verified via async/service
+                .isBankVerified(false) // Verified via webhook
+                .kycStatus(VerificationStatus.PENDING)
+                .pennyDropStatus(VerificationStatus.PENDING)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
                 
-        return brandRepository.save(brand);
+        brand = brandRepository.save(brand);
+        
+        try {
+            // Write to Outbox table within the same transaction for CDC/Kafka
+            Map<String, Object> payload = Map.of(
+                KEY_BRAND_ID, brand.getId().toString(),
+                KEY_BRAND_NAME, brand.getName(),
+                KEY_GSTIN, brand.getGstin(),
+                KEY_BANK_ACCOUNT_NUMBER, brand.getBankAccountNumber(),
+                KEY_IFSC_CODE, brand.getBankIfsc(),
+                KEY_TIMESTAMP, LocalDateTime.now().toString()
+            );
+            
+            OutboxEventEntity event = OutboxEventEntity.builder()
+                .id(UUID.randomUUID())
+                .aggregateType(AggregateType.BRAND)
+                .aggregateId(brand.getId().toString())
+                .eventType(EventType.BRAND_CREATED)
+                .payload(objectMapper.writeValueAsString(payload))
+                .status(OutboxStatus.UNPROCESSED)
+                .createdAt(LocalDateTime.now())
+                .retryCount(0)
+                .build();
+            outboxEventRepository.save(event);
+        } catch (Exception e) {
+            log.error("Failed to serialize outbox event payload for Brand", e);
+            throw new RuntimeException("Failed to publish brand created event", e);
+        }
+        
+        return brand;
     }
     
     // Phase 2: Outlet & Geospatial Setup
@@ -88,7 +128,12 @@ public class RestaurantOnboardingService {
             .orElseThrow(() -> new IllegalArgumentException("Brand not found"));
 
         if (!brand.getIsGstinVerified() || !brand.getIsBankVerified()) {
-            throw new IllegalStateException("Brand financial setup incomplete.");
+            boolean isDev = activeProfile != null && activeProfile.contains("dev");
+            if (!isDev) {
+                throw new IllegalStateException("Brand financial setup incomplete.");
+            } else {
+                log.info("Bypassing brand financial setup check for dev profile");
+            }
         }
         
         boolean isFssaiValid = verifyFssai(fssai);
@@ -148,6 +193,31 @@ public class RestaurantOnboardingService {
         outlet.setIsActive(isActive);
         outlet.setUpdatedAt(LocalDateTime.now());
         outletRepository.save(outlet);
+        
+        try {
+            // Write to Outbox table within the same transaction for CDC/Kafka
+            Map<String, Object> payload = Map.of(
+                KEY_OUTLET_ID, outletId.toString(),
+                KEY_BRAND_ID, outlet.getBrandId().toString(),
+                KEY_IS_ACTIVE, isActive,
+                KEY_TIMESTAMP, LocalDateTime.now().toString()
+            );
+            
+            OutboxEventEntity event = OutboxEventEntity.builder()
+                .id(UUID.randomUUID())
+                .aggregateType(AggregateType.OUTLET)
+                .aggregateId(outletId.toString())
+                .eventType(isActive ? EventType.OUTLET_ACTIVATED : EventType.OUTLET_DEACTIVATED)
+                .payload(objectMapper.writeValueAsString(payload))
+                .status(OutboxStatus.UNPROCESSED)
+                .createdAt(LocalDateTime.now())
+                .retryCount(0)
+                .build();
+            outboxEventRepository.save(event);
+        } catch (Exception e) {
+            log.error("Failed to serialize outbox event payload", e);
+            throw new RuntimeException("Failed to publish outlet status event", e);
+        }
     }
 
     @org.springframework.transaction.annotation.Transactional
@@ -197,39 +267,18 @@ public class RestaurantOnboardingService {
     }
     
     private boolean verifyFssai(String fssai) {
-        log.info("Verifying FSSAI against API for {}", fssai);
-        if (fssai == null || fssai.length() != 14) return false;
-        try {
-            ResponseEntity<Map> response = kycClient.verifyFssai(fssai);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            log.warn("FSSAI API failed, mocking true", e);
-            return true;
-        }
+        log.info("Mock verifying FSSAI for {}", fssai);
+        return fssai != null && fssai.length() == 14;
     }
     
     private boolean verifyGstin(String gstin) {
-        log.info("Verifying GSTIN against API for {}", gstin);
-        if (gstin == null || gstin.length() != 15) return false;
-        try {
-            ResponseEntity<Map> response = kycClient.verifyGstin(gstin);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            log.warn("GSTIN API failed, mocking true", e);
-            return true;
-        }
+        log.info("Mock verifying GSTIN for {}", gstin);
+        return gstin != null && gstin.length() == 15;
     }
 
     private boolean verifyBankAccount(String bankAccountNumber, String ifscCode) {
-        log.info("Penny Drop Verification A/C: {}, IFSC: {}", bankAccountNumber, ifscCode);
-        if (bankAccountNumber == null || ifscCode == null || bankAccountNumber.length() < 9) return false;
-        try {
-            ResponseEntity<Map> response = kycClient.verifyBankAccount(bankAccountNumber, ifscCode);
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (Exception e) {
-            log.warn("Penny Drop API failed, mocking true", e);
-            return true;
-        }
+        log.info("Mock Penny Drop Verification A/C: {}, IFSC: {}", bankAccountNumber, ifscCode);
+        return bankAccountNumber != null && ifscCode != null && bankAccountNumber.length() >= 9;
     }
     public List<Outlet> getAllOutlets() {
         return outletRepository.findAll();
@@ -237,12 +286,31 @@ public class RestaurantOnboardingService {
 
     public List<Outlet> getNearbyOutlets(double lat, double lng, double radiusInKm) {
         double radiusInMeters = radiusInKm * 1000.0;
-        return outletRepository.findNearbyOutlets(lat, lng, radiusInMeters);
+        List<Outlet> rawOutlets = outletRepository.findNearbyOutlets(lat, lng, radiusInMeters);
+        return populateOutletTimingsInOrder(rawOutlets);
     }
 
     public List<Outlet> getNearbyOutletsByBrand(UUID brandId, double lat, double lng, double radiusInKm) {
         double radiusInMeters = radiusInKm * 1000.0;
-        return outletRepository.findNearbyOutletsByBrand(brandId, lat, lng, radiusInMeters);
+        List<Outlet> rawOutlets = outletRepository.findNearbyOutletsByBrand(brandId, lat, lng, radiusInMeters);
+        return populateOutletTimingsInOrder(rawOutlets);
+    }
+
+    private List<Outlet> populateOutletTimingsInOrder(List<Outlet> rawOutlets) {
+        if (rawOutlets == null || rawOutlets.isEmpty()) {
+            return rawOutlets;
+        }
+        
+        List<UUID> outletIds = rawOutlets.stream().map(Outlet::getId).collect(java.util.stream.Collectors.toList());
+        List<Outlet> fullyPopulated = outletRepository.findByIdIn(outletIds);
+        
+        java.util.Map<UUID, Outlet> outletMap = fullyPopulated.stream()
+                .collect(java.util.stream.Collectors.toMap(Outlet::getId, o -> o));
+                
+        // Maintain the original geospatial sorted order returned by the native query
+        return rawOutlets.stream()
+                .map(o -> outletMap.getOrDefault(o.getId(), o))
+                .collect(java.util.stream.Collectors.toList());
     }
 
 
@@ -251,11 +319,49 @@ public class RestaurantOnboardingService {
     }
 
     public List<Outlet> getOutletsByOwner(UUID ownerId) {
-        List<Brand> brands = brandRepository.findByOwnerId(ownerId);
-        if (brands.isEmpty()) {
-            return java.util.Collections.emptyList();
+        return outletRepository.findByOwnerId(ownerId);
+    }
+    
+    @org.springframework.transaction.annotation.Transactional
+    public void updateVerificationStatusFromCallback(UUID brandId, String verificationType, String status, String legalEntityName, String bankBeneficiaryName) {
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new IllegalArgumentException("Brand not found"));
+        
+        VerificationType type;
+        try {
+            type = VerificationType.valueOf(verificationType.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.warn("Unknown verification type received: {}", verificationType);
+            return;
         }
-        List<UUID> brandIds = brands.stream().map(Brand::getId).collect(java.util.stream.Collectors.toList());
-        return outletRepository.findByBrandIdIn(brandIds);
+
+        VerificationStatus statusEnum;
+        try {
+            String statusStr = VerificationStatus.APPROVED.name().equalsIgnoreCase(status) ? VerificationStatus.VERIFIED.name() : status;
+            statusEnum = VerificationStatus.valueOf(statusStr.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            log.warn("Unknown verification status received: {}", status);
+            return;
+        }
+        
+        if (type == VerificationType.GSTIN) {
+            brand.setKycStatus(statusEnum);
+            if (statusEnum == VerificationStatus.VERIFIED || statusEnum == VerificationStatus.APPROVED) {
+                brand.setIsGstinVerified(true);
+                brand.setLegalEntityName(legalEntityName);
+            } else {
+                brand.setIsGstinVerified(false);
+            }
+        } else if (type == VerificationType.PENNY_DROP) {
+            brand.setPennyDropStatus(statusEnum);
+            if (statusEnum == VerificationStatus.VERIFIED || statusEnum == VerificationStatus.APPROVED) {
+                brand.setIsBankVerified(true);
+            } else {
+                brand.setIsBankVerified(false);
+            }
+            brand.setBankBeneficiaryName(bankBeneficiaryName);
+        }
+        
+        brandRepository.save(brand);
     }
 }

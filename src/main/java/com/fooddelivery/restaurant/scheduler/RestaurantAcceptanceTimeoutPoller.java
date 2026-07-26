@@ -22,7 +22,7 @@ public class RestaurantAcceptanceTimeoutPoller {
 
     @Scheduled(fixedDelay = 60000)
     public void pollAcceptanceTimeouts() {
-        Boolean locked = redisTemplate.opsForValue().setIfAbsent("lock:pollAcceptanceTimeouts", "1", java.time.Duration.ofSeconds(50));
+        Boolean locked = redisTemplate.opsForValue().setIfAbsent(com.fooddelivery.common.constants.RedisKeyConstants.LOCK_POLL_ACCEPTANCE_TIMEOUTS, "1", java.time.Duration.ofSeconds(50));
         if (!Boolean.TRUE.equals(locked)) {
             return;
         }

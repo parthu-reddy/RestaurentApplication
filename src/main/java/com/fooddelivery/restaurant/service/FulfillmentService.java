@@ -20,6 +20,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FulfillmentService {
 
+    private static final String DRIVER_FIELD_ID = "id";
+    private static final String DRIVER_FIELD_FULL_NAME = "fullName";
+    private static final String DRIVER_FIELD_PHONE_NUMBER = "phoneNumber";
+    private static final String SORT_FIELD_CREATED_AT = "createdAt";
+
     private final OutletRepository outletRepository;
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final RestaurantActionService actionService;
@@ -31,60 +36,65 @@ public class FulfillmentService {
 
 
     public java.util.List<RestaurantOrder> getActiveOrdersByRestaurant(UUID restaurantId) {
-        java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findByRestaurantIdAndStatusIn(restaurantId, java.util.Arrays.asList(
-            com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.PENDING_ACCEPTANCE,
-            com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
-            com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
-            com.fooddelivery.restaurant.entity.OrderStatus.READY,
-            com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED));
+        java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findByRestaurantIdAndStatusIn(
+            restaurantId, com.fooddelivery.restaurant.entity.OrderStatus.ACTIVE_STATUSES);
             
         populateDriverDetails(orders, true);
         return orders;
     }
 
     private void populateDriverDetails(Iterable<RestaurantOrder> orders, boolean includePhone) {
+        java.util.Set<UUID> driverIds = new java.util.HashSet<>();
         for (RestaurantOrder order : orders) {
             if (order.getDeliveryExecutiveId() != null) {
-                try {
-                    org.springframework.http.ResponseEntity<java.util.Map<String, Object>> response = deliveryClient.getDriverById(order.getDeliveryExecutiveId());
-                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                        java.util.Map<String, Object> driver = response.getBody();
-                        if (driver.containsKey("fullName")) {
-                            order.setRiderName(driver.get("fullName").toString());
-                        }
-                        if (includePhone && driver.containsKey("phoneNumber")) {
-                            order.setRiderPhone(driver.get("phoneNumber").toString());
+                driverIds.add(order.getDeliveryExecutiveId());
+            }
+        }
+        
+        if (driverIds.isEmpty()) return;
+
+        try {
+            org.springframework.http.ResponseEntity<java.util.List<java.util.Map<String, Object>>> response = 
+                deliveryClient.getDriversByIds(new java.util.ArrayList<>(driverIds));
+                
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                java.util.Map<String, java.util.Map<String, Object>> driverMap = new java.util.HashMap<>();
+                for (java.util.Map<String, Object> driver : response.getBody()) {
+                    if (driver.containsKey(DRIVER_FIELD_ID)) {
+                        driverMap.put(driver.get(DRIVER_FIELD_ID).toString(), driver);
+                    }
+                }
+                
+                for (RestaurantOrder order : orders) {
+                    if (order.getDeliveryExecutiveId() != null) {
+                        java.util.Map<String, Object> driver = driverMap.get(order.getDeliveryExecutiveId().toString());
+                        if (driver != null) {
+                            if (driver.containsKey(DRIVER_FIELD_FULL_NAME)) {
+                                order.setRiderName(driver.get(DRIVER_FIELD_FULL_NAME).toString());
+                            }
+                            if (includePhone && driver.containsKey(DRIVER_FIELD_PHONE_NUMBER)) {
+                                order.setRiderPhone(driver.get(DRIVER_FIELD_PHONE_NUMBER).toString());
+                            }
                         }
                     }
-                } catch (Exception e) {
-                    log.error("Failed to fetch driver details for driver ID: " + order.getDeliveryExecutiveId(), e);
                 }
             }
+        } catch (Exception e) {
+            log.error("Failed to fetch batched driver details", e);
         }
     }
 
     public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, String date, int page, int size) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
-        java.util.List<com.fooddelivery.restaurant.entity.OrderStatus> activeStatuses = java.util.Arrays.asList(
-            com.fooddelivery.restaurant.entity.OrderStatus.CREATED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.PENDING_ACCEPTANCE,
-            com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD,
-            com.fooddelivery.restaurant.entity.OrderStatus.ACCEPTED, 
-            com.fooddelivery.restaurant.entity.OrderStatus.PREPARING,
-            com.fooddelivery.restaurant.entity.OrderStatus.READY,
-            com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED
-        );
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(SORT_FIELD_CREATED_AT).descending());
 
         org.springframework.data.domain.Page<RestaurantOrder> resultPage;
         if (date != null && !date.trim().isEmpty()) {
             java.time.LocalDate localDate = java.time.LocalDate.parse(date);
             java.time.LocalDateTime start = localDate.atStartOfDay();
             java.time.LocalDateTime end = localDate.atTime(java.time.LocalTime.MAX);
-            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotInAndCreatedAtBetween(restaurantId, activeStatuses, start, end, pageable);
+            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotInAndCreatedAtBetween(restaurantId, com.fooddelivery.restaurant.entity.OrderStatus.ACTIVE_STATUSES, start, end, pageable);
         } else {
-            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotIn(restaurantId, activeStatuses, pageable);
+            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotIn(restaurantId, com.fooddelivery.restaurant.entity.OrderStatus.ACTIVE_STATUSES, pageable);
         }
         
         populateDriverDetails(resultPage.getContent(), false);

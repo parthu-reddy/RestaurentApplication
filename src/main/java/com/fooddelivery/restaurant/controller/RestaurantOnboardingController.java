@@ -29,6 +29,7 @@ public class RestaurantOnboardingController {
 
     private final RestaurantOnboardingService onboardingService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
+    private final com.fooddelivery.restaurant.client.GovernmentIdClient governmentIdClient;
 
     // Phase 1: Brand Onboarding
     @PostMapping("/api/v1/brands")
@@ -44,7 +45,48 @@ public class RestaurantOnboardingController {
                 request.getIfscCode(),
                 request.getLogoUrl()
         );
-        return ResponseEntity.ok(ApiResponse.success(brand, "Brand onboarded successfully"));
+        
+        // KYC is triggered async via Outbox/Kafka in the onboardingService
+        
+        return ResponseEntity.ok(ApiResponse.success(brand, "Brand onboarded successfully. KYC pending."));
+    }
+    
+    // Callback from GovernmentIDValidationService
+    @PostMapping("/api/v1/internal/brands/{brandId}/verification-callback")
+    public ResponseEntity<Void> updateVerificationStatus(@PathVariable UUID brandId, @RequestBody VerificationCallbackRequest request) {
+        onboardingService.updateVerificationStatusFromCallback(
+                brandId, 
+                request.getVerificationType(), 
+                request.getStatus(), 
+                request.getLegalEntityName(), 
+                request.getBankBeneficiaryName()
+        );
+        return ResponseEntity.ok().build();
+    }
+
+    // Proxy endpoints for KYC
+    @GetMapping("/api/v1/restaurants/verification/upload-url")
+    @PreAuthorize("hasRole('RESTAURANT')")
+    public ResponseEntity<ApiResponse<Map<String, String>>> getPresignedUploadUrl(
+            @org.springframework.web.bind.annotation.RequestParam("docType") String docType,
+            @org.springframework.web.bind.annotation.RequestParam("contentType") String contentType) {
+        
+        Map<String, String> response = governmentIdClient.getPresignedUploadUrl(docType, contentType);
+        return ResponseEntity.ok(ApiResponse.success(response, "Upload URL generated"));
+    }
+
+    @PostMapping("/api/v1/restaurants/verification/brands/gstin")
+    @PreAuthorize("hasRole('RESTAURANT')")
+    public ResponseEntity<ApiResponse<Void>> verifyGstin(@Valid @RequestBody com.fooddelivery.restaurant.client.GovernmentIdClient.GstinRequest request) {
+        governmentIdClient.verifyGstin(request);
+        return ResponseEntity.ok(ApiResponse.success(null, "GSTIN verification initiated"));
+    }
+
+    @PostMapping("/api/v1/restaurants/verification/brands/bank-account")
+    @PreAuthorize("hasRole('RESTAURANT')")
+    public ResponseEntity<ApiResponse<Void>> verifyBankAccount(@Valid @RequestBody com.fooddelivery.restaurant.client.GovernmentIdClient.BankAccountRequest request) {
+        governmentIdClient.verifyBankAccount(request);
+        return ResponseEntity.ok(ApiResponse.success(null, "Bank account verification initiated"));
     }
 
     @GetMapping("/api/v1/brands")
@@ -397,5 +439,14 @@ public class RestaurantOnboardingController {
     public static class OutletTimingsUpdateRequest {
         @NotNull
         private List<TimingRequest> timings;
+    }
+
+    @Data
+    public static class VerificationCallbackRequest {
+        private String verificationType;
+        private String status;
+        private String legalEntityName;
+        private String bankBeneficiaryName;
+        private Double matchScore;
     }
 }

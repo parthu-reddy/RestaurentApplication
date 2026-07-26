@@ -2,4 +2,22 @@ spring:
   application:
     name: restaurant-service
   config:
-    import: "optional:configserver:http://localhost:8888"
+    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1h
+
+resilience4j:
+  retry:
+    instances:
+      kycApiRetry:
+        maxAttempts: 3
+        waitDuration: 2s
+  circuitbreaker:
+    instances:
+      kycApiCircuitBreaker:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3

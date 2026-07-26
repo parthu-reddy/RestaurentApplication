@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +38,32 @@ public class CatalogService {
     private final CategoryRepository categoryRepository;
     private final OutletCategoryTimingRepository outletCategoryTimingRepository;
     private final BrandCategoryTimingRepository brandCategoryTimingRepository;
+    private final org.springframework.cache.CacheManager cacheManager;
+
+    private void evictOutletMenusForBrand(UUID brandId) {
+        org.springframework.cache.Cache cache = cacheManager.getCache("outletMenus");
+        if (cache != null) {
+            List<Outlet> outlets = outletRepository.findByBrandId(brandId);
+            for (Outlet outlet : outlets) {
+                cache.evict(outlet.getId());
+            }
+        }
+    }
 
     @Transactional
     public MasterMenuItem addMasterMenuItem(UUID brandId, MasterMenuItem item) {
         if (item.getCategoryId() != null) {
             Category cat = categoryRepository.findById(item.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid categoryId provided"));
+        } else {
+            Category defaultCat = categoryRepository.findByNameAndBrandId("Food", brandId)
+                .orElseGet(() -> categoryRepository.save(Category.builder()
+                    .brandId(brandId)
+                    .name("Food")
+                    .description("General Food Items")
+                    .active(true)
+                    .build()));
+            item.setCategoryId(defaultCat.getId());
         }
         item.setBrandId(brandId);
         if (item.getId() == null) {
@@ -50,7 +72,9 @@ public class CatalogService {
         if (item.getDefaultPrepTimeMinutes() == null) {
             item.setDefaultPrepTimeMinutes(15);
         }
-        return masterMenuItemRepository.save(item);
+        MasterMenuItem savedItem = masterMenuItemRepository.save(item);
+        evictOutletMenusForBrand(brandId);
+        return savedItem;
     }
 
     @Transactional(readOnly = true)
@@ -61,7 +85,7 @@ public class CatalogService {
     @Transactional
     public MasterMenuItem editMasterMenuItem(UUID brandId, UUID itemId, MasterMenuItem updatedItem) {
         MasterMenuItem existingItem = masterMenuItemRepository.findById(itemId)
-            .orElseThrow(() -> new IllegalArgumentException("Menu item not found"));
+            .orElseThrow(() -> new IllegalArgumentException("Item not found"));
             
         if (!existingItem.getBrandId().equals(brandId)) {
             throw new IllegalArgumentException("Menu item does not belong to this brand");
@@ -72,7 +96,14 @@ public class CatalogService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid categoryId provided"));
             existingItem.setCategoryId(updatedItem.getCategoryId());
         } else {
-            existingItem.setCategoryId(null);
+            Category defaultCat = categoryRepository.findByNameAndBrandId("Food", brandId)
+                .orElseGet(() -> categoryRepository.save(Category.builder()
+                    .brandId(brandId)
+                    .name("Food")
+                    .description("General Food Items")
+                    .active(true)
+                    .build()));
+            existingItem.setCategoryId(defaultCat.getId());
         }
         
         if (updatedItem.getName() != null) existingItem.setName(updatedItem.getName());
@@ -81,10 +112,13 @@ public class CatalogService {
         if (updatedItem.getBasePrice() != null) existingItem.setBasePrice(updatedItem.getBasePrice());
         if (updatedItem.getDefaultPrepTimeMinutes() != null) existingItem.setDefaultPrepTimeMinutes(updatedItem.getDefaultPrepTimeMinutes());
         
-        return masterMenuItemRepository.save(existingItem);
+        MasterMenuItem savedItem = masterMenuItemRepository.save(existingItem);
+        evictOutletMenusForBrand(brandId);
+        return savedItem;
     }
 
     @Transactional
+    @CacheEvict(value = "outletMenus", key = "#outletId")
     public OutletMenuOverride addOrUpdateOverride(UUID outletId, UUID masterMenuItemId, OutletMenuOverride override) {
         Optional<OutletMenuOverride> existing = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId);
         OutletMenuOverride target = existing.orElse(new OutletMenuOverride());
@@ -110,6 +144,7 @@ public class CatalogService {
 
     // Resolves the effective menu for an outlet (Master items + Overrides)
     @Transactional(readOnly = true)
+    @Cacheable(value = "outletMenus", key = "#outletId", sync = true)
     public List<MenuItemDTO> getEffectiveMenuForOutlet(UUID outletId) {
         Outlet outlet = outletRepository.findById(outletId)
                 .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));

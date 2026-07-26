@@ -6,6 +6,9 @@ import com.fooddelivery.common.enums.OrderStatus;
 
 public interface RestaurantOrderState {
     
+    String PAYLOAD_FIELD_DRIVER_ID = "driverId";
+    String PAYLOAD_FIELD_STATUS = "status";
+    
     // API Actions
     default void requestDelay(RestaurantOrderContext ctx) {
         throw new IllegalStateTransitionException("Cannot request delay in state: " + ctx.getOrder().getStatus());
@@ -38,10 +41,7 @@ public interface RestaurantOrderState {
 
     default void handleOrderCancelled(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        if (order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.REJECTED ||
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED) {
+        if (order.getStatus().isTerminal()) {
             return;
         }
         order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED);
@@ -50,10 +50,7 @@ public interface RestaurantOrderState {
 
     default void handleOrderCancelledByCustomer(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        if (order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.REJECTED ||
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED) {
+        if (order.getStatus().isTerminal()) {
             return;
         }
         order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED);
@@ -70,28 +67,20 @@ public interface RestaurantOrderState {
 
     default void handleDriverAssigned(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        if (order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.REJECTED ||
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED ||
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
+        if (order.getStatus().isTerminal() || order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
             return;
         }
         
         com.fasterxml.jackson.databind.JsonNode payload = ctx.getEventPayload();
-        if (payload != null && payload.has("driverId")) {
-            order.setDeliveryExecutiveId(java.util.UUID.fromString(payload.path("driverId").asText()));
+        if (payload != null && payload.has(PAYLOAD_FIELD_DRIVER_ID)) {
+            order.setDeliveryExecutiveId(java.util.UUID.fromString(payload.path(PAYLOAD_FIELD_DRIVER_ID).asText()));
             ctx.getActionService().saveOrder(order);
         }
     }
 
     default void handleDriverAtRestaurant(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        if (order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED || 
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.REJECTED ||
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED ||
-            order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
+        if (order.getStatus().isTerminal() || order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
             return;
         }
         order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.AT_RESTAURANT);
@@ -99,16 +88,12 @@ public interface RestaurantOrderState {
     }
 
     default void handleOrderStatusUpdated(RestaurantOrderContext ctx) {
-        String newStatusStr = ctx.getEventPayload().path("status").asText("");
+        String newStatusStr = ctx.getEventPayload().path(PAYLOAD_FIELD_STATUS).asText("");
         if (com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED.name().equals(newStatusStr) || 
-            "PICKED_UP".equals(newStatusStr) || 
-            "OUT_FOR_DELIVERY".equals(newStatusStr)) {
+            com.fooddelivery.common.enums.OrderStatus.PICKED_UP.name().equals(newStatusStr) || 
+            com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY.name().equals(newStatusStr)) {
             com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-            if (order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED && 
-                order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED &&
-                order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.REJECTED &&
-                order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED &&
-                order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
+            if (!order.getStatus().isTerminal() && order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
                 order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED);
                 order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY);
                 ctx.getActionService().saveOrder(order);
@@ -117,7 +102,7 @@ public interface RestaurantOrderState {
     }
 
     default void handleOrderStatusSync(RestaurantOrderContext ctx) {
-        String targetStatusStr = ctx.getEventPayload().path("status").asText(null);
+        String targetStatusStr = ctx.getEventPayload().path(PAYLOAD_FIELD_STATUS).asText(null);
         if (targetStatusStr != null) {
             try {
                 if (OrderStatus.PENDING_ACCEPTANCE.name().equals(targetStatusStr)) {

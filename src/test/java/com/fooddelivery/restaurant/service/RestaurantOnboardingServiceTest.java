@@ -1,19 +1,21 @@
 package com.fooddelivery.restaurant.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fooddelivery.restaurant.entity.Brand;
 import com.fooddelivery.restaurant.entity.Outlet;
 import com.fooddelivery.restaurant.repository.BrandRepository;
+import com.fooddelivery.common.outbox.repository.OutboxEventRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.util.ReflectionTestUtils;
-import com.fooddelivery.restaurant.client.KycClient;
 
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -34,7 +36,10 @@ class RestaurantOnboardingServiceTest {
     private OutletRepository outletRepository;
 
     @Mock
-    private KycClient kycClient;
+    private OutboxEventRepository outboxEventRepository;
+
+    @Spy
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @InjectMocks
     private RestaurantOnboardingService restaurantOnboardingService;
@@ -45,11 +50,6 @@ class RestaurantOnboardingServiceTest {
 
     @Test
     void testOnboardBrand_Success() {
-        when(kycClient.verifyGstin(anyString()))
-                .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
-        when(kycClient.verifyBankAccount(anyString(), anyString()))
-                .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
-        
         when(brandRepository.save(any(Brand.class))).thenAnswer(i -> i.getArguments()[0]);
 
         Brand brand = restaurantOnboardingService.onboardBrand(
@@ -58,8 +58,8 @@ class RestaurantOnboardingServiceTest {
 
         assertNotNull(brand);
         assertEquals("Test Brand", brand.getName());
-        assertTrue(brand.getIsGstinVerified());
-        assertTrue(brand.getIsBankVerified());
+        assertFalse(brand.getIsGstinVerified());
+        assertFalse(brand.getIsBankVerified());
     }
 
     @Test
@@ -79,8 +79,6 @@ class RestaurantOnboardingServiceTest {
                 .build();
                 
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
-        when(kycClient.verifyFssai(anyString()))
-                .thenReturn(new ResponseEntity<>(new HashMap<>(), HttpStatus.OK));
         when(outletRepository.save(any(Outlet.class))).thenAnswer(i -> i.getArguments()[0]);
 
         com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr = new com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest();

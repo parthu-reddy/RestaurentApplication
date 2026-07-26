@@ -1,5 +1,7 @@
 package com.fooddelivery.restaurant.entity;
 
+import java.util.List;
+
 public enum OrderStatus {
     CREATED(10),
     PENDING_ACCEPTANCE(20),
@@ -21,5 +23,13 @@ public enum OrderStatus {
 
     public int getSequence() {
         return sequence;
+    }
+
+    public static final List<OrderStatus> ACTIVE_STATUSES = List.of(
+        CREATED, PENDING_ACCEPTANCE, ON_HOLD, ACCEPTED, PREPARING, READY, DISPATCHED
+    );
+
+    public boolean isTerminal() {
+        return this == CANCELLED || this == DELIVERED || this == REJECTED || this == DELIVERY_FAILED;
     }
 }

@@ -21,7 +21,10 @@ import com.fooddelivery.common.constants.PaymentIntentStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Entity
-@Table(name = "restaurant_orders")
+@Table(name = "restaurant_orders", indexes = {
+    @jakarta.persistence.Index(name = "idx_rest_order_restaurant", columnList = "restaurantId"),
+    @jakarta.persistence.Index(name = "idx_rest_order_status", columnList = "status")
+})
 @Data
 @Builder
 @NoArgsConstructor

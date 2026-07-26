@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.UUID;
 import net.coobird.thumbnailator.Thumbnails;
 import java.io.ByteArrayOutputStream;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/v1/images")
@@ -31,7 +32,8 @@ public class ImageUploadController {
     public ResponseEntity<ApiResponse<String>> uploadImage(
             @RequestParam(value = "file") MultipartFile file,
             @RequestParam("folderId") String folderId,
-            @RequestParam(value = "imageType", defaultValue = "default") String imageType) {
+            @RequestParam(value = "imageType", defaultValue = "default") String imageType,
+            Authentication authentication) {
 
         if (file == null || file.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("A file must be provided (INVALID_INPUT)"));
@@ -39,8 +41,15 @@ public class ImageUploadController {
         
         // Sanitize folderId to prevent path traversal or weird characters
         String safeFolderId = folderId.replaceAll("[^a-zA-Z0-9_-]", "");
-        if (safeFolderId.isEmpty()) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Invalid folderId (INVALID_INPUT)"));
+        
+        // Prevent IDOR: Force the folder to be the user's ID unless they are an admin.
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (!isAdmin) {
+            safeFolderId = authentication.getName();
+        } else if (safeFolderId.isEmpty()) {
+            safeFolderId = "default";
         }
         
         long MAX_DOWNLOAD_SIZE = 5 * 1024 * 1024; // 5 MB limit
