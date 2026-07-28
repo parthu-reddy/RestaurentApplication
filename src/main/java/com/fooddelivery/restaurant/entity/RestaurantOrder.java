@@ -33,10 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 public class RestaurantOrder {
 
     @Id
+    @Column(name = "order_id")
     private UUID orderId;
 
+    @Column(name = "restaurant_id")
     private UUID restaurantId;
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(name = "status")
     private OrderStatus status;
 
     public void setStatus(OrderStatus status) {
@@ -61,37 +64,51 @@ public class RestaurantOrder {
     private PaymentIntentStatus paymentStatus;
 
     @Version
+    @Column(name = "version")
     private Integer version;
 
+    @Column(name = "prep_time")
     private Integer prepTime;
     
+    @Column(name = "additional_prep_time")
     private Integer additionalPrepTime;
     
+    @Column(name = "estimated_completion_time")
     private Long estimatedCompletionTime;
 
+    @Column(name = "delivery_lat")
     private Double deliveryLat;
     
+    @Column(name = "delivery_lng")
     private Double deliveryLng;
     
+    @Column(name = "delivery_address")
     private String deliveryAddress;
 
+    @Column(name = "pickup_otp")
     private String pickupOtp;
     
+    @Column(name = "delivery_otp")
     private String deliveryOtp;
 
+    @Column(name = "delivery_executive_id")
     private UUID deliveryExecutiveId;
 
     @jakarta.persistence.Transient
+    @Column(name = "rider_name")
     private String riderName;
     
     @jakarta.persistence.Transient
+    @Column(name = "rider_phone")
     private String riderPhone;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "items_json", columnDefinition = "TEXT")
     private String itemsJson;
     
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
     
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

@@ -1,5 +1,6 @@
 package com.fooddelivery.restaurant.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private UUID id;
     
     @jakarta.persistence.Column(name = "brand_id")
@@ -33,10 +35,13 @@ public class Category {
     
     @NotBlank
     @Size(min = 2, max = 100)
+    @Column(name = "name")
     private String name;
     
     @Size(max = 500)
+    @Column(name = "description")
     private String description;
+    @Column(name = "active")
     private Boolean active;
 
     @OneToMany(mappedBy = "category", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)

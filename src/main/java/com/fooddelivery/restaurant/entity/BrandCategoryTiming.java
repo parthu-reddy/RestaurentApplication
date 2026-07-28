@@ -30,6 +30,7 @@ import java.util.UUID;
 public class BrandCategoryTiming {
     
     @Id
+    @Column(name = "id")
     private UUID id;
     
     @Column(name = "brand_id", nullable = false)
@@ -55,5 +56,6 @@ public class BrandCategoryTiming {
     private LocalDateTime updatedAt;
 
     @jakarta.persistence.Version
+    @Column(name = "version")
     private Integer version;
 }

@@ -1,5 +1,6 @@
 package com.fooddelivery.restaurant.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,31 +28,41 @@ import jakarta.validation.constraints.DecimalMax;
 public class MasterMenuItem {
     
     @Id
+    @Column(name = "id")
     private UUID id;
     
+    @Column(name = "brand_id")
     private UUID brandId;
     
+    @Column(name = "category_id")
     private UUID categoryId;
     
     @NotBlank
+    @Column(name = "name")
     private String name;
+    @Column(name = "description")
     private String description;
     
+    @Column(name = "image_url")
     private String imageUrl;
     
     @NotNull
     @Positive
+    @Column(name = "base_price")
     private BigDecimal basePrice;
     
     @NotNull
     @DecimalMin(value = "0.0")
     @DecimalMax(value = "10.0", inclusive = false)
     @Builder.Default
+    @Column(name = "packing_charge")
     private BigDecimal packingCharge = BigDecimal.ZERO;
     
     @Positive
+    @Column(name = "default_prep_time_minutes")
     private Integer defaultPrepTimeMinutes;
 
     @jakarta.persistence.Version
+    @Column(name = "version")
     private Integer version;
 }

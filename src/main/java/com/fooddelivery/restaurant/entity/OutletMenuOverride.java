@@ -1,5 +1,6 @@
 package com.fooddelivery.restaurant.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,18 +25,25 @@ import jakarta.validation.constraints.Positive;
 public class OutletMenuOverride {
     
     @Id
+    @Column(name = "id")
     private UUID id;
     
+    @Column(name = "outlet_id")
     private UUID outletId;
+    @Column(name = "master_menu_item_id")
     private UUID masterMenuItemId;
     
     @Positive
+    @Column(name = "overridden_price")
     private BigDecimal overriddenPrice;
     @NotNull
+    @Column(name = "is_available")
     private Boolean isAvailable;
     @Positive
+    @Column(name = "overridden_prep_time_minutes")
     private Integer overriddenPrepTimeMinutes;
 
     @jakarta.persistence.Version
+    @Column(name = "version")
     private Integer version;
 }

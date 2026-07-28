@@ -30,6 +30,7 @@ import java.util.UUID;
 public class OutletCategoryTiming {
     
     @Id
+    @Column(name = "id")
     private UUID id;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,5 +58,6 @@ public class OutletCategoryTiming {
     private LocalDateTime updatedAt;
 
     @jakarta.persistence.Version
+    @Column(name = "version")
     private Integer version;
 }

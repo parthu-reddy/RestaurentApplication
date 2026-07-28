@@ -23,6 +23,7 @@ public class CategoryTiming {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,6 +38,7 @@ public class CategoryTiming {
     private LocalTime closingTime;
 
     @Version
+    @Column(name = "version")
     private Integer version;
 
     @CreationTimestamp

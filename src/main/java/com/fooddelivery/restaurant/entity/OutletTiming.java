@@ -1,5 +1,6 @@
 package com.fooddelivery.restaurant.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class OutletTiming {
     
     @Id
+    @Column(name = "id")
     private UUID id;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,12 +36,17 @@ public class OutletTiming {
     @JsonIgnore
     private Outlet outlet;
     
+    @Column(name = "opening_time")
     private LocalTime openingTime;
+    @Column(name = "closing_time")
     private LocalTime closingTime;
     
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @jakarta.persistence.Version
+    @Column(name = "version")
     private Integer version;
 }
