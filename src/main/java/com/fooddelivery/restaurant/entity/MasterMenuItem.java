@@ -15,6 +15,8 @@ import java.util.UUID;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.DecimalMax;
 
 @Entity
 @Table(name = "master_menu_items")
@@ -40,6 +42,13 @@ public class MasterMenuItem {
     @NotNull
     @Positive
     private BigDecimal basePrice;
+    
+    @NotNull
+    @DecimalMin(value = "0.0")
+    @DecimalMax(value = "10.0", inclusive = false)
+    @Builder.Default
+    private BigDecimal packingCharge = BigDecimal.ZERO;
+    
     @Positive
     private Integer defaultPrepTimeMinutes;
 

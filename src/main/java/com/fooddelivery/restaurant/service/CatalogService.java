@@ -72,6 +72,9 @@ public class CatalogService {
         if (item.getDefaultPrepTimeMinutes() == null) {
             item.setDefaultPrepTimeMinutes(15);
         }
+        if (item.getPackingCharge() == null) {
+            item.setPackingCharge(java.math.BigDecimal.ZERO);
+        }
         MasterMenuItem savedItem = masterMenuItemRepository.save(item);
         evictOutletMenusForBrand(brandId);
         return savedItem;
@@ -110,6 +113,7 @@ public class CatalogService {
         if (updatedItem.getDescription() != null) existingItem.setDescription(updatedItem.getDescription());
         if (updatedItem.getImageUrl() != null) existingItem.setImageUrl(updatedItem.getImageUrl());
         if (updatedItem.getBasePrice() != null) existingItem.setBasePrice(updatedItem.getBasePrice());
+        if (updatedItem.getPackingCharge() != null) existingItem.setPackingCharge(updatedItem.getPackingCharge());
         if (updatedItem.getDefaultPrepTimeMinutes() != null) existingItem.setDefaultPrepTimeMinutes(updatedItem.getDefaultPrepTimeMinutes());
         
         MasterMenuItem savedItem = masterMenuItemRepository.save(existingItem);
@@ -228,7 +232,8 @@ public class CatalogService {
                 .restaurantId(outletId)
                 .name(master.getName())
                 .description(master.getDescription())
-                .price(override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
+                .price((override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
+                        .add(master.getPackingCharge() != null ? master.getPackingCharge() : java.math.BigDecimal.ZERO))
                 .isAvailable(isAvail)
                 .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
                 .imageUrl(master.getImageUrl())
@@ -325,7 +330,8 @@ public class CatalogService {
                     .restaurantId(outletId)
                     .name(master.getName())
                     .description(master.getDescription())
-                    .price(override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
+                    .price((override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
+                            .add(master.getPackingCharge() != null ? master.getPackingCharge() : java.math.BigDecimal.ZERO))
                     .isAvailable(isAvail)
                     .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
                     .imageUrl(master.getImageUrl())
