@@ -109,8 +109,18 @@ public class FulfillmentService {
         Outlet restaurant = outletRepository.findById(restaurantId)
             .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
             
-        double lat = restaurant.getLocation() != null ? restaurant.getLocation().getY() : 0.0;
-        double lng = restaurant.getLocation() != null ? restaurant.getLocation().getX() : 0.0;
+        double lat = 0.0;
+        double lng = 0.0;
+        
+        String locationWkt = outletRepository.findLocationWktById(restaurantId);
+        if (locationWkt != null && locationWkt.startsWith("POINT(")) {
+            String coords = locationWkt.substring(6, locationWkt.length() - 1);
+            String[] parts = coords.split(" ");
+            if (parts.length == 2) {
+                lng = Double.parseDouble(parts[0]); // PostGIS X is Longitude
+                lat = Double.parseDouble(parts[1]); // PostGIS Y is Latitude
+            }
+        }
         
         RestaurantOrder order = restaurantOrderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
