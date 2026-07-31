@@ -82,6 +82,7 @@ public class OrderEventConsumer {
                 try {
                     switch (EventType.valueOf(eventType)) {
                         case ORDER_CANCELLED:
+                        case ORDER_CANCELLED_BY_ADMIN:
                             state.handleOrderCancelled(ctx);
                             break;
                         case ORDER_CANCELLED_BY_CUSTOMER:
@@ -105,8 +106,8 @@ public class OrderEventConsumer {
                         case ORDER_STATUS_SYNC:
                             state.handleOrderStatusSync(ctx);
                             break;
-                        case DISPATCH_FAILED:
-                            state.handleDispatchFailed(ctx);
+                        case MANUAL_INTERVENTION_REQUIRED:
+                            state.handleManualInterventionRequired(ctx);
                             break;
                         case DELIVERY_FAILED:
                             state.handleDeliveryFailed(ctx);
@@ -149,10 +150,12 @@ public class OrderEventConsumer {
         String itemsJson = root.path("itemsJson").asText("[]");
         String pickupOtp = root.path("pickupOtp").asText("");
         String deliveryOtp = root.path("deliveryOtp").asText("");
+        String customerName = root.path("customerName").asText("");
 
         RestaurantOrder order = RestaurantOrder.builder()
                 .orderId(orderId)
                 .restaurantId(UUID.fromString(restaurantId))
+                .customerName(customerName)
                 .status(OrderStatus.CREATED)
                 .prepTime(estimatedPrepTimeMinutes)
                 .additionalPrepTime(0)

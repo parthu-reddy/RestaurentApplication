@@ -33,7 +33,7 @@ public class TerminalState implements RestaurantOrderState {
     }
 
     @Override
-    public void handleDispatchFailed(com.fooddelivery.restaurant.service.state.RestaurantOrderContext ctx) {
-        log.warn("Ignoring DISPATCH_FAILED for Order {}. Already terminal: {}", ctx.getOrder().getOrderId(), ctx.getOrder().getStatus());
+    public void handleManualInterventionRequired(com.fooddelivery.restaurant.service.state.RestaurantOrderContext ctx) {
+        log.warn("handleManualInterventionRequired ignored in TerminalState for order {}", ctx.getOrder().getOrderId());
     }
 }

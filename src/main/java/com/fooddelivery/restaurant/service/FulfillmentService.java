@@ -35,9 +35,16 @@ public class FulfillmentService {
     }
 
 
+    private static final java.util.List<com.fooddelivery.restaurant.entity.OrderStatus> CANCELLED_STATUSES = java.util.List.of(
+        com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED,
+        com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED_BY_RESTAURANT
+    );
+
     public java.util.List<RestaurantOrder> getActiveOrdersByRestaurant(UUID restaurantId) {
-        java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findByRestaurantIdAndStatusIn(
-            restaurantId, com.fooddelivery.restaurant.entity.OrderStatus.ACTIVE_STATUSES);
+        java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findActiveOrdersByRestaurantId(
+            restaurantId, 
+            CANCELLED_STATUSES, 
+            java.util.List.of(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED, com.fooddelivery.common.enums.DeliveryStatus.FAILED, com.fooddelivery.common.enums.DeliveryStatus.CANCELLED));
             
         populateDriverDetails(orders, true);
         return orders;
@@ -72,9 +79,6 @@ public class FulfillmentService {
                             if (driver.containsKey(DRIVER_FIELD_FULL_NAME)) {
                                 order.setRiderName(driver.get(DRIVER_FIELD_FULL_NAME).toString());
                             }
-                            if (includePhone && driver.containsKey(DRIVER_FIELD_PHONE_NUMBER)) {
-                                order.setRiderPhone(driver.get(DRIVER_FIELD_PHONE_NUMBER).toString());
-                            }
                         }
                     }
                 }
@@ -87,15 +91,22 @@ public class FulfillmentService {
     public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, String date, int page, int size) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(SORT_FIELD_CREATED_AT).descending());
 
-        org.springframework.data.domain.Page<RestaurantOrder> resultPage;
+        java.time.LocalDateTime start = null;
+        java.time.LocalDateTime end = null;
+
         if (date != null && !date.trim().isEmpty()) {
             java.time.LocalDate localDate = java.time.LocalDate.parse(date);
-            java.time.LocalDateTime start = localDate.atStartOfDay();
-            java.time.LocalDateTime end = localDate.atTime(java.time.LocalTime.MAX);
-            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotInAndCreatedAtBetween(restaurantId, com.fooddelivery.restaurant.entity.OrderStatus.ACTIVE_STATUSES, start, end, pageable);
-        } else {
-            resultPage = restaurantOrderRepository.findByRestaurantIdAndStatusNotIn(restaurantId, com.fooddelivery.restaurant.entity.OrderStatus.ACTIVE_STATUSES, pageable);
+            start = localDate.atStartOfDay();
+            end = localDate.atTime(java.time.LocalTime.MAX);
         }
+
+        org.springframework.data.domain.Page<RestaurantOrder> resultPage = restaurantOrderRepository.findHistoryOrdersByRestaurantId(
+            restaurantId, 
+            CANCELLED_STATUSES, 
+            java.util.List.of(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED, com.fooddelivery.common.enums.DeliveryStatus.FAILED, com.fooddelivery.common.enums.DeliveryStatus.CANCELLED), 
+            start, 
+            end, 
+            pageable);
         
         populateDriverDetails(resultPage.getContent(), false);
         return resultPage;

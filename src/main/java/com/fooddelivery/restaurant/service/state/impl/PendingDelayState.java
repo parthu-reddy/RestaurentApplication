@@ -14,6 +14,18 @@ public class PendingDelayState implements RestaurantOrderState {
     public PendingDelayState(CreatedState createdState) {
         this.createdState = createdState;
     }
+
+    @Override
+    public void accept(RestaurantOrderContext ctx) {
+        log.info("Order {} accepted by restaurant while in ON_HOLD state (overriding delay)", ctx.getOrder().getOrderId());
+        createdState.accept(ctx);
+    }
+
+    @Override
+    public void requestDelay(RestaurantOrderContext ctx) {
+        log.info("Order {} delay requested again by restaurant while in ON_HOLD state", ctx.getOrder().getOrderId());
+        createdState.requestDelay(ctx);
+    }
     
     @Override
     public void handleDelayApproved(RestaurantOrderContext ctx) {

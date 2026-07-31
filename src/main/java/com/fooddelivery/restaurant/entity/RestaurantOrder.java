@@ -94,13 +94,11 @@ public class RestaurantOrder {
     @Column(name = "delivery_executive_id")
     private UUID deliveryExecutiveId;
 
-    @jakarta.persistence.Transient
+    @Column(name = "customer_name")
+    private String customerName;
+
     @Column(name = "rider_name")
     private String riderName;
-    
-    @jakarta.persistence.Transient
-    @Column(name = "rider_phone")
-    private String riderPhone;
 
     @Column(name = "items_json", columnDefinition = "TEXT")
     private String itemsJson;

@@ -18,7 +18,7 @@ public class CreatedState implements RestaurantOrderState {
         
         if (additionalPrepTime != null && additionalPrepTime > 10) {
             order.setAdditionalPrepTime(additionalPrepTime);
-            order.setStatus(OrderStatus.ON_HOLD);
+            order.setStatus(OrderStatus.AWAITING_DELAY_APPROVAL);
             ctx.getActionService().saveOrder(order);
             
             ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
@@ -65,6 +65,7 @@ public class CreatedState implements RestaurantOrderState {
         payloadNode.put("deliveryAddress", order.getDeliveryAddress() != null ? order.getDeliveryAddress() : "");
         payloadNode.put("pickupOtp", order.getPickupOtp() != null ? order.getPickupOtp() : "");
         payloadNode.put("deliveryOtp", order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "");
+        payloadNode.put("customerName", order.getCustomerName() != null ? order.getCustomerName() : "");
         
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_ACCEPTED, payloadNode);
     }
@@ -72,7 +73,7 @@ public class CreatedState implements RestaurantOrderState {
     @Override
     public void reject(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
-        order.setStatus(OrderStatus.CANCELLED);
+        order.setStatus(OrderStatus.CANCELLED_BY_RESTAURANT);
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();

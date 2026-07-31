@@ -14,7 +14,7 @@ public class PreparingState implements RestaurantOrderState {
     @Override
     public void ready(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
-        order.setStatus(OrderStatus.READY);
+        order.setStatus(OrderStatus.READY_FOR_PICKUP);
         ctx.getActionService().saveOrder(order);
         
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();

@@ -67,20 +67,23 @@ public interface RestaurantOrderState {
 
     default void handleDriverAssigned(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        if (order.getStatus().isTerminal() || order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
+        if (order.getStatus().isTerminal() || order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER) {
             return;
         }
         
         com.fasterxml.jackson.databind.JsonNode payload = ctx.getEventPayload();
         if (payload != null && payload.has(PAYLOAD_FIELD_DRIVER_ID)) {
             order.setDeliveryExecutiveId(java.util.UUID.fromString(payload.path(PAYLOAD_FIELD_DRIVER_ID).asText()));
+            if (payload.has("driverName")) {
+                order.setRiderName(payload.path("driverName").asText());
+            }
             ctx.getActionService().saveOrder(order);
         }
     }
 
     default void handleDriverAtRestaurant(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        if (order.getStatus().isTerminal() || order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
+        if (order.getStatus().isTerminal() || order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER) {
             return;
         }
         order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.AT_RESTAURANT);
@@ -89,12 +92,13 @@ public interface RestaurantOrderState {
 
     default void handleOrderStatusUpdated(RestaurantOrderContext ctx) {
         String newStatusStr = ctx.getEventPayload().path(PAYLOAD_FIELD_STATUS).asText("");
-        if (com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED.name().equals(newStatusStr) || 
-            com.fooddelivery.common.enums.OrderStatus.PICKED_UP.name().equals(newStatusStr) || 
-            com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY.name().equals(newStatusStr)) {
+        if (com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER.name().equals(newStatusStr) || 
+            com.fooddelivery.common.enums.OrderStatus.HANDED_OVER.name().equals(newStatusStr) || 
+            "OUT_FOR_DELIVERY".equals(newStatusStr) ||
+            "DELIVERED".equals(newStatusStr)) {
             com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-            if (!order.getStatus().isTerminal() && order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED) {
-                order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED);
+            if (!order.getStatus().isTerminal() && order.getStatus() != com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER) {
+                order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER);
                 order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY);
                 ctx.getActionService().saveOrder(order);
             }
@@ -110,11 +114,12 @@ public interface RestaurantOrderState {
                 } else if (OrderStatus.CANCELLED.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED.name();
                 } else if (OrderStatus.AWAITING_DELAY_APPROVAL.name().equals(targetStatusStr)) {
-                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.ON_HOLD.name();
+                } else if (OrderStatus.AWAITING_DELAY_APPROVAL.name().equals(targetStatusStr)) {
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.AWAITING_DELAY_APPROVAL.name();
                 } else if (OrderStatus.READY_FOR_PICKUP.name().equals(targetStatusStr)) {
-                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.READY.name();
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.READY_FOR_PICKUP.name();
                 } else if (com.fooddelivery.common.enums.DeliveryStatus.OUT_FOR_DELIVERY.name().equals(targetStatusStr)) {
-                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.DISPATCHED.name();
+                    targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER.name();
                 } else if (OrderStatus.CANCELLED_BY_RESTAURANT.name().equals(targetStatusStr) || 
                            OrderStatus.CANCELLED.name().equals(targetStatusStr)) {
                     targetStatusStr = com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED.name();
@@ -136,21 +141,25 @@ public interface RestaurantOrderState {
         }
     }
 
-    default void handleDispatchFailed(RestaurantOrderContext ctx) {
-        com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED);
-        ctx.getActionService().saveOrder(order);
+    default void handleManualInterventionRequired(RestaurantOrderContext ctx) {
+        // Log explicitly using simple name
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrderState.class);
+        log.warn("handleManualInterventionRequired ignored in state: {}", this.getClass().getSimpleName());
     }
 
     default void handleDeliveryFailed(RestaurantOrderContext ctx) {
         com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.DELIVERY_FAILED);
+        if (order.getStatus().isTerminal()) {
+            return;
+        }
+        order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED);
         ctx.getActionService().saveOrder(order);
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrderState.class);
+        log.info("Order {} cancelled in RestaurantApplication due to DELIVERY_FAILED", order.getOrderId());
     }
 
     default void handleOrderDelivered(RestaurantOrderContext ctx) {
-        com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
-        order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.DELIVERED);
-        ctx.getActionService().saveOrder(order);
+        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrderState.class);
+        log.warn("handleOrderDelivered ignored in state: {}", this.getClass().getSimpleName());
     }
 }

@@ -3,7 +3,6 @@ package com.fooddelivery.restaurant.service.state;
 import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.service.state.impl.AcceptedState;
 import com.fooddelivery.restaurant.service.state.impl.CreatedState;
-import com.fooddelivery.restaurant.service.state.impl.DispatchedState;
 import com.fooddelivery.restaurant.service.state.impl.PendingDelayState;
 import com.fooddelivery.restaurant.service.state.impl.PreparingState;
 import com.fooddelivery.restaurant.service.state.impl.ReadyState;
@@ -21,22 +20,19 @@ public class RestaurantOrderStateFactory {
     private static final AcceptedState ACCEPTED = new AcceptedState();
     private static final PreparingState PREPARING = new PreparingState();
     private static final ReadyState READY = new ReadyState();
-    private static final DispatchedState DISPATCHED = new DispatchedState();
     private static final TerminalState TERMINAL = new TerminalState();
 
     static {
         stateMap.put(OrderStatus.CREATED, CREATED);
         stateMap.put(OrderStatus.PENDING_ACCEPTANCE, CREATED); // Pending acceptance maps to CreatedState in Restaurant App
-        stateMap.put(OrderStatus.ON_HOLD, PENDING_DELAY);
+        stateMap.put(OrderStatus.AWAITING_DELAY_APPROVAL, PENDING_DELAY);
         stateMap.put(OrderStatus.ACCEPTED, ACCEPTED);
         stateMap.put(OrderStatus.PREPARING, PREPARING);
-        stateMap.put(OrderStatus.READY, READY);
-        stateMap.put(OrderStatus.DISPATCHED, DISPATCHED);
-        
-        stateMap.put(OrderStatus.DELIVERED, TERMINAL);
-        stateMap.put(OrderStatus.DELIVERY_FAILED, TERMINAL);
+        stateMap.put(OrderStatus.READY_FOR_PICKUP, READY);
+        stateMap.put(OrderStatus.HANDED_OVER, TERMINAL);
         stateMap.put(OrderStatus.CANCELLED, TERMINAL);
-        stateMap.put(OrderStatus.REJECTED, TERMINAL);
+        stateMap.put(OrderStatus.CANCELLED_BY_RESTAURANT, TERMINAL);
+
     }
 
     public static RestaurantOrderState getState(OrderStatus status) {

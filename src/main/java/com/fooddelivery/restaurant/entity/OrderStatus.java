@@ -5,15 +5,13 @@ import java.util.List;
 public enum OrderStatus {
     CREATED(10),
     PENDING_ACCEPTANCE(20),
-    ON_HOLD(30),
+    AWAITING_DELAY_APPROVAL(30),
     ACCEPTED(40),
     PREPARING(50),
-    READY(60),
-    DISPATCHED(70),
-    DELIVERED(80),
+    READY_FOR_PICKUP(60),
+    HANDED_OVER(70),
     CANCELLED(100),
-    REJECTED(110),
-    DELIVERY_FAILED(120);
+    CANCELLED_BY_RESTAURANT(100);
 
     private final int sequence;
 
@@ -25,11 +23,9 @@ public enum OrderStatus {
         return sequence;
     }
 
-    public static final List<OrderStatus> ACTIVE_STATUSES = List.of(
-        CREATED, PENDING_ACCEPTANCE, ON_HOLD, ACCEPTED, PREPARING, READY, DISPATCHED
-    );
+
 
     public boolean isTerminal() {
-        return this == CANCELLED || this == DELIVERED || this == REJECTED || this == DELIVERY_FAILED;
+        return this == CANCELLED || this == CANCELLED_BY_RESTAURANT || this == HANDED_OVER;
     }
 }
