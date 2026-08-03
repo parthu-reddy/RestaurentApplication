@@ -17,15 +17,24 @@ public class RestaurantMcpService {
     private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final RestaurantOnboardingService onboardingService;
+    private final com.fooddelivery.restaurant.controller.InternalOrderController internalOrderController;
+    private final com.fooddelivery.restaurant.controller.InternalRestaurantController internalRestaurantController;
+    private final com.fooddelivery.restaurant.controller.CategoryController categoryController;
     private final ObjectMapper objectMapper;
 
     public RestaurantMcpService(FulfillmentService fulfillmentService,
                                 com.fooddelivery.restaurant.service.CatalogService catalogService,
                                 RestaurantOnboardingService onboardingService,
+                                com.fooddelivery.restaurant.controller.InternalOrderController internalOrderController,
+                                com.fooddelivery.restaurant.controller.InternalRestaurantController internalRestaurantController,
+                                com.fooddelivery.restaurant.controller.CategoryController categoryController,
                                 ObjectMapper objectMapper) {
         this.fulfillmentService = fulfillmentService;
         this.catalogService = catalogService;
         this.onboardingService = onboardingService;
+        this.internalOrderController = internalOrderController;
+        this.internalRestaurantController = internalRestaurantController;
+        this.categoryController = categoryController;
         this.objectMapper = objectMapper;
     }
 
@@ -167,6 +176,106 @@ public class RestaurantMcpService {
             return objectMapper.writeValueAsString(response);
         } catch (Exception e) {
             return "Failed to get restaurant details: " + e.getMessage();
+        }
+    }
+
+    // InternalOrderController
+
+    @Tool(description = "Internal: Get order status. Provide orderId.")
+    public String getInternalOrderStatus(String orderId) {
+        try {
+            return objectMapper.writeValueAsString(internalOrderController.getOrderStatus(UUID.fromString(orderId)).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    // InternalRestaurantController
+
+    @Tool(description = "Internal: Get outlet IDs by owner. Provide ownerId.")
+    public String getOutletIdsByOwner(String ownerId) {
+        try {
+            return objectMapper.writeValueAsString(internalRestaurantController.getOwnerOutlets(UUID.fromString(ownerId)).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    // CategoryController
+
+    @Tool(description = "Get global active categories.")
+    public String getCategories() {
+        try {
+            return objectMapper.writeValueAsString(categoryController.getCategories().getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Create global category (Admin). Provide JSON string of CategoryDTO (name, description, imageUrl, isActive, displayOrder).")
+    public String createCategory(String categoryDtoJson) {
+        try {
+            com.fooddelivery.restaurant.dto.CategoryDTO dto = objectMapper.readValue(categoryDtoJson, com.fooddelivery.restaurant.dto.CategoryDTO.class);
+            return objectMapper.writeValueAsString(categoryController.createCategory(dto).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Get brand categories. Provide brandId.")
+    public String getBrandCategories(String brandId) {
+        try {
+            return objectMapper.writeValueAsString(categoryController.getBrandCategories(UUID.fromString(brandId)).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Create brand category. Provide brandId and JSON string of CategoryDTO.")
+    public String createBrandCategory(String brandId, String categoryDtoJson) {
+        try {
+            com.fooddelivery.restaurant.dto.CategoryDTO dto = objectMapper.readValue(categoryDtoJson, com.fooddelivery.restaurant.dto.CategoryDTO.class);
+            return objectMapper.writeValueAsString(categoryController.createBrandCategory(UUID.fromString(brandId), dto).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Get outlet category timings. Provide outletId and categoryId.")
+    public String getOutletCategoryTimings(String outletId, String categoryId) {
+        try {
+            return objectMapper.writeValueAsString(categoryController.getOutletCategoryTimings(UUID.fromString(outletId), UUID.fromString(categoryId)).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Set outlet category timings. Provide outletId and JSON string of SetOutletCategoryTimingRequest.")
+    public String setOutletCategoryTimings(String outletId, String requestJson) {
+        try {
+            com.fooddelivery.restaurant.dto.SetOutletCategoryTimingRequest req = objectMapper.readValue(requestJson, com.fooddelivery.restaurant.dto.SetOutletCategoryTimingRequest.class);
+            return objectMapper.writeValueAsString(categoryController.setOutletCategoryTimings(UUID.fromString(outletId), req).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Get brand category timings. Provide brandId and categoryId.")
+    public String getBrandCategoryTimings(String brandId, String categoryId) {
+        try {
+            return objectMapper.writeValueAsString(categoryController.getBrandCategoryTimings(UUID.fromString(brandId), UUID.fromString(categoryId)).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @Tool(description = "Set brand category timings. Provide brandId and JSON string of SetBrandCategoryTimingRequest.")
+    public String setBrandCategoryTimings(String brandId, String requestJson) {
+        try {
+            com.fooddelivery.restaurant.dto.SetBrandCategoryTimingRequest req = objectMapper.readValue(requestJson, com.fooddelivery.restaurant.dto.SetBrandCategoryTimingRequest.class);
+            return objectMapper.writeValueAsString(categoryController.setBrandCategoryTimings(UUID.fromString(brandId), req).getBody());
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
         }
     }
 }
