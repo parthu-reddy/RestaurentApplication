@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.UUID;
 import java.security.Principal;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/campaigns")
 @PreAuthorize("hasRole('RESTAURANT_OWNER')")
+@Slf4j
 public class CampaignController {
 
     private final AdvertisementClient advertisementClient;

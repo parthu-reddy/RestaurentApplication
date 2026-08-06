@@ -10,8 +10,10 @@ import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class RestaurantMcpService {
 
     private final FulfillmentService fulfillmentService;

@@ -27,9 +27,11 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CatalogService {
 
     private final MasterMenuItemRepository masterMenuItemRepository;

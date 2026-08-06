@@ -15,9 +15,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BrandCategoryTimingService {
 
     private final BrandCategoryTimingRepository brandCategoryTimingRepository;

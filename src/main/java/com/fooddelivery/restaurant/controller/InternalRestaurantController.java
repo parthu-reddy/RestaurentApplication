@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/internal/restaurants")
 @RequiredArgsConstructor
+@Slf4j
 public class InternalRestaurantController {
 
     private final OutletRepository outletRepository;

@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/internal/restaurants/orders")
 @RequiredArgsConstructor
+@Slf4j
 public class InternalOrderController {
 
     private final RestaurantOrderRepository orderRepository;

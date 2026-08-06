@@ -18,9 +18,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OutletCategoryTimingService {
 
     private final OutletCategoryTimingRepository outletCategoryTimingRepository;

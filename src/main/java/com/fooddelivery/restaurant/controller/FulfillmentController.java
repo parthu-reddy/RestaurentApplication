@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/v1/restaurants/{restaurantId}/fulfillment")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.principal)")
+@Slf4j
 public class FulfillmentController {
 
     private final FulfillmentService fulfillmentService;
