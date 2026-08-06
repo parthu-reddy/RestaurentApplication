@@ -36,4 +36,16 @@ public class TerminalState implements RestaurantOrderState {
     public void handleManualInterventionRequired(com.fooddelivery.restaurant.service.state.RestaurantOrderContext ctx) {
         log.warn("handleManualInterventionRequired ignored in TerminalState for order {}", ctx.getOrder().getOrderId());
     }
+
+    @Override
+    public void handleOrderDelivered(com.fooddelivery.restaurant.service.state.RestaurantOrderContext ctx) {
+        com.fooddelivery.restaurant.entity.RestaurantOrder order = ctx.getOrder();
+        if (order.getStatus() == com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER) {
+            order.setDeliveryStatus(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED);
+            ctx.getActionService().saveOrder(order);
+            log.info("Order {} successfully marked as DELIVERED in TerminalState.", order.getOrderId());
+        } else {
+            log.warn("Ignoring ORDER_DELIVERED for Order {}. State is: {}", order.getOrderId(), order.getStatus());
+        }
+    }
 }
