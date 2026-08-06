@@ -42,6 +42,10 @@ public class CatalogService {
     private final BrandCategoryTimingRepository brandCategoryTimingRepository;
     private final org.springframework.cache.CacheManager cacheManager;
 
+    @org.springframework.beans.factory.annotation.Autowired
+    @org.springframework.context.annotation.Lazy
+    private CatalogService self;
+
     private void evictOutletMenusForBrand(UUID brandId) {
         org.springframework.cache.Cache cache = cacheManager.getCache("outletMenus");
         if (cache != null) {
@@ -248,98 +252,9 @@ public class CatalogService {
     // Resolves specific items for batch queries
     @Transactional(readOnly = true)
     public List<MenuItemDTO> getEffectiveMenuBatch(UUID outletId, List<UUID> itemIds) {
-        Outlet outlet = outletRepository.findById(outletId)
-                .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
-                
-        List<MasterMenuItem> masterItems = masterMenuItemRepository.findByIdIn(itemIds);
-        List<OutletMenuOverride> overrides = outletMenuOverrideRepository.findByOutletId(outletId);
-        List<OutletCategoryTiming> categoryTimings = outletCategoryTimingRepository.findByOutletId(outletId);
-        List<BrandCategoryTiming> brandTimings = brandCategoryTimingRepository.findByBrandId(outlet.getBrandId());
-        List<Category> allCategories = categoryRepository.findActiveCategoriesForBrand(outlet.getBrandId());
-        
-        Map<UUID, String> categoryNames = allCategories.stream()
-            .collect(Collectors.toMap(Category::getId, Category::getName));
-        
-        Map<UUID, OutletMenuOverride> overrideMap = overrides.stream()
-            .collect(Collectors.toMap(OutletMenuOverride::getMasterMenuItemId, o -> o, (o1, o2) -> o1));
-            
-        Map<UUID, List<OutletCategoryTiming>> timingsByCategory = categoryTimings.stream()
-            .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
-            
-        Map<UUID, List<BrandCategoryTiming>> brandTimingsByCategory = brandTimings.stream()
-            .collect(Collectors.groupingBy(t -> t.getCategory().getId()));
-            
-        LocalTime now = LocalTime.now(ZoneId.of("Asia/Kolkata"));
-            
-        return masterItems.stream()
-            .filter(master -> master.getBrandId().equals(outlet.getBrandId()))
-            .map(master -> {
-                OutletMenuOverride override = overrideMap.get(master.getId());
-                boolean isAvail = override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true;
-                
-                // Evaluate category timings
-                if (isAvail && master.getCategoryId() != null) {
-                    List<OutletCategoryTiming> timings = timingsByCategory.get(master.getCategoryId());
-                    
-                    boolean hasOutletTimings = timings != null && !timings.isEmpty();
-                    boolean hasBrandTimings = brandTimingsByCategory.containsKey(master.getCategoryId()) && !brandTimingsByCategory.get(master.getCategoryId()).isEmpty();
-                    
-                    if (hasOutletTimings || hasBrandTimings) {
-                        boolean categoryOpen = false;
-                        
-                        if (hasOutletTimings) {
-                            for (OutletCategoryTiming timing : timings) {
-                                LocalTime start = timing.getOpeningTime();
-                                LocalTime end = timing.getClosingTime();
-                                if (start.isBefore(end) || start.equals(end)) {
-                                    if (!now.isBefore(start) && !now.isAfter(end)) {
-                                        categoryOpen = true;
-                                        break;
-                                    }
-                                } else { // cross-midnight
-                                    if (!now.isBefore(start) || !now.isAfter(end)) {
-                                        categoryOpen = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (hasBrandTimings) {
-                            for (BrandCategoryTiming timing : brandTimingsByCategory.get(master.getCategoryId())) {
-                                LocalTime start = timing.getOpeningTime();
-                                LocalTime end = timing.getClosingTime();
-                                if (start.isBefore(end) || start.equals(end)) {
-                                    if (!now.isBefore(start) && !now.isAfter(end)) {
-                                        categoryOpen = true;
-                                        break;
-                                    }
-                                } else { // cross-midnight
-                                    if (!now.isBefore(start) || !now.isAfter(end)) {
-                                        categoryOpen = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (!categoryOpen) {
-                            isAvail = false; // Override to false if category is currently closed
-                        }
-                    }
-                }
-                    
-                return MenuItemDTO.builder()
-                    .id(master.getId())
-                    .restaurantId(outletId)
-                    .name(master.getName())
-                    .description(master.getDescription())
-                    .price((override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice())
-                            .add(master.getPackingCharge() != null ? master.getPackingCharge() : java.math.BigDecimal.ZERO))
-                    .isAvailable(isAvail)
-                    .prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes())
-                    .imageUrl(master.getImageUrl())
-                    .categoryId(master.getCategoryId())
-                    .categoryName(master.getCategoryId() != null ? categoryNames.get(master.getCategoryId()) : null)
-                    .build();
-        }).collect(Collectors.toList());
+        List<MenuItemDTO> fullMenu = self.getEffectiveMenuForOutlet(outletId);
+        return fullMenu.stream()
+            .filter(item -> itemIds.contains(item.getId()))
+            .collect(Collectors.toList());
     }
 }
