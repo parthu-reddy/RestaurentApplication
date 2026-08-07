@@ -2,22 +2,18 @@ package com.fooddelivery.restaurant.service;
 
 import com.fooddelivery.restaurant.dto.CategoryDTO;
 import com.fooddelivery.restaurant.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class CategoryService {
-    
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
-    
-    @Cacheable(value = "categories", key = "#brandId != null ? #brandId.toString() : 'global'")
+
+    @Cacheable(value = "categories", key = "#brandId != null ? #brandId.toString() : \'global\'")
     public List<CategoryDTO> getActiveCategories(java.util.UUID brandId) {
         List<com.fooddelivery.restaurant.entity.Category> categories;
         if (brandId != null) {
@@ -25,20 +21,7 @@ public class CategoryService {
         } else {
             categories = categoryRepository.findByActiveTrueAndBrandIdIsNull();
         }
-        return categories.stream()
-                .map(cat -> CategoryDTO.builder()
-                        .id(cat.getId())
-                        .brandId(cat.getBrandId())
-                        .name(cat.getName())
-                        .description(cat.getDescription())
-                        .timings(cat.getTimings() != null ? cat.getTimings().stream()
-                                .map(t -> CategoryDTO.CategoryTimingDTO.builder()
-                                        .openingTime(t.getOpeningTime())
-                                        .closingTime(t.getClosingTime())
-                                        .build())
-                                .collect(Collectors.toList()) : null)
-                        .build())
-                .collect(Collectors.toList());
+        return categories.stream().map(cat -> CategoryDTO.builder().id(cat.getId()).brandId(cat.getBrandId()).name(cat.getName()).description(cat.getDescription()).timings(cat.getTimings() != null ? cat.getTimings().stream().map(t -> CategoryDTO.CategoryTimingDTO.builder().openingTime(t.getOpeningTime()).closingTime(t.getClosingTime()).build()).collect(Collectors.toList()) : null).build()).collect(Collectors.toList());
     }
 
     @org.springframework.cache.annotation.CacheEvict(value = "categories", allEntries = true)
@@ -48,7 +31,6 @@ public class CategoryService {
         category.setDescription(categoryDTO.getDescription());
         category.setBrandId(brandId);
         category.setActive(true);
-
         if (categoryDTO.getTimings() != null && !categoryDTO.getTimings().isEmpty()) {
             java.util.List<com.fooddelivery.restaurant.entity.CategoryTiming> timings = categoryDTO.getTimings().stream().map(dto -> {
                 com.fooddelivery.restaurant.entity.CategoryTiming timing = new com.fooddelivery.restaurant.entity.CategoryTiming();
@@ -65,21 +47,8 @@ public class CategoryService {
             defaultTiming.setClosingTime(java.time.LocalTime.of(22, 0));
             category.setTimings(java.util.List.of(defaultTiming));
         }
-
         com.fooddelivery.restaurant.entity.Category saved = categoryRepository.save(category);
-
-        return CategoryDTO.builder()
-                .id(saved.getId())
-                .brandId(saved.getBrandId())
-                .name(saved.getName())
-                .description(saved.getDescription())
-                .timings(saved.getTimings() != null ? saved.getTimings().stream()
-                        .map(t -> CategoryDTO.CategoryTimingDTO.builder()
-                                .openingTime(t.getOpeningTime())
-                                .closingTime(t.getClosingTime())
-                                .build())
-                        .collect(Collectors.toList()) : null)
-                .build();
+        return CategoryDTO.builder().id(saved.getId()).brandId(saved.getBrandId()).name(saved.getName()).description(saved.getDescription()).timings(saved.getTimings() != null ? saved.getTimings().stream().map(t -> CategoryDTO.CategoryTimingDTO.builder().openingTime(t.getOpeningTime()).closingTime(t.getClosingTime()).build()).collect(Collectors.toList()) : null).build();
     }
 
     @org.springframework.context.event.EventListener(org.springframework.boot.context.event.ApplicationReadyEvent.class)
@@ -87,5 +56,10 @@ public class CategoryService {
     public void clearCategoriesCacheOnStartup() {
         // Automatically evict categories cache when application starts up
         // This ensures Redis stays in sync with any Flyway DB migrations.
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CategoryService(final CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 }

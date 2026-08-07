@@ -8,18 +8,14 @@ import com.fooddelivery.common.outbox.entity.OutboxEventEntity;
 import com.fooddelivery.common.outbox.repository.OutboxEventRepository;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class RestaurantActionService {
-
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantActionService.class);
     private final RestaurantOrderRepository orderRepository;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
@@ -31,15 +27,7 @@ public class RestaurantActionService {
     public void publishEvent(String aggregateId, com.fooddelivery.common.constants.EventType eventType, ObjectNode payloadNode) {
         try {
             String payload = objectMapper.writeValueAsString(payloadNode);
-            OutboxEventEntity outboxEvent = OutboxEventEntity.builder()
-                    .id(UUID.randomUUID())
-                    .aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER)
-                    .aggregateId(aggregateId)
-                    .eventType(eventType)
-                    .payload(payload)
-                    .createdAt(LocalDateTime.now())
-                    .status(OutboxStatus.UNPROCESSED)
-                    .build();
+            OutboxEventEntity outboxEvent = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER).aggregateId(aggregateId).eventType(eventType).payload(payload).createdAt(LocalDateTime.now()).status(OutboxStatus.UNPROCESSED).build();
             log.info("Triggering event: {} for aggregate: {}", eventType, aggregateId);
             outboxEventRepository.save(outboxEvent);
             log.info("Saved {} outbox event for order {}", eventType, aggregateId);
@@ -48,8 +36,15 @@ public class RestaurantActionService {
             throw new RuntimeException("Failed to publish event to Kafka", e);
         }
     }
-    
+
     public ObjectNode createPayloadNode() {
         return objectMapper.createObjectNode();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RestaurantActionService(final RestaurantOrderRepository orderRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper) {
+        this.orderRepository = orderRepository;
+        this.outboxEventRepository = outboxEventRepository;
+        this.objectMapper = objectMapper;
     }
 }

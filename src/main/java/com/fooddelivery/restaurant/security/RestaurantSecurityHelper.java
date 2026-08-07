@@ -4,15 +4,11 @@ import com.fooddelivery.restaurant.entity.Brand;
 import com.fooddelivery.restaurant.entity.Outlet;
 import com.fooddelivery.restaurant.repository.BrandRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.util.UUID;
 
 @Component
-@RequiredArgsConstructor
 public class RestaurantSecurityHelper {
-
     private final BrandRepository brandRepository;
     private final OutletRepository outletRepository;
 
@@ -36,5 +32,11 @@ public class RestaurantSecurityHelper {
             return false;
         }
         return isBrandOwner(outlet.getBrandId(), userId);
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RestaurantSecurityHelper(final BrandRepository brandRepository, final OutletRepository outletRepository) {
+        this.brandRepository = brandRepository;
+        this.outletRepository = outletRepository;
     }
 }

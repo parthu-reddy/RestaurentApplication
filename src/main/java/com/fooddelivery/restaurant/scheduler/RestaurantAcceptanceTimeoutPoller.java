@@ -3,19 +3,15 @@ package com.fooddelivery.restaurant.scheduler;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
 import com.fooddelivery.restaurant.service.FulfillmentService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-@Slf4j
-@RequiredArgsConstructor
 public class RestaurantAcceptanceTimeoutPoller {
-
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantAcceptanceTimeoutPoller.class);
     private final RestaurantOrderRepository orderRepository;
     private final FulfillmentService fulfillmentService;
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
@@ -26,10 +22,8 @@ public class RestaurantAcceptanceTimeoutPoller {
         if (!Boolean.TRUE.equals(locked)) {
             return;
         }
-
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(10);
         List<RestaurantOrder> unacceptedOrders = orderRepository.findByStatusAndCreatedAtBefore(com.fooddelivery.restaurant.entity.OrderStatus.CREATED, threshold);
-        
         if (!unacceptedOrders.isEmpty()) {
             log.info("Found {} unaccepted restaurant orders older than 10 minutes. Auto-rejecting...", unacceptedOrders.size());
             for (RestaurantOrder order : unacceptedOrders) {
@@ -41,5 +35,12 @@ public class RestaurantAcceptanceTimeoutPoller {
                 }
             }
         }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public RestaurantAcceptanceTimeoutPoller(final RestaurantOrderRepository orderRepository, final FulfillmentService fulfillmentService, final org.springframework.data.redis.core.StringRedisTemplate redisTemplate) {
+        this.orderRepository = orderRepository;
+        this.fulfillmentService = fulfillmentService;
+        this.redisTemplate = redisTemplate;
     }
 }

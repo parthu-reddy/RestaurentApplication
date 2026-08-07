@@ -8,14 +8,12 @@ import com.fooddelivery.restaurant.entity.MasterMenuItem;
 import com.fooddelivery.restaurant.entity.OutletMenuOverride;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
-
 import java.util.UUID;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 public class RestaurantMcpService {
-
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantMcpService.class);
     private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final RestaurantOnboardingService onboardingService;
@@ -24,13 +22,7 @@ public class RestaurantMcpService {
     private final com.fooddelivery.restaurant.controller.CategoryController categoryController;
     private final ObjectMapper objectMapper;
 
-    public RestaurantMcpService(FulfillmentService fulfillmentService,
-                                com.fooddelivery.restaurant.service.CatalogService catalogService,
-                                RestaurantOnboardingService onboardingService,
-                                com.fooddelivery.restaurant.controller.InternalOrderController internalOrderController,
-                                com.fooddelivery.restaurant.controller.InternalRestaurantController internalRestaurantController,
-                                com.fooddelivery.restaurant.controller.CategoryController categoryController,
-                                ObjectMapper objectMapper) {
+    public RestaurantMcpService(FulfillmentService fulfillmentService, com.fooddelivery.restaurant.service.CatalogService catalogService, RestaurantOnboardingService onboardingService, com.fooddelivery.restaurant.controller.InternalOrderController internalOrderController, com.fooddelivery.restaurant.controller.InternalRestaurantController internalRestaurantController, com.fooddelivery.restaurant.controller.CategoryController categoryController, ObjectMapper objectMapper) {
         this.fulfillmentService = fulfillmentService;
         this.catalogService = catalogService;
         this.onboardingService = onboardingService;
@@ -121,10 +113,7 @@ public class RestaurantMcpService {
     @Tool(description = "Get batch effective menu items. Provide restaurantId and comma separated idsStr.")
     public String getEffectiveMenuBatch(String restaurantId, String idsStr) {
         try {
-            java.util.List<UUID> ids = java.util.Arrays.stream(idsStr.split(","))
-                .map(String::trim)
-                .map(UUID::fromString)
-                .collect(java.util.stream.Collectors.toList());
+            java.util.List<UUID> ids = java.util.Arrays.stream(idsStr.split(",")).map(String::trim).map(UUID::fromString).collect(java.util.stream.Collectors.toList());
             return objectMapper.writeValueAsString(catalogService.getEffectiveMenuBatch(UUID.fromString(restaurantId), ids));
         } catch (Exception e) {
             return "Failed to get batch menu items: " + e.getMessage();
@@ -182,7 +171,6 @@ public class RestaurantMcpService {
     }
 
     // InternalOrderController
-
     @Tool(description = "Internal: Get order status. Provide orderId.")
     public String getInternalOrderStatus(String orderId) {
         try {
@@ -193,7 +181,6 @@ public class RestaurantMcpService {
     }
 
     // InternalRestaurantController
-
     @Tool(description = "Internal: Get outlet IDs by owner. Provide ownerId.")
     public String getOutletIdsByOwner(String ownerId) {
         try {
@@ -204,7 +191,6 @@ public class RestaurantMcpService {
     }
 
     // CategoryController
-
     @Tool(description = "Get global active categories.")
     public String getCategories() {
         try {

@@ -4,11 +4,10 @@ import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderContext;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class PendingDelayState implements RestaurantOrderState {
-    
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PendingDelayState.class);
     private final CreatedState createdState;
 
     public PendingDelayState(CreatedState createdState) {
@@ -26,17 +25,14 @@ public class PendingDelayState implements RestaurantOrderState {
         log.info("Order {} delay requested again by restaurant while in ON_HOLD state", ctx.getOrder().getOrderId());
         createdState.requestDelay(ctx);
     }
-    
+
     @Override
     public void handleDelayApproved(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
         log.info("Order {} delay approved. Proceeding to accept.", order.getOrderId());
-        
         Integer originalAdditional = ctx.getAdditionalPrepTime();
         ctx.setAdditionalPrepTime(null);
-        
         createdState.accept(ctx);
-        
         ctx.setAdditionalPrepTime(originalAdditional);
     }
 
@@ -44,7 +40,6 @@ public class PendingDelayState implements RestaurantOrderState {
     public void handleDelayRejected(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
         log.info("Order {} delay rejected. Rejecting order.", order.getOrderId());
-        
         createdState.reject(ctx);
     }
 

@@ -8,7 +8,6 @@ import com.fooddelivery.restaurant.service.BrandCategoryTimingService;
 import com.fooddelivery.restaurant.dto.SetOutletCategoryTimingRequest;
 import com.fooddelivery.restaurant.dto.SetBrandCategoryTimingRequest;
 import com.fooddelivery.restaurant.dto.TimingDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,18 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
-
 import java.util.List;
 import java.util.UUID;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequiredArgsConstructor
-@Slf4j
 public class CategoryController {
-
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CategoryController.class);
     private final CategoryService categoryService;
     private final OutletCategoryTimingService outletCategoryTimingService;
     private final BrandCategoryTimingService brandCategoryTimingService;
@@ -39,7 +34,7 @@ public class CategoryController {
     }
 
     @PostMapping("/api/v1/categories")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole(\'ADMIN\')")
     public ResponseEntity<ApiResponse<CategoryDTO>> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO created = categoryService.createCategory(categoryDTO, null);
         return ResponseEntity.ok(ApiResponse.success(created, "Category created successfully"));
@@ -52,41 +47,42 @@ public class CategoryController {
     }
 
     @PostMapping("/api/v1/brands/{brandId}/categories")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
-    public ResponseEntity<ApiResponse<CategoryDTO>> createBrandCategory(
-            @PathVariable UUID brandId,
-            @Valid @RequestBody CategoryDTO categoryDTO) {
+    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
+    public ResponseEntity<ApiResponse<CategoryDTO>> createBrandCategory(@PathVariable UUID brandId, @Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO created = categoryService.createCategory(categoryDTO, brandId);
         return ResponseEntity.ok(ApiResponse.success(created, "Brand category created successfully"));
     }
 
     @GetMapping("/api/v1/outlets/{outletId}/categories/{categoryId}/timings")
-    public ResponseEntity<ApiResponse<List<TimingDTO>>> getOutletCategoryTimings(
-            @PathVariable UUID outletId, @PathVariable UUID categoryId) {
+    public ResponseEntity<ApiResponse<List<TimingDTO>>> getOutletCategoryTimings(@PathVariable UUID outletId, @PathVariable UUID categoryId) {
         List<TimingDTO> timings = outletCategoryTimingService.getTimings(outletId, categoryId);
         return ResponseEntity.ok(ApiResponse.success(timings, "Outlet category timings retrieved"));
     }
 
     @PostMapping("/api/v1/outlets/{outletId}/categories/timings")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal))")
-    public ResponseEntity<ApiResponse<List<TimingDTO>>> setOutletCategoryTimings(
-            @PathVariable UUID outletId, @Valid @RequestBody SetOutletCategoryTimingRequest request) {
+    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal))")
+    public ResponseEntity<ApiResponse<List<TimingDTO>>> setOutletCategoryTimings(@PathVariable UUID outletId, @Valid @RequestBody SetOutletCategoryTimingRequest request) {
         List<TimingDTO> timings = outletCategoryTimingService.setTimings(outletId, request);
         return ResponseEntity.ok(ApiResponse.success(timings, "Outlet category timings set successfully"));
     }
 
     @GetMapping("/api/v1/brands/{brandId}/categories/{categoryId}/timings")
-    public ResponseEntity<ApiResponse<List<TimingDTO>>> getBrandCategoryTimings(
-            @PathVariable UUID brandId, @PathVariable UUID categoryId) {
+    public ResponseEntity<ApiResponse<List<TimingDTO>>> getBrandCategoryTimings(@PathVariable UUID brandId, @PathVariable UUID categoryId) {
         List<TimingDTO> timings = brandCategoryTimingService.getTimings(brandId, categoryId);
         return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings retrieved"));
     }
 
     @PostMapping("/api/v1/brands/{brandId}/categories/timings")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
-    public ResponseEntity<ApiResponse<List<TimingDTO>>> setBrandCategoryTimings(
-            @PathVariable UUID brandId, @Valid @RequestBody SetBrandCategoryTimingRequest request) {
+    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
+    public ResponseEntity<ApiResponse<List<TimingDTO>>> setBrandCategoryTimings(@PathVariable UUID brandId, @Valid @RequestBody SetBrandCategoryTimingRequest request) {
         List<TimingDTO> timings = brandCategoryTimingService.setTimings(brandId, request);
         return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings set successfully"));
+    }
+
+    @java.lang.SuppressWarnings("all")
+    public CategoryController(final CategoryService categoryService, final OutletCategoryTimingService outletCategoryTimingService, final BrandCategoryTimingService brandCategoryTimingService) {
+        this.categoryService = categoryService;
+        this.outletCategoryTimingService = outletCategoryTimingService;
+        this.brandCategoryTimingService = brandCategoryTimingService;
     }
 }

@@ -6,26 +6,23 @@ import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderContext;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class ReadyState implements RestaurantOrderState {
+    @java.lang.SuppressWarnings("all")
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ReadyState.class);
 
     @Override
     public void cancel(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.CANCELLED);
         ctx.getActionService().saveOrder(order);
-        
         ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
         payloadNode.put("eventType", EventType.ORDER_CANCELLED_BY_RESTAURANT.name());
         payloadNode.put("orderId", order.getOrderId().toString());
         payloadNode.put("restaurantId", order.getRestaurantId().toString());
         payloadNode.put("reason", ctx.getCancelReason() != null ? ctx.getCancelReason() : "");
-        
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_CANCELLED_BY_RESTAURANT, payloadNode);
     }
-
 
     @Override
     public void handleDriverAtRestaurant(RestaurantOrderContext ctx) {
