@@ -24,6 +24,7 @@ public class FulfillmentService {
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final RestaurantActionService actionService;
     private final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient;
+    private final com.fooddelivery.restaurant.client.OrderClient orderClient;
 
     public java.util.List<RestaurantOrder> getOrdersByRestaurant(UUID restaurantId) {
         return restaurantOrderRepository.findByRestaurantId(restaurantId);
@@ -71,7 +72,8 @@ public class FulfillmentService {
     }
 
     public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, String date, int page, int size) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, org.springframework.data.domain.Sort.by(SORT_FIELD_CREATED_AT).descending());
+        int safeSize = Math.min(size, 100);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, safeSize, org.springframework.data.domain.Sort.by(SORT_FIELD_CREATED_AT).descending());
         java.time.LocalDateTime start = null;
         java.time.LocalDateTime end = null;
         if (date != null && !date.trim().isEmpty()) {
@@ -178,11 +180,29 @@ public class FulfillmentService {
         }
     }
 
+    public void initiatePartialRefund(UUID restaurantId, UUID orderId, java.math.BigDecimal amount) {
+        log.info("Restaurant {} initiating partial refund of {} for order {}", restaurantId, amount, orderId);
+        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+        
+        if (!order.getRestaurantId().equals(restaurantId)) {
+            throw new IllegalArgumentException("Order does not belong to this restaurant");
+        }
+        
+        java.util.Map<String, String> payload = new java.util.HashMap<>();
+        payload.put("amount", amount.toString());
+        
+        org.springframework.http.ResponseEntity<java.util.Map<String, String>> response = orderClient.initiatePartialRefund(orderId, payload);
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException("Failed to initiate partial refund through CustomerApplication: " + response.getStatusCode());
+        }
+    }
+
     @java.lang.SuppressWarnings("all")
-    public FulfillmentService(final OutletRepository outletRepository, final RestaurantOrderRepository restaurantOrderRepository, final RestaurantActionService actionService, final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient) {
+    public FulfillmentService(final OutletRepository outletRepository, final RestaurantOrderRepository restaurantOrderRepository, final RestaurantActionService actionService, final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient, final com.fooddelivery.restaurant.client.OrderClient orderClient) {
         this.outletRepository = outletRepository;
         this.restaurantOrderRepository = restaurantOrderRepository;
         this.actionService = actionService;
         this.deliveryClient = deliveryClient;
+        this.orderClient = orderClient;
     }
 }

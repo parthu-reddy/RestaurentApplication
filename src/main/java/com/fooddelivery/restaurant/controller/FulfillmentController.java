@@ -58,7 +58,7 @@ public class FulfillmentController {
     @PostMapping("/orders/{orderId}/ready")
     public ResponseEntity<ApiResponse<Void>> readyOrder(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
         fulfillmentService.readyOrder(restaurantId, orderId);
-        return ResponseEntity.ok(ApiResponse.success(null, "Order marked as ready for pickup"));
+        return ResponseEntity.ok(ApiResponse.success(null, "Order marked as ready"));
     }
 
     @PostMapping("/orders/{orderId}/cancel")
@@ -66,6 +66,23 @@ public class FulfillmentController {
         String reason = request != null ? request.get("reason") : null;
         fulfillmentService.cancelOrderAfterAccept(restaurantId, orderId, reason);
         return ResponseEntity.ok(ApiResponse.success(null, "Order cancelled"));
+    }
+
+    @PostMapping("/orders/{orderId}/refund/partial")
+    public ResponseEntity<ApiResponse<Void>> partialRefund(@PathVariable UUID restaurantId, @PathVariable UUID orderId, @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> request) {
+        String amountStr = request.get("amount");
+        if (amountStr == null || amountStr.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("amount is required"));
+        }
+        try {
+            java.math.BigDecimal amount = new java.math.BigDecimal(amountStr);
+            fulfillmentService.initiatePartialRefund(restaurantId, orderId, amount);
+            return ResponseEntity.ok(ApiResponse.success(null, "Partial refund requested successfully"));
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Invalid amount format"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
     }
 
     @java.lang.SuppressWarnings("all")

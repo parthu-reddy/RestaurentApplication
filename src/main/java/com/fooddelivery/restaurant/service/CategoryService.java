@@ -58,6 +58,30 @@ public class CategoryService {
         // This ensures Redis stays in sync with any Flyway DB migrations.
     }
 
+    @org.springframework.cache.annotation.CacheEvict(value = "categories", allEntries = true)
+    public CategoryDTO updateCategory(java.util.UUID id, CategoryDTO categoryDTO) {
+        com.fooddelivery.restaurant.entity.Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Category not found"));
+        
+        category.setName(categoryDTO.getName());
+        category.setDescription(categoryDTO.getDescription());
+        
+        if (categoryDTO.getTimings() != null) {
+            category.getTimings().clear();
+            java.util.List<com.fooddelivery.restaurant.entity.CategoryTiming> timings = categoryDTO.getTimings().stream().map(dto -> {
+                com.fooddelivery.restaurant.entity.CategoryTiming timing = new com.fooddelivery.restaurant.entity.CategoryTiming();
+                timing.setCategory(category);
+                timing.setOpeningTime(dto.getOpeningTime());
+                timing.setClosingTime(dto.getClosingTime());
+                return timing;
+            }).collect(Collectors.toList());
+            category.getTimings().addAll(timings);
+        }
+        
+        com.fooddelivery.restaurant.entity.Category saved = categoryRepository.save(category);
+        return CategoryDTO.builder().id(saved.getId()).brandId(saved.getBrandId()).name(saved.getName()).description(saved.getDescription()).timings(saved.getTimings() != null ? saved.getTimings().stream().map(t -> CategoryDTO.CategoryTimingDTO.builder().openingTime(t.getOpeningTime()).closingTime(t.getClosingTime()).build()).collect(Collectors.toList()) : null).build();
+    }
+
     @java.lang.SuppressWarnings("all")
     public CategoryService(final CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;

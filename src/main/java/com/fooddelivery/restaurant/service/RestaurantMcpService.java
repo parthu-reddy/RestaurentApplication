@@ -9,6 +9,7 @@ import com.fooddelivery.restaurant.entity.OutletMenuOverride;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
+import com.fooddelivery.restaurant.dto.*;
 
 @Service
 public class RestaurantMcpService {
@@ -123,7 +124,7 @@ public class RestaurantMcpService {
     @Tool(description = "Onboard a new brand. Provide JSON string of BrandOnboardRequest, and the ownerId.")
     public String onboardBrand(String ownerId, String brandOnboardRequestJson) {
         try {
-            RestaurantOnboardingController.BrandOnboardRequest req = objectMapper.readValue(brandOnboardRequestJson, RestaurantOnboardingController.BrandOnboardRequest.class);
+            BrandOnboardRequest req = objectMapper.readValue(brandOnboardRequestJson, BrandOnboardRequest.class);
             return objectMapper.writeValueAsString(onboardingService.onboardBrand(UUID.fromString(ownerId), req.getName(), req.getGstin(), req.getPan(), req.getCin(), req.getBankAccountNumber(), req.getIfscCode(), req.getLogoUrl()));
         } catch (Exception e) {
             return "Failed to onboard brand: " + e.getMessage();
@@ -133,7 +134,7 @@ public class RestaurantMcpService {
     @Tool(description = "Onboard an outlet for a brand. Provide brandId and JSON string of OutletOnboardRequest.")
     public String onboardOutlet(String brandId, String outletOnboardRequestJson) {
         try {
-            RestaurantOnboardingController.OutletOnboardRequest req = objectMapper.readValue(outletOnboardRequestJson, RestaurantOnboardingController.OutletOnboardRequest.class);
+            OutletOnboardRequest req = objectMapper.readValue(outletOnboardRequestJson, OutletOnboardRequest.class);
             return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getTimings(), req.getBannerUrl(), req.getCuisine(), req.getRating(), req.getReviewsCount(), req.getDeliveryTime(), req.getDeliveryFee(), req.getTags()));
         } catch (Exception e) {
             return "Failed to onboard outlet: " + e.getMessage();

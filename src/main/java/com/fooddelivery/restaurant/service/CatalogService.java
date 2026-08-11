@@ -24,6 +24,8 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.kafka.core.KafkaTemplate;
+import com.fooddelivery.common.constants.KafkaConstants;
 
 @Service
 public class CatalogService {
@@ -36,9 +38,20 @@ public class CatalogService {
     private final OutletCategoryTimingRepository outletCategoryTimingRepository;
     private final BrandCategoryTimingRepository brandCategoryTimingRepository;
     private final org.springframework.cache.CacheManager cacheManager;
+    private final KafkaTemplate<String, String> kafkaTemplate;
     @org.springframework.beans.factory.annotation.Autowired
     @org.springframework.context.annotation.Lazy
     private CatalogService self;
+
+    private void notifyMenuUpdate(UUID brandId) {
+        try {
+            // Notify that a brand's menu has been updated
+            String eventPayload = String.format("{\"brandId\":\"%s\",\"type\":\"MENU_UPDATED\",\"timestamp\":\"%s\"}", brandId, java.time.Instant.now().toString());
+            kafkaTemplate.send(KafkaConstants.TOPIC_MENU_EVENTS, brandId.toString(), eventPayload);
+        } catch (Exception e) {
+            log.error("Failed to send MENU_UPDATED event for brand {}", brandId, e);
+        }
+    }
 
     private void evictOutletMenusForBrand(UUID brandId) {
         org.springframework.cache.Cache cache = cacheManager.getCache("outletMenus");
@@ -70,6 +83,7 @@ public class CatalogService {
         }
         MasterMenuItem savedItem = masterMenuItemRepository.save(item);
         evictOutletMenusForBrand(brandId);
+        notifyMenuUpdate(brandId);
         return savedItem;
     }
 
@@ -99,6 +113,7 @@ public class CatalogService {
         if (updatedItem.getDefaultPrepTimeMinutes() != null) existingItem.setDefaultPrepTimeMinutes(updatedItem.getDefaultPrepTimeMinutes());
         MasterMenuItem savedItem = masterMenuItemRepository.save(existingItem);
         evictOutletMenusForBrand(brandId);
+        notifyMenuUpdate(brandId);
         return savedItem;
     }
 
@@ -115,7 +130,12 @@ public class CatalogService {
         target.setOverriddenPrice(override.getOverriddenPrice());
         if (override.getIsAvailable() != null) target.setIsAvailable(override.getIsAvailable());
         if (override.getOverriddenPrepTimeMinutes() != null) target.setOverriddenPrepTimeMinutes(override.getOverriddenPrepTimeMinutes());
-        return outletMenuOverrideRepository.save(target);
+        OutletMenuOverride saved = outletMenuOverrideRepository.save(target);
+        
+        // Notify for the specific outlet's brand
+        outletRepository.findById(outletId).ifPresent(outlet -> notifyMenuUpdate(outlet.getBrandId()));
+        
+        return saved;
     }
 
     @Transactional(readOnly = true)
@@ -202,7 +222,7 @@ public class CatalogService {
     }
 
     @java.lang.SuppressWarnings("all")
-    public CatalogService(final MasterMenuItemRepository masterMenuItemRepository, final OutletMenuOverrideRepository outletMenuOverrideRepository, final OutletRepository outletRepository, final CategoryRepository categoryRepository, final OutletCategoryTimingRepository outletCategoryTimingRepository, final BrandCategoryTimingRepository brandCategoryTimingRepository, final org.springframework.cache.CacheManager cacheManager) {
+    public CatalogService(final MasterMenuItemRepository masterMenuItemRepository, final OutletMenuOverrideRepository outletMenuOverrideRepository, final OutletRepository outletRepository, final CategoryRepository categoryRepository, final OutletCategoryTimingRepository outletCategoryTimingRepository, final BrandCategoryTimingRepository brandCategoryTimingRepository, final org.springframework.cache.CacheManager cacheManager, final KafkaTemplate<String, String> kafkaTemplate) {
         this.masterMenuItemRepository = masterMenuItemRepository;
         this.outletMenuOverrideRepository = outletMenuOverrideRepository;
         this.outletRepository = outletRepository;
@@ -210,5 +230,6 @@ public class CatalogService {
         this.outletCategoryTimingRepository = outletCategoryTimingRepository;
         this.brandCategoryTimingRepository = brandCategoryTimingRepository;
         this.cacheManager = cacheManager;
+        this.kafkaTemplate = kafkaTemplate;
     }
 }

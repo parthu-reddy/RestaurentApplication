@@ -37,12 +37,15 @@ class OrderEventConsumerTest {
     @Mock
     private TransactionTemplate transactionTemplate;
 
+    @Mock
+    private StringRedisTemplate redisTemplate;
+
     private OrderEventConsumer orderEventConsumer;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, actionService, transactionTemplate);
+        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, actionService, transactionTemplate, redisTemplate);
         lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
             TransactionCallback<?> callback = invocation.getArgument(0);
             return callback.doInTransaction(null);

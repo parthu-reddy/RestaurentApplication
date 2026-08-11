@@ -40,6 +40,13 @@ public class CategoryController {
         return ResponseEntity.ok(ApiResponse.success(created, "Category created successfully"));
     }
 
+    @org.springframework.web.bind.annotation.PutMapping("/api/v1/categories/{categoryId}")
+    @PreAuthorize("hasRole(\'ADMIN\')")
+    public ResponseEntity<ApiResponse<CategoryDTO>> updateCategory(@PathVariable java.util.UUID categoryId, @Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO updated = categoryService.updateCategory(categoryId, categoryDTO);
+        return ResponseEntity.ok(ApiResponse.success(updated, "Category updated successfully"));
+    }
+
     @GetMapping("/api/v1/brands/{brandId}/categories")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getBrandCategories(@PathVariable UUID brandId) {
         List<CategoryDTO> categories = categoryService.getActiveCategories(brandId);

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.UUID;
 import java.util.Map;
 
-@FeignClient(name = "delivery-service")
+@FeignClient(name = "delivery-service", fallback = DeliveryClientFallback.class)
 public interface DeliveryClient {
 
     @GetMapping("/api/v1/internal/admin/delivery/drivers/{driverId}")

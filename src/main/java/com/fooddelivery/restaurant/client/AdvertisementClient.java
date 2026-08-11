@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 import java.util.UUID;
 
-@FeignClient(name = "campaign-service")
+@FeignClient(name = "campaign-service", fallback = AdvertisementClientFallback.class)
 public interface AdvertisementClient {
 
     @PostMapping("/api/v1/campaigns")

@@ -3,6 +3,16 @@ spring:
     name: restaurant-service
   config:
     import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 2000
+            readTimeout: 3000
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids: true
   cache:
     type: redis
     redis:
@@ -10,14 +20,63 @@ spring:
 
 resilience4j:
   retry:
+    configs:
+      default:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
     instances:
       kycApiRetry:
         maxAttempts: 3
         waitDuration: 2s
+      wallet-service:
+        baseConfig: default
+      government-id-service:
+        baseConfig: default
+      customer-service:
+        baseConfig: default
+      advertisement-service:
+        baseConfig: default
+      delivery-service:
+        baseConfig: default
   circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
     instances:
       kycApiCircuitBreaker:
         slidingWindowSize: 10
         failureRateThreshold: 50
         waitDurationInOpenState: 30s
         permittedNumberOfCallsInHalfOpenState: 3
+      wallet-service:
+        baseConfig: default
+      government-id-service:
+        baseConfig: default
+      customer-service:
+        baseConfig: default
+      advertisement-service:
+        baseConfig: default
+      delivery-service:
+        baseConfig: default
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 3s
+    instances:
+      wallet-service:
+        baseConfig: default
+      government-id-service:
+        baseConfig: default
+      customer-service:
+        baseConfig: default
+      advertisement-service:
+        baseConfig: default
+      delivery-service:
+        baseConfig: default

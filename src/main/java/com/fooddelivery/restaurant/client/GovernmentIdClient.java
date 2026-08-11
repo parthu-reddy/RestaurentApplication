@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 import java.util.UUID;
 
-@FeignClient(name = "government-id-validation-service")
+@FeignClient(name = "government-id-validation-service", fallback = GovernmentIdClientFallback.class)
 public interface GovernmentIdClient {
 
     @GetMapping("/api/v1/verification/upload-url")

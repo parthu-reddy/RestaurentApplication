@@ -11,6 +11,8 @@ import com.fooddelivery.common.constants.EventType;
 import com.fooddelivery.common.enums.OutboxStatus;
 import com.fooddelivery.common.enums.VerificationStatus;
 import com.fooddelivery.common.enums.VerificationType;
+import com.fooddelivery.restaurant.dto.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,7 @@ public class RestaurantOnboardingService {
     private final OutletRepository outletRepository;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
+    private final org.springframework.cache.CacheManager cacheManager;
     @Value("${spring.profiles.active:}")
     private String activeProfile;
 
@@ -77,7 +80,7 @@ public class RestaurantOnboardingService {
 
     // Phase 2: Outlet & Geospatial Setup
     @org.springframework.transaction.annotation.Transactional
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, Double deliveryFee, String tags) {
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, Double deliveryFee, String tags) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new IllegalArgumentException("Brand not found"));
         if (!brand.getIsGstinVerified() || !brand.getIsBankVerified()) {
@@ -101,7 +104,7 @@ public class RestaurantOnboardingService {
         Outlet outlet = Outlet.builder().id(UUID.randomUUID()).brandId(brand.getId()).name(name).fssaiLicenseNumber(fssai).location(locationPoint).bannerUrl(bannerUrl).cuisine(cuisine).rating(rating != null ? rating : 0.0).reviewsCount(reviewsCount != null ? reviewsCount : 0).deliveryTime(deliveryTime).deliveryFee(deliveryFee).tags(tags).isActive(true).defaultPrepTimeSeconds(900).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
         List<com.fooddelivery.restaurant.entity.OutletTiming> timings = new java.util.ArrayList<>();
         if (timingsReq != null) {
-            for (com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr : timingsReq) {
+            for (com.fooddelivery.restaurant.dto.TimingRequest tr : timingsReq) {
                 com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder().id(UUID.randomUUID()).outlet(outlet).openingTime(tr.getOpeningTime()).closingTime(tr.getClosingTime()).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
                 timings.add(timing);
             }
@@ -121,6 +124,12 @@ public class RestaurantOnboardingService {
             Map<String, Object> payload = Map.of(KEY_OUTLET_ID, outletId.toString(), KEY_BRAND_ID, outlet.getBrandId().toString(), KEY_IS_ACTIVE, isActive, KEY_TIMESTAMP, LocalDateTime.now().toString());
             OutboxEventEntity event = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(AggregateType.OUTLET).aggregateId(outletId.toString()).eventType(isActive ? EventType.OUTLET_ACTIVATED : EventType.OUTLET_DEACTIVATED).payload(objectMapper.writeValueAsString(payload)).status(OutboxStatus.UNPROCESSED).createdAt(LocalDateTime.now()).retryCount(0).build();
             outboxEventRepository.save(event);
+            
+            // Proactively invalidate menu cache
+            org.springframework.cache.Cache cache = cacheManager.getCache("outletMenus");
+            if (cache != null) {
+                cache.evict(outletId);
+            }
         } catch (Exception e) {
             log.error("Failed to serialize outbox event payload", e);
             throw new RuntimeException("Failed to publish outlet status event", e);
@@ -135,14 +144,20 @@ public class RestaurantOnboardingService {
         }
         outlet.setUpdatedAt(LocalDateTime.now());
         outletRepository.save(outlet);
+        
+        // Proactively invalidate menu cache
+        org.springframework.cache.Cache cache = cacheManager.getCache("outletMenus");
+        if (cache != null) {
+            cache.evict(outletId);
+        }
     }
 
     @org.springframework.transaction.annotation.Transactional
-    public void updateOutletTimings(UUID outletId, List<com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest> timingsReq) {
+    public void updateOutletTimings(UUID outletId, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq) {
         Outlet outlet = outletRepository.findById(outletId).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
         outlet.getTimings().clear();
         if (timingsReq != null) {
-            for (com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr : timingsReq) {
+            for (com.fooddelivery.restaurant.dto.TimingRequest tr : timingsReq) {
                 com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder().id(UUID.randomUUID()).outlet(outlet).openingTime(tr.getOpeningTime()).closingTime(tr.getClosingTime()).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
                 outlet.getTimings().add(timing);
             }
@@ -252,10 +267,11 @@ public class RestaurantOnboardingService {
     }
 
     @java.lang.SuppressWarnings("all")
-    public RestaurantOnboardingService(final BrandRepository brandRepository, final OutletRepository outletRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper) {
+    public RestaurantOnboardingService(final BrandRepository brandRepository, final OutletRepository outletRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper, final org.springframework.cache.CacheManager cacheManager) {
         this.brandRepository = brandRepository;
         this.outletRepository = outletRepository;
         this.outboxEventRepository = outboxEventRepository;
         this.objectMapper = objectMapper;
+        this.cacheManager = cacheManager;
     }
 }
