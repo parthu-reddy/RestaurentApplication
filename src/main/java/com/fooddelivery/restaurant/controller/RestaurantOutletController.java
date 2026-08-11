@@ -215,10 +215,13 @@ public class RestaurantOutletController {
     }
 
     @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")
-    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getAllOutletsWithLocation() {
-        List<Outlet> outlets = onboardingService.getAllOutlets();
-        List<Map<String, Object>> responseList = 
-        outlets.stream().map(outlet -> {
+    public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<Map<String, Object>>>> getAllOutletsWithLocation(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "100") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        org.springframework.data.domain.Page<Outlet> outlets = onboardingService.getAllOutlets(pageable);
+        
+        org.springframework.data.domain.Page<Map<String, Object>> responsePage = outlets.map(outlet -> {
             Map<String, Object> response = new HashMap<>();
             response.put("id", outlet.getId());
             response.put("name", outlet.getName());
@@ -231,7 +234,7 @@ public class RestaurantOutletController {
                 response.put("lng", 0.0);
             }
             return response;
-        }).collect(java.util.stream.Collectors.toList());
-        return ResponseEntity.ok(ApiResponse.success(responseList, "All restaurants with locations fetched"));
+        });
+        return ResponseEntity.ok(ApiResponse.success(responsePage, "All restaurants with locations fetched"));
     }
 }

@@ -193,8 +193,8 @@ public class RestaurantOnboardingService {
         return bankAccountNumber != null && ifscCode != null && bankAccountNumber.length() >= 9;
     }
 
-    public List<Outlet> getAllOutlets() {
-        return outletRepository.findAll();
+    public org.springframework.data.domain.Page<Outlet> getAllOutlets(org.springframework.data.domain.Pageable pageable) {
+        return outletRepository.findAll(pageable);
     }
 
     public List<Outlet> getNearbyOutlets(double lat, double lng, double radiusInKm) {
