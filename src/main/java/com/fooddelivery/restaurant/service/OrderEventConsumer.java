@@ -3,10 +3,10 @@ package com.fooddelivery.restaurant.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fooddelivery.common.constants.EventType;
-import com.fooddelivery.restaurant.entity.IdempotencyKey;
+import com.fooddelivery.common.entity.IdempotencyKey;
 import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
-import com.fooddelivery.restaurant.repository.IdempotencyKeyRepository;
+import com.fooddelivery.common.repository.IIdempotencyKeyRepository;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
 import com.fooddelivery.restaurant.service.state.RestaurantActionService;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderContext;
@@ -27,7 +27,7 @@ public class OrderEventConsumer {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderEventConsumer.class);
     private final ObjectMapper objectMapper;
     private final RestaurantOrderRepository restaurantOrderRepository;
-    private final IdempotencyKeyRepository idempotencyKeyRepository;
+    private final IIdempotencyKeyRepository idempotencyKeyRepository;
     private final RestaurantActionService actionService;
     private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
@@ -169,7 +169,7 @@ public class OrderEventConsumer {
     }
 
     @java.lang.SuppressWarnings("all")
-    public OrderEventConsumer(final ObjectMapper objectMapper, final RestaurantOrderRepository restaurantOrderRepository, final IdempotencyKeyRepository idempotencyKeyRepository, final RestaurantActionService actionService, final org.springframework.transaction.support.TransactionTemplate transactionTemplate, final org.springframework.data.redis.core.StringRedisTemplate redisTemplate, final MeterRegistry meterRegistry) {
+    public OrderEventConsumer(final ObjectMapper objectMapper, final RestaurantOrderRepository restaurantOrderRepository, final IIdempotencyKeyRepository idempotencyKeyRepository, final RestaurantActionService actionService, final org.springframework.transaction.support.TransactionTemplate transactionTemplate, final org.springframework.data.redis.core.StringRedisTemplate redisTemplate, final MeterRegistry meterRegistry) {
         this.objectMapper = objectMapper;
         this.restaurantOrderRepository = restaurantOrderRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;

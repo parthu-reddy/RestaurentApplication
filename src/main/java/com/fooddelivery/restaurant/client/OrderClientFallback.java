@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.UUID;
 
-@Component
+@Component("restaurantOrderClientFallback")
 public class OrderClientFallback implements OrderClient {
     @Override
     public ResponseEntity<Map<String, String>> initiatePartialRefund(UUID orderId, Map<String, String> payload) {

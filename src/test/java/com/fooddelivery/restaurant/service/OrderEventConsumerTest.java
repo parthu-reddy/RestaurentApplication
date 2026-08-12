@@ -5,9 +5,13 @@ import com.fooddelivery.common.constants.EventType;
 import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
+import com.fooddelivery.common.repository.IIdempotencyKeyRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import com.fooddelivery.restaurant.service.state.RestaurantActionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -40,12 +44,19 @@ class OrderEventConsumerTest {
     @Mock
     private StringRedisTemplate redisTemplate;
 
+    @Mock
+    private IIdempotencyKeyRepository idempotencyKeyRepository;
+
+    @Mock
+    private MeterRegistry meterRegistry;
+
     private OrderEventConsumer orderEventConsumer;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         objectMapper = new ObjectMapper();
-        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, actionService, transactionTemplate, redisTemplate);
+        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, idempotencyKeyRepository, actionService, transactionTemplate, redisTemplate, meterRegistry);
         lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
             TransactionCallback<?> callback = invocation.getArgument(0);
             return callback.doInTransaction(null);

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.UUID;
 
-@Component
+@Component("restaurantAdvertisementClientFallback")
 public class AdvertisementClientFallback implements AdvertisementClient {
     @Override
     public Object createCampaign(Map<String, Object> request) {

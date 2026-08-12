@@ -81,7 +81,7 @@ class RestaurantOnboardingServiceTest {
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
         when(outletRepository.save(any(Outlet.class))).thenAnswer(i -> i.getArguments()[0]);
 
-        com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr = new com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest();
+        com.fooddelivery.restaurant.dto.TimingRequest tr = new com.fooddelivery.restaurant.dto.TimingRequest();
         tr.setOpeningTime(LocalTime.of(9, 0));
         tr.setClosingTime(LocalTime.of(22, 0));
 
@@ -105,7 +105,7 @@ class RestaurantOnboardingServiceTest {
                 
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
 
-        com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest tr = new com.fooddelivery.restaurant.controller.RestaurantOnboardingController.TimingRequest();
+        com.fooddelivery.restaurant.dto.TimingRequest tr = new com.fooddelivery.restaurant.dto.TimingRequest();
         tr.setOpeningTime(LocalTime.of(9, 0));
         tr.setClosingTime(LocalTime.of(22, 0));
 

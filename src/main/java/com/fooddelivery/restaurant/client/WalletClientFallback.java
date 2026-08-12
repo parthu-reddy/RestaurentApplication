@@ -7,7 +7,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import java.util.UUID;
 
-@Component
+@Component("restaurantWalletClientFallback")
 public class WalletClientFallback implements WalletClient {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WalletClientFallback.class);
 

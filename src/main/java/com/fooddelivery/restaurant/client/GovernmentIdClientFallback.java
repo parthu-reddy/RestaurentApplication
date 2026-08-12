@@ -5,7 +5,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 import java.util.Map;
 
-@Component
+@Component("restaurantGovernmentIdClientFallback")
 public class GovernmentIdClientFallback implements GovernmentIdClient {
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GovernmentIdClientFallback.class);
 

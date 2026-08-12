@@ -6,8 +6,6 @@ CREATE INDEX IF NOT EXISTS idx_restaurant_orders_restaurant_status_created ON re
 CREATE INDEX IF NOT EXISTS idx_restaurant_orders_status_created ON restaurant_orders(status, created_at);
 CREATE INDEX IF NOT EXISTS idx_restaurant_orders_delivery_exec_id ON restaurant_orders(delivery_executive_id) WHERE delivery_executive_id IS NOT NULL;
 
--- Indexes for outbox events polling and cleanup
-CREATE INDEX IF NOT EXISTS idx_outbox_events_status_created ON outbox_events(status, created_at ASC);
 
 -- Indexes on foreign keys and frequently queried columns to prevent sequential table scans
 CREATE INDEX IF NOT EXISTS idx_brands_owner_id ON brands(owner_id) WHERE owner_id IS NOT NULL;
