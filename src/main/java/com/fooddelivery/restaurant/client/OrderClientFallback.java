@@ -11,4 +11,9 @@ public class OrderClientFallback implements OrderClient {
     public ResponseEntity<Map<String, String>> initiatePartialRefund(UUID orderId, Map<String, String> payload) {
         throw new IllegalStateException("Customer service is currently unavailable. Failing fast to ensure financial integrity.");
     }
+
+    @Override
+    public ResponseEntity<java.util.Map<String, Object>> getOrderInvoice(UUID orderId) {
+        throw new IllegalStateException("Customer service is currently unavailable. Failing fast to ensure financial integrity.");
+    }
 }

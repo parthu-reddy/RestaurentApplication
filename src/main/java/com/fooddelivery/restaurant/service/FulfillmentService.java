@@ -197,6 +197,20 @@ public class FulfillmentService {
         }
     }
 
+    public java.util.Map<String, Object> getOrderInvoice(UUID restaurantId, UUID orderId) {
+        RestaurantOrder order = restaurantOrderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        if (!order.getRestaurantId().equals(restaurantId)) {
+            throw new IllegalArgumentException("Order does not belong to this restaurant");
+        }
+        
+        org.springframework.http.ResponseEntity<java.util.Map<String, Object>> response = orderClient.getOrderInvoice(orderId);
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new RuntimeException("Failed to fetch order invoice from CustomerApplication: " + response.getStatusCode());
+        }
+        return response.getBody();
+    }
+
     @java.lang.SuppressWarnings("all")
     public FulfillmentService(final OutletRepository outletRepository, final RestaurantOrderRepository restaurantOrderRepository, final RestaurantActionService actionService, final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient, final com.fooddelivery.restaurant.client.OrderClient orderClient) {
         this.outletRepository = outletRepository;

@@ -5,6 +5,7 @@ import com.fooddelivery.restaurant.service.FulfillmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
@@ -82,6 +83,18 @@ public class FulfillmentController {
             return ResponseEntity.badRequest().body(ApiResponse.error("Invalid amount format"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/orders/{orderId}/invoice")
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> getOrderInvoice(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
+        try {
+            java.util.Map<String, Object> invoice = fulfillmentService.getOrderInvoice(restaurantId, orderId);
+            return ResponseEntity.ok(ApiResponse.success(invoice, "Invoice retrieved successfully"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to retrieve invoice"));
         }
     }
 
