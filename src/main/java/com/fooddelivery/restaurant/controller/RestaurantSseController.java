@@ -9,8 +9,9 @@ import java.util.UUID;
 import java.util.List;
 
 @RestController
+@lombok.extern.slf4j.Slf4j
 public class RestaurantSseController {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantSseController.class);
+
     private final RestaurantOnboardingService onboardingService;
     private final java.util.concurrent.ScheduledExecutorService scheduler = java.util.concurrent.Executors.newScheduledThreadPool(4);
 

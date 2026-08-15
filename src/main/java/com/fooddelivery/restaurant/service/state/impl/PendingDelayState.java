@@ -4,10 +4,11 @@ import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderContext;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
+@lombok.extern.slf4j.Slf4j
 
 public class PendingDelayState implements RestaurantOrderState {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PendingDelayState.class);
+
     private final CreatedState createdState;
 
     public PendingDelayState(CreatedState createdState) {

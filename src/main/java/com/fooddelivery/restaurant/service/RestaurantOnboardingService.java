@@ -29,9 +29,10 @@ import org.locationtech.jts.geom.PrecisionModel;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@lombok.extern.slf4j.Slf4j
 public class RestaurantOnboardingService {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOnboardingService.class);
+
     private static final String KEY_BRAND_ID = "brandId";
     private static final String KEY_BRAND_NAME = "brandName";
     private static final String KEY_GSTIN = "gstin";

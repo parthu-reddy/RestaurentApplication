@@ -13,9 +13,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 public class RestaurantKycController {
     private final RestaurantOnboardingService onboardingService;
-    private final com.fooddelivery.restaurant.client.GovernmentIdClient governmentIdClient;
+    private final com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient;
 
-    public RestaurantKycController(RestaurantOnboardingService onboardingService, com.fooddelivery.restaurant.client.GovernmentIdClient governmentIdClient) {
+    public RestaurantKycController(RestaurantOnboardingService onboardingService, com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient) {
         this.onboardingService = onboardingService;
         this.governmentIdClient = governmentIdClient;
     }
@@ -37,15 +37,15 @@ public class RestaurantKycController {
 
     @PostMapping("/api/v1/restaurants/verification/brands/gstin")
     @PreAuthorize("hasRole('RESTAURANT')")
-    public ResponseEntity<ApiResponse<Void>> verifyGstin(@Valid @RequestBody com.fooddelivery.restaurant.client.GovernmentIdClient.GstinRequest request) {
+    public ResponseEntity<ApiResponse<Void>> verifyGstin(@Valid @RequestBody com.fooddelivery.common.dto.governmentid.GstinRequest request) {
         governmentIdClient.verifyGstin(request);
         return ResponseEntity.ok(ApiResponse.success(null, "GSTIN verification initiated"));
     }
 
     @PostMapping("/api/v1/restaurants/verification/brands/bank-account")
     @PreAuthorize("hasRole('RESTAURANT')")
-    public ResponseEntity<ApiResponse<Void>> verifyBankAccount(@Valid @RequestBody com.fooddelivery.restaurant.client.GovernmentIdClient.BankAccountRequest request) {
-        governmentIdClient.verifyBankAccount(request);
+    public ResponseEntity<ApiResponse<Void>> verifyBankAccount(@Valid @RequestBody com.fooddelivery.common.dto.governmentid.BankAccountRequest request) {
+        governmentIdClient.verifyBrandBankAccount(request);
         return ResponseEntity.ok(ApiResponse.success(null, "Bank account verification initiated"));
     }
 }

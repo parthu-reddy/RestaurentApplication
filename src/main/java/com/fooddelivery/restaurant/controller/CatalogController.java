@@ -20,9 +20,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import jakarta.validation.Valid;
 
 @RestController
+@lombok.extern.slf4j.Slf4j
 public class CatalogController {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CatalogController.class);
+
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 

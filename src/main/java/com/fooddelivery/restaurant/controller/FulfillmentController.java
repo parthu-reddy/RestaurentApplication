@@ -14,9 +14,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequestMapping("/api/v1/restaurants/{restaurantId}/fulfillment")
 @PreAuthorize("hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.principal)")
+@lombok.extern.slf4j.Slf4j
 public class FulfillmentController {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FulfillmentController.class);
+
     private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 

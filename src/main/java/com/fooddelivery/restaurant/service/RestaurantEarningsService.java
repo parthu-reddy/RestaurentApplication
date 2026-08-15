@@ -1,19 +1,20 @@
 package com.fooddelivery.restaurant.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fooddelivery.restaurant.client.WalletClient;
-import com.fooddelivery.restaurant.dto.WalletDto;
+import com.fooddelivery.common.client.WalletServiceClient;
+import com.fooddelivery.common.dto.wallet.WalletDto;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
+@lombok.extern.slf4j.Slf4j
 public class RestaurantEarningsService {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantEarningsService.class);
-    private final WalletClient walletClient;
 
-    public RestaurantEarningsService(WalletClient walletClient) {
+    private final WalletServiceClient walletClient;
+
+    public RestaurantEarningsService(WalletServiceClient walletClient) {
         this.walletClient = walletClient;
     }
 

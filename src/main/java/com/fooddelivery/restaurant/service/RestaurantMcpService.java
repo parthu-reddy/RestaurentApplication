@@ -12,9 +12,10 @@ import java.util.UUID;
 import com.fooddelivery.restaurant.dto.*;
 
 @Service
+@lombok.extern.slf4j.Slf4j
 public class RestaurantMcpService {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantMcpService.class);
+
     private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final RestaurantOnboardingService onboardingService;

@@ -22,9 +22,10 @@ import io.micrometer.core.instrument.MeterRegistry;
 import java.util.UUID;
 
 @Service
+@lombok.extern.slf4j.Slf4j
 public class OrderEventConsumer {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(OrderEventConsumer.class);
+
     private final ObjectMapper objectMapper;
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final IIdempotencyKeyRepository idempotencyKeyRepository;

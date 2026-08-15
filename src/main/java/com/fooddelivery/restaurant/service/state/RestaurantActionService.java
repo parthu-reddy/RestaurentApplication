@@ -12,10 +12,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import io.micrometer.observation.annotation.Observed;
+
 @Service
+@lombok.extern.slf4j.Slf4j
+@Observed(name = "restaurant.order.processing")
 public class RestaurantActionService {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantActionService.class);
+
     private final RestaurantOrderRepository orderRepository;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;

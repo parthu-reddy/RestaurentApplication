@@ -12,9 +12,10 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api/v1/campaigns")
 @PreAuthorize("hasRole(\'RESTAURANT_OWNER\')")
+@lombok.extern.slf4j.Slf4j
 public class CampaignController {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CampaignController.class);
+
     private final AdvertisementClient advertisementClient;
     private final com.fooddelivery.restaurant.repository.BrandRepository brandRepository;
 

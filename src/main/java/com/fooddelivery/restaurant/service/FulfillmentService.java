@@ -13,9 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 @Service
+@lombok.extern.slf4j.Slf4j
 public class FulfillmentService {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FulfillmentService.class);
+
     private static final String DRIVER_FIELD_ID = "id";
     private static final String DRIVER_FIELD_FULL_NAME = "fullName";
     private static final String DRIVER_FIELD_PHONE_NUMBER = "phoneNumber";

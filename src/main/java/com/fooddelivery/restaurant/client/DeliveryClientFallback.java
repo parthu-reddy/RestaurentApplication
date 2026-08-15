@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.List;
 
 @Component("restaurantDeliveryClientFallback")
+@lombok.extern.slf4j.Slf4j
 public class DeliveryClientFallback implements DeliveryClient {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DeliveryClientFallback.class);
 
     @Override
     public ResponseEntity<Map<String, Object>> getDriverById(UUID driverId) {

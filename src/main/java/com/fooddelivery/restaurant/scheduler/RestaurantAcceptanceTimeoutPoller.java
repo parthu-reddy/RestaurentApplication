@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
+@lombok.extern.slf4j.Slf4j
 public class RestaurantAcceptanceTimeoutPoller {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantAcceptanceTimeoutPoller.class);
+
     private final RestaurantOrderRepository orderRepository;
     private final FulfillmentService fulfillmentService;
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;

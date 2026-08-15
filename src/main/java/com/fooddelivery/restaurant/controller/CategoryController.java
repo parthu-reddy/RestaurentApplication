@@ -20,9 +20,10 @@ import java.util.UUID;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
+@lombok.extern.slf4j.Slf4j
 public class CategoryController {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CategoryController.class);
+
     private final CategoryService categoryService;
     private final OutletCategoryTimingService outletCategoryTimingService;
     private final BrandCategoryTimingService brandCategoryTimingService;

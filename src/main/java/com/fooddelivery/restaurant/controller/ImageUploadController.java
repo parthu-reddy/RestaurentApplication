@@ -19,9 +19,10 @@ import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/v1/images")
+@lombok.extern.slf4j.Slf4j
 public class ImageUploadController {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ImageUploadController.class);
+
     private final CloudflareR2Service cloudflareR2Service;
 
     @PostMapping("/upload")

@@ -15,9 +15,10 @@ import com.fooddelivery.common.constants.PaymentIntentStatus;
 
 @Entity
 @Table(name = "restaurant_orders", indexes = {@jakarta.persistence.Index(name = "idx_rest_order_restaurant", columnList = "restaurantId"), @jakarta.persistence.Index(name = "idx_rest_order_status", columnList = "status")})
+@lombok.extern.slf4j.Slf4j
 public class RestaurantOrder {
     @java.lang.SuppressWarnings("all")
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrder.class);
+
     @Id
     @Column(name = "order_id")
     private UUID orderId;

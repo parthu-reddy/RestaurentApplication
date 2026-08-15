@@ -3,9 +3,9 @@ package com.fooddelivery.restaurant.service.state.impl;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+@lombok.extern.slf4j.Slf4j
 
 public class TerminalState implements RestaurantOrderState {
-    private static final Logger log = LoggerFactory.getLogger(TerminalState.class);
 
     @Override
     public void handleOrderPaid(com.fooddelivery.restaurant.service.state.RestaurantOrderContext ctx) {

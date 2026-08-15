@@ -142,9 +142,7 @@ public interface RestaurantOrderState {
     }
 
     default void handleManualInterventionRequired(RestaurantOrderContext ctx) {
-        // Log explicitly using simple name
-        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrderState.class);
-        log.warn("handleManualInterventionRequired ignored in state: {}", this.getClass().getSimpleName());
+        // Ignored by default
     }
 
     default void handleDeliveryFailed(RestaurantOrderContext ctx) {
@@ -154,12 +152,9 @@ public interface RestaurantOrderState {
         }
         order.setStatus(com.fooddelivery.restaurant.entity.OrderStatus.CANCELLED);
         ctx.getActionService().saveOrder(order);
-        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrderState.class);
-        log.info("Order {} cancelled in RestaurantApplication due to DELIVERY_FAILED", order.getOrderId());
     }
 
     default void handleOrderDelivered(RestaurantOrderContext ctx) {
-        org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(RestaurantOrderState.class);
-        log.warn("handleOrderDelivered ignored in state: {}", this.getClass().getSimpleName());
+        // Ignored by default
     }
 }
