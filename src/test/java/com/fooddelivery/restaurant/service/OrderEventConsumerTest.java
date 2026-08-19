@@ -73,7 +73,7 @@ class OrderEventConsumerTest {
 
         when(restaurantOrderRepository.existsById(orderId)).thenReturn(false);
 
-        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, null));
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, new java.util.HashMap<>()));
         
         ArgumentCaptor<RestaurantOrder> captor = ArgumentCaptor.forClass(RestaurantOrder.class);
         verify(actionService).saveOrder(captor.capture());
@@ -92,6 +92,6 @@ class OrderEventConsumerTest {
 
         when(restaurantOrderRepository.findById(orderId)).thenReturn(Optional.empty());
 
-        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, null));
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, new java.util.HashMap<>()));
     }
 }

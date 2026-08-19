@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Configuration
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "spring.redis.enabled", matchIfMissing = true)
 @EnableCaching
 public class RedisCacheConfig {
 

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.UUID;
 import java.util.Map;
 
-@FeignClient(name = "customer-service", fallback = OrderClientFallback.class)
+@FeignClient(name = "customer-application", fallback = OrderClientFallback.class)
 public interface OrderClient {
 
     @PostMapping("/api/v1/internal/orders/{orderId}/partial-refund")

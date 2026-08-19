@@ -2,3 +2,8 @@ spring:
   cloud:
     config:
       enabled: false
+
+
+stubrunner:
+  stubsMode: REMOTE
+  repositoryRoot: git://https://github.com/parthu-reddy/FoodDeliveryContracts.git

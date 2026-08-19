@@ -147,7 +147,7 @@ public class OrderEventConsumer {
     @DltHandler
     public void handleDlt(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
         log.error("DLT processing: Message exhausted all retries in RestaurantApplication. Message: {}, Headers: {}", message, headers);
-        meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-service").increment();
+        meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 
     private void handleOrderPaid(JsonNode root, UUID orderId) {
