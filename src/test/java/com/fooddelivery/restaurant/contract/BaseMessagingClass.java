@@ -16,12 +16,19 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootTest(classes = BaseMessagingClass.TestConfig.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@org.springframework.test.context.ActiveProfiles("contract-test")
 @AutoConfigureMessageVerifier
 @EmbeddedKafka(partitions = 1, topics = {"restaurant-events", "menu-events"})
 public abstract class BaseMessagingClass {
 
-    @org.springframework.boot.test.context.TestConfiguration
-    
+    @org.springframework.boot.SpringBootConfiguration
+    @org.springframework.boot.autoconfigure.EnableAutoConfiguration(exclude = {
+            org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration.class,
+            org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class,
+            org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration.class,
+            org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration.class,
+            org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration.class
+    })
     static class TestConfig {
         @Bean
         public KafkaMessageVerifier kafkaMessageVerifier() {
@@ -37,29 +44,53 @@ public abstract class BaseMessagingClass {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    public void fireRestaurantAccepted() {
-        String payload = """
-{
-  "eventId": "res-222",
-  "type": "ORDER_ACCEPTED",
-  "payload": {
-    "orderId": 1001,
-    "restaurantId": 501
-  }
-}""";
-        kafkaTemplate.send("restaurant-events", payload);
+    @Autowired
+    private com.fasterxml.jackson.databind.ObjectMapper objectMapper;
+
+    /** Mirrors RestaurantOnboardingService's BRAND_CREATED payload (BRAND aggregate). */
+    public void fireRestaurantAccepted() throws Exception {
+        String brandId = "9c8b7a65-1e2d-4f30-b5a6-7c8d9e0f1a23";
+        java.util.Map<String, Object> payload = java.util.Map.of(
+                "brandId", brandId,
+                "brandName", "Pizza Hub",
+                "gstin", "29ABCDE1234F1Z5",
+                "bankAccountNumber", "1234567890",
+                "ifscCode", "HDFC0001234",
+                "timestamp", java.time.LocalDateTime.now().toString());
+        publishViaOutbox(com.fooddelivery.common.constants.AggregateType.BRAND, brandId,
+                com.fooddelivery.common.constants.EventType.BRAND_CREATED, payload);
     }
+    /** Mirrors CatalogService.notifyMenuUpdate exactly (private method, so replicated here). */
     public void fireMenuUpdated() {
-        String payload = """
-{
-  "eventId": "menu-333",
-  "type": "MENU_UPDATED",
-  "payload": {
-    "restaurantId": 501,
-    "itemId": "item-88"
-  }
-}""";
-        kafkaTemplate.send("menu-events", payload);
+        java.util.UUID brandId = java.util.UUID.fromString("9c8b7a65-1e2d-4f30-b5a6-7c8d9e0f1a23");
+        String payload = String.format("{\"brandId\":\"%s\",\"type\":\"MENU_UPDATED\",\"timestamp\":\"%s\"}",
+                brandId, java.time.Instant.now().toString());
+        kafkaTemplate.send(com.fooddelivery.common.constants.KafkaConstants.TOPIC_MENU_EVENTS,
+                brandId.toString(), payload);
+    }
+
+
+    /** Drives the real OutboxProcessor: real topic routing, real key, real eventType header. */
+    protected void publishViaOutbox(com.fooddelivery.common.constants.AggregateType aggregateType,
+                                    String aggregateId,
+                                    com.fooddelivery.common.constants.EventType eventType,
+                                    Object payloadObject) throws Exception {
+        com.fooddelivery.common.outbox.entity.OutboxEventEntity outboxEvent =
+                com.fooddelivery.common.outbox.entity.OutboxEventEntity.builder()
+                        .id(java.util.UUID.randomUUID())
+                        .aggregateType(aggregateType)
+                        .aggregateId(aggregateId)
+                        .eventType(eventType)
+                        .payload(payloadObject instanceof String
+                                ? (String) payloadObject
+                                : objectMapper.writeValueAsString(payloadObject))
+                        .createdAt(java.time.LocalDateTime.now())
+                        .build();
+        com.fooddelivery.common.outbox.repository.OutboxEventRepository repo =
+                org.mockito.Mockito.mock(com.fooddelivery.common.outbox.repository.OutboxEventRepository.class);
+        org.mockito.Mockito.when(repo.findTop100ByStatusInOrderByCreatedAtAsc(org.mockito.ArgumentMatchers.anyList()))
+                .thenReturn(new java.util.ArrayList<>(java.util.List.of(outboxEvent)));
+        new com.fooddelivery.common.outbox.service.OutboxProcessor(repo, kafkaTemplate).processOutboxEvents();
     }
 
 }
