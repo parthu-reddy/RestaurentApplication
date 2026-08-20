@@ -1,36 +1,19 @@
 spring:
-  kafka:
-    listener:
-      observation-enabled: true
-    template:
-      observation-enabled: true
   application:
     name: restaurant-service
   config:
-    import: optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
-  cloud:
-    openfeign:
-      client:
-        config:
-          default:
-            connectTimeout: 2000
-            readTimeout: 3000
-      circuitbreaker:
-        enabled: true
-        alphanumeric-ids: true
+    import: optional:classpath:config/platform-defaults.yml,optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}
   cache:
     type: redis
     redis:
       time-to-live: 1h
-
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids: true
 resilience4j:
   retry:
-    configs:
-      default:
-        maxAttempts: 3
-        waitDuration: 500ms
-        enableExponentialBackoff: true
-        exponentialBackoffMultiplier: 2
     instances:
       kycApiRetry:
         maxAttempts: 3
@@ -46,14 +29,6 @@ resilience4j:
       delivery-service:
         baseConfig: default
   circuitbreaker:
-    configs:
-      default:
-        slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        permittedNumberOfCallsInHalfOpenState: 3
-        automaticTransitionFromOpenToHalfOpenEnabled: true
     instances:
       kycApiCircuitBreaker:
         slidingWindowSize: 10
@@ -71,9 +46,6 @@ resilience4j:
       delivery-service:
         baseConfig: default
   timelimiter:
-    configs:
-      default:
-        timeoutDuration: 3s
     instances:
       wallet-service:
         baseConfig: default
@@ -85,13 +57,3 @@ resilience4j:
         baseConfig: default
       delivery-service:
         baseConfig: default
-
-
-management:
-  tracing:
-    enabled: true
-    sampling:
-      probability: 1.0
-  otlp:
-    tracing:
-      endpoint: http://localhost:4318/v1/traces

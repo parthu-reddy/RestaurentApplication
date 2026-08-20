@@ -54,7 +54,8 @@ public class RestaurantContractConsumerTest {
     @Test
     public void testInitiatePartialRefund() {
         Map<String, String> payload = new java.util.HashMap<>();
-        payload.put("reason", "Item missing");
+        // Mirrors FulfillmentService.initiatePartialRefund, which sends {"amount": ...} and nothing else.
+        payload.put("amount", "25.00");
 
         org.springframework.http.ResponseEntity<Map<String, String>> response = orderClient.initiatePartialRefund(
                 java.util.UUID.fromString("123e4567-e89b-12d3-a456-426614174000"), payload);
@@ -62,7 +63,9 @@ public class RestaurantContractConsumerTest {
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
-        assertEquals("REFUND_INITIATED", response.getBody().get("status"));
+        // partialRefund returns ApiResponse.success(...) -> {success, message, data}.
+        // the Feign client is typed Map<String, String>, so this arrives as the string "true"
+        assertEquals("true", response.getBody().get("success"));
     }
 
     @Test
@@ -73,8 +76,9 @@ public class RestaurantContractConsumerTest {
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
-        assertEquals("INV-123", response.getBody().get("invoiceId"));
-        assertEquals(100.0, response.getBody().get("amount"));
+        // getOrderInvoice returns OrderResponse; there is no invoiceId field, and the money
+        // field is totalAmount.
+        assertEquals(100.0, response.getBody().get("totalAmount"));
     }
 
     @Test

@@ -1,6 +1,8 @@
 package com.fooddelivery.restaurant.controller;
 
+import com.fooddelivery.common.dto.ApiResponse;
 import com.fooddelivery.restaurant.entity.Outlet;
+import com.fooddelivery.restaurant.repository.MasterMenuItemRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ public class InternalRestaurantController {
     @java.lang.SuppressWarnings("all")
 
     private final OutletRepository outletRepository;
+    private final MasterMenuItemRepository masterMenuItemRepository;
 
     @GetMapping("/owner/{ownerId}/outlets")
     public ResponseEntity<List<String>> getOwnerOutlets(@PathVariable UUID ownerId) {
@@ -22,8 +25,21 @@ public class InternalRestaurantController {
         return ResponseEntity.ok(outletIds);
     }
 
+    @GetMapping("/outlets/{outletId}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> outletExists(@PathVariable String outletId) {
+        boolean exists = outletRepository.existsById(UUID.fromString(outletId));
+        return ResponseEntity.ok(ApiResponse.success(exists, "Outlet existence check completed"));
+    }
+
+    @GetMapping("/products/{productId}/exists")
+    public ResponseEntity<ApiResponse<Boolean>> productExists(@PathVariable String productId) {
+        boolean exists = masterMenuItemRepository.existsById(UUID.fromString(productId));
+        return ResponseEntity.ok(ApiResponse.success(exists, "Product existence check completed"));
+    }
+
     @java.lang.SuppressWarnings("all")
-    public InternalRestaurantController(final OutletRepository outletRepository) {
+    public InternalRestaurantController(final OutletRepository outletRepository, final MasterMenuItemRepository masterMenuItemRepository) {
         this.outletRepository = outletRepository;
+        this.masterMenuItemRepository = masterMenuItemRepository;
     }
 }

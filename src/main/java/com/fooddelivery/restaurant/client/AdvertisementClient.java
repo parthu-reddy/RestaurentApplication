@@ -12,12 +12,12 @@ import java.util.UUID;
 @FeignClient(name = "campaign-service", fallback = AdvertisementClientFallback.class)
 public interface AdvertisementClient {
 
-    @PostMapping("/api/v1/campaigns")
-    Object createCampaign(@RequestBody Map<String, Object> request);
+    @PostMapping("/api/v1/advertisers/{restaurantId}/campaigns")
+    Object createCampaign(@PathVariable UUID restaurantId, @RequestBody Map<String, Object> request);
 
-    @GetMapping("/api/v1/campaigns/restaurant/{restaurantId}")
+    @GetMapping("/api/v1/advertisers/{restaurantId}/campaigns")
     Object getCampaigns(@PathVariable UUID restaurantId);
 
-    @PutMapping("/api/v1/campaigns/{campaignId}/pause")
-    Object pauseCampaign(@PathVariable UUID campaignId);
+    @PostMapping("/api/v1/advertisers/{restaurantId}/campaigns/{campaignId}/pause")
+    Object pauseCampaign(@PathVariable UUID restaurantId, @PathVariable UUID campaignId);
 }

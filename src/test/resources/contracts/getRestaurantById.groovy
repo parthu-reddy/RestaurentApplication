@@ -1,6 +1,12 @@
 
 import org.springframework.cloud.contract.spec.Contract
 
+/*
+ * Corrected 2026-08-20. This asserted id/name at the ROOT. getRestaurant returns
+ * ResponseEntity<ApiResponse<Map<String,Object>>>, i.e. {success, message, data:{...}}, so the
+ * contract omitted the envelope and could never pass. Its sibling getNearbyRestaurants.groovy
+ * already models the envelope correctly.
+ */
 Contract.make {
     description("should return restaurant by id")
     request {
@@ -13,8 +19,11 @@ Contract.make {
             contentType applicationJson()
         }
         body([
-            id: $(producer(regex('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'))),
-            name: 'Test Restaurant'
+            success: true,
+            data: [
+                id: $(producer(regex('[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}'))),
+                name: 'Test Restaurant'
+            ]
         ])
     }
 }

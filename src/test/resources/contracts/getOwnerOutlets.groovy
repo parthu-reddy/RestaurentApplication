@@ -1,5 +1,13 @@
 package contracts
 import org.springframework.cloud.contract.spec.Contract
+/*
+ * Corrected 2026-08-20. This asserted a list of objects {id, name, address, status}.
+ * InternalRestaurantController.getOwnerOutlets returns ResponseEntity<List<String>> -- a JSON array
+ * of outlet id strings -- so the contract could never pass.
+ *
+ * The duplicate placeholder sample.groovy, which asserted [] for this same endpoint, was deleted:
+ * two contracts on one route with incompatible bodies cannot both hold against one fixture.
+ */
 Contract.make {
     request {
         method 'GET'
@@ -11,12 +19,7 @@ Contract.make {
             contentType(applicationJson())
         }
         body([
-            [
-                id: "123e4567-e89b-12d3-a456-426614174001",
-                name: "Outlet 1",
-                address: "123 Main St",
-                status: "OPEN"
-            ]
+            "123e4567-e89b-12d3-a456-426614174000"
         ])
     }
 }
