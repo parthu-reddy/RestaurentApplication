@@ -20,7 +20,7 @@ public class Outlet {
     private UUID brandId;
     @Column(name = "name")
     private String name;
-    @Column(name = "fssai_license_number")
+    @Column(name = "fssai_license_number", unique = true)
     private String fssaiLicenseNumber;
     @JsonIgnore
     @Column(name = "location", columnDefinition = "geometry(Point, 4326)")

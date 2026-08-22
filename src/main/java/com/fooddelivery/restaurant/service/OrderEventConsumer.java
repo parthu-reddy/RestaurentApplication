@@ -65,8 +65,9 @@ public class OrderEventConsumer {
                 idempotencyKeyRepository.save(new IdempotencyKey(idempotencyKeyStr));
 
                 try {
-                    JsonNode root = objectMapper.readTree(message);
-                    String eventType = com.fooddelivery.common.util.KafkaHeaderUtils.extractEventType(headers, root);
+                    JsonNode rootNode = objectMapper.readTree(message);
+                    String eventType = com.fooddelivery.common.util.KafkaHeaderUtils.extractEventType(headers, rootNode);
+                    JsonNode root = rootNode;
                     if (eventType == null) {
                         log.warn("Event type is missing in order event: {}", message);
                         return null;

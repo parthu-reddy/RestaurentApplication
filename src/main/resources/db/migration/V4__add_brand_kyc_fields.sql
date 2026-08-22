@@ -1,4 +1,0 @@
-ALTER TABLE brands ADD COLUMN legal_entity_name VARCHAR(255);
-ALTER TABLE brands ADD COLUMN kyc_status VARCHAR(50) DEFAULT 'PENDING';
-ALTER TABLE brands ADD COLUMN bank_beneficiary_name VARCHAR(255);
-ALTER TABLE brands ADD COLUMN penny_drop_status VARCHAR(50) DEFAULT 'PENDING';

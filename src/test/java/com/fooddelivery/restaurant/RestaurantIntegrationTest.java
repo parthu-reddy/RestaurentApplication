@@ -7,9 +7,11 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.springframework.kafka.test.context.EmbeddedKafka;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@org.junit.jupiter.api.Disabled("Disabled as there is no Postgres instance for testing locally and Testcontainers are forbidden by rule.")
+@EmbeddedKafka(partitions = 1, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092" })
 public class RestaurantIntegrationTest extends BaseIntegrationTest {
 
     @Test

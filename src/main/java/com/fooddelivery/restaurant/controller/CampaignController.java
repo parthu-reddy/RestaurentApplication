@@ -38,21 +38,35 @@ public class CampaignController {
         }
         UUID restaurantId = UUID.fromString(request.get("restaurantId").toString());
         verifyOwnership(restaurantId, principal);
-        Object response = advertisementClient.createCampaign(request);
+        UUID advertiserId = getAdvertiserId(restaurantId);
+        Object response = advertisementClient.createCampaign(advertiserId, request);
         return ResponseEntity.ok(ApiResponse.success(response, "Campaign created successfully"));
     }
 
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<ApiResponse<Object>> getCampaigns(@PathVariable UUID restaurantId, Principal principal) {
         verifyOwnership(restaurantId, principal);
-        Object response = advertisementClient.getCampaigns(restaurantId);
+        UUID advertiserId = getAdvertiserId(restaurantId);
+        Object response = advertisementClient.getCampaigns(advertiserId);
         return ResponseEntity.ok(ApiResponse.success(response, "Campaigns fetched successfully"));
     }
 
     @PutMapping("/{campaignId}/pause")
     public ResponseEntity<ApiResponse<Object>> pauseCampaign(@PathVariable UUID campaignId, @RequestParam UUID restaurantId, Principal principal) {
         verifyOwnership(restaurantId, principal);
-        Object response = advertisementClient.pauseCampaign(campaignId);
+        UUID advertiserId = getAdvertiserId(restaurantId);
+        Object response = advertisementClient.pauseCampaign(advertiserId, campaignId);
         return ResponseEntity.ok(ApiResponse.success(response, "Campaign paused successfully"));
+    }
+
+    private UUID getAdvertiserId(UUID restaurantId) {
+        Map<String, Object> apiResponse = advertisementClient.getAdvertiserByExternalRef(restaurantId.toString());
+        if (apiResponse != null && apiResponse.containsKey("data")) {
+            Map<String, Object> data = (Map<String, Object>) apiResponse.get("data");
+            if (data != null && data.containsKey("id")) {
+                return UUID.fromString(data.get("id").toString());
+            }
+        }
+        throw new IllegalStateException("Could not resolve advertiser for the given restaurant");
     }
 }

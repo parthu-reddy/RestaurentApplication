@@ -6,18 +6,24 @@ import java.util.UUID;
 
 @Component("restaurantAdvertisementClientFallback")
 public class AdvertisementClientFallback implements AdvertisementClient {
+
     @Override
-    public Object createCampaign(Map<String, Object> request) {
+    public Map<String, Object> getAdvertiserByExternalRef(String externalRef) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 
     @Override
-    public Object getCampaigns(UUID restaurantId) {
+    public Object createCampaign(UUID advertiserId, Map<String, Object> request) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 
     @Override
-    public Object pauseCampaign(UUID campaignId) {
+    public Object getCampaigns(UUID advertiserId) {
+        throw new IllegalStateException("Campaign service is currently unavailable.");
+    }
+
+    @Override
+    public Object pauseCampaign(UUID advertiserId, UUID campaignId) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 }

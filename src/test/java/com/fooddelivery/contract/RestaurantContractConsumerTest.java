@@ -19,7 +19,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @ActiveProfiles("contract-test")
 @SpringBootTest(classes = RestaurantContractConsumerTest.TestConfig.class, webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = {
-    "stubrunner.idsToServiceIds.food-delivery-backend=customer-application"
+    // Stub ids are Maven artifactIds; Feign resolves by spring.application.name. These two
+    // differ for these services, so the stub must be registered under the name the client asks for.
+    "stubrunner.idsToServiceIds.food-delivery-backend=customer-service",
+    "stubrunner.idsToServiceIds.delivery-executive-application=delivery-service"
 })
 @AutoConfigureStubRunner(ids = { "com.fooddelivery:food-delivery-backend:+:stubs:8090", "com.fooddelivery:delivery-executive-application:+:stubs:8092" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class RestaurantContractConsumerTest {
@@ -30,13 +33,8 @@ public class RestaurantContractConsumerTest {
     @MockBean
     private com.fooddelivery.restaurant.client.DeliveryClientFallback deliveryClientFallback;
 
-    @MockBean
-    private com.fooddelivery.restaurant.client.AdvertisementClientFallback advertisementClientFallback;
-
     @Autowired
     private com.fooddelivery.restaurant.client.OrderClient orderClient;
-    @Autowired
-    private com.fooddelivery.restaurant.client.AdvertisementClient advertisementClient;
     @Autowired
     private com.fooddelivery.restaurant.client.DeliveryClient deliveryClient;
 
@@ -89,8 +87,11 @@ public class RestaurantContractConsumerTest {
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
-        assertEquals("Test Driver", response.getBody().get("name"));
-        assertEquals("AVAILABLE", response.getBody().get("status"));
+        // DeliveryExecutive serialises fullName, not name, and DeliveryExecutiveStatus is
+        // OFFLINE | ONLINE | ON_DELIVERY -- there is no AVAILABLE. The contract has been correct
+        // since 2026-08-20; these assertions had not caught up.
+        assertEquals("Test Driver", response.getBody().get("fullName"));
+        assertEquals("ONLINE", response.getBody().get("status"));
     }
 
     @Test
@@ -104,6 +105,8 @@ public class RestaurantContractConsumerTest {
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
-        assertEquals("Test Driver", response.getBody().get(0).get("name"));
+        assertEquals("Test Driver", response.getBody().get(0).get("fullName"));
     }
+
+
 }

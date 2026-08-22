@@ -18,9 +18,9 @@ public class Brand {
     private UUID ownerId;
     @Column(name = "name")
     private String name;
-    @Column(name = "gstin")
+    @Column(name = "gstin", unique = true)
     private String gstin;
-    @Column(name = "pan")
+    @Column(name = "pan", unique = true)
     private String pan;
     @Column(name = "cin")
     private String cin;

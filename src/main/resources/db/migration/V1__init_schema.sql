@@ -15,7 +15,13 @@ CREATE TABLE brands (
     updated_at TIMESTAMP,
     version INTEGER DEFAULT 0,
     logo_url VARCHAR(1024),
-    median_price DOUBLE PRECISION DEFAULT 0.0
+    median_price DOUBLE PRECISION DEFAULT 0.0,
+    legal_entity_name VARCHAR(255),
+    kyc_status VARCHAR(50) DEFAULT 'PENDING',
+    bank_beneficiary_name VARCHAR(255),
+    penny_drop_status VARCHAR(50) DEFAULT 'PENDING',
+    CONSTRAINT uq_brands_pan UNIQUE (pan),
+    CONSTRAINT uq_brands_gstin  UNIQUE (gstin)
 );
 
 CREATE TABLE categories (
@@ -25,10 +31,6 @@ CREATE TABLE categories (
     active BOOLEAN DEFAULT true,
     brand_id UUID REFERENCES brands(id)
 );
-
-CREATE INDEX idx_categories_brand_id ON categories(brand_id);
-CREATE UNIQUE INDEX uq_categories_brand_name ON categories (brand_id, name) WHERE brand_id IS NOT NULL;
-CREATE UNIQUE INDEX uq_categories_global_name ON categories (name) WHERE brand_id IS NULL;
 
 CREATE TABLE outlets (
     id UUID PRIMARY KEY,
@@ -47,7 +49,8 @@ CREATE TABLE outlets (
     delivery_time INTEGER,
     delivery_fee DOUBLE PRECISION,
     tags TEXT,
-    default_prep_time_seconds INTEGER DEFAULT 900
+    default_prep_time_seconds INTEGER DEFAULT 900,
+    CONSTRAINT uq_outlets_fssai UNIQUE (fssai_license_number)
 );
 
 CREATE TABLE master_menu_items (
@@ -59,7 +62,8 @@ CREATE TABLE master_menu_items (
     default_prep_time_minutes INTEGER DEFAULT 15 CHECK (default_prep_time_minutes >= 0),
     version INTEGER DEFAULT 0,
     image_url VARCHAR(1024),
-    category_id UUID REFERENCES categories(id)
+    category_id UUID REFERENCES categories(id),
+    packing_charge DECIMAL(10,2) DEFAULT 0.00 NOT NULL
 );
 
 CREATE TABLE outlet_menu_overrides (
@@ -81,7 +85,6 @@ CREATE TABLE outlet_timings (
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
-CREATE INDEX idx_outlet_timings_outlet_id ON outlet_timings(outlet_id);
 
 CREATE TABLE category_timings (
     id UUID PRIMARY KEY,
@@ -92,7 +95,6 @@ CREATE TABLE category_timings (
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );
-CREATE INDEX idx_category_timings_category_id ON category_timings(category_id);
 
 CREATE TABLE outlet_category_timings (
     id UUID PRIMARY KEY,
@@ -104,8 +106,6 @@ CREATE TABLE outlet_category_timings (
     updated_at TIMESTAMP WITHOUT TIME ZONE,
     version INTEGER
 );
-CREATE INDEX idx_outlet_category_timings_outlet_id ON outlet_category_timings(outlet_id);
-CREATE INDEX idx_outlet_category_timings_category_id ON outlet_category_timings(category_id);
 
 CREATE TABLE brand_category_timings (
     id UUID PRIMARY KEY,
@@ -117,8 +117,6 @@ CREATE TABLE brand_category_timings (
     updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     version INTEGER DEFAULT 0
 );
-CREATE INDEX idx_brand_category_timings_brand_id ON brand_category_timings(brand_id);
-CREATE INDEX idx_brand_category_timings_category_id ON brand_category_timings(category_id);
 
 CREATE TABLE restaurant_orders (
     order_id UUID PRIMARY KEY,
@@ -137,7 +135,41 @@ CREATE TABLE restaurant_orders (
     pickup_otp VARCHAR(255),
     estimated_completion_time BIGINT CHECK (estimated_completion_time >= 0),
     rider_name VARCHAR(255),
-    rider_phone VARCHAR(255)
+    delivery_status VARCHAR(50),
+    payment_status VARCHAR(50),
+    customer_name VARCHAR(255),
+    delivery_executive_id UUID
 );
 
+CREATE INDEX idx_categories_brand_id ON categories(brand_id);
 
+CREATE UNIQUE INDEX uq_categories_brand_name ON categories (brand_id, name) WHERE brand_id IS NOT NULL;
+
+CREATE UNIQUE INDEX uq_categories_global_name ON categories (name) WHERE brand_id IS NULL;
+
+CREATE INDEX idx_outlet_timings_outlet_id ON outlet_timings(outlet_id);
+
+CREATE INDEX idx_category_timings_category_id ON category_timings(category_id);
+
+CREATE INDEX idx_outlet_category_timings_outlet_id ON outlet_category_timings(outlet_id);
+
+CREATE INDEX idx_outlet_category_timings_category_id ON outlet_category_timings(category_id);
+
+CREATE INDEX idx_brand_category_timings_brand_id ON brand_category_timings(brand_id);
+
+CREATE INDEX idx_brand_category_timings_category_id ON brand_category_timings(category_id);
+
+CREATE INDEX IF NOT EXISTS idx_outlets_location_gist ON outlets USING GIST (location);
+
+CREATE INDEX IF NOT EXISTS idx_restaurant_orders_status_created ON restaurant_orders(status, created_at);
+
+CREATE INDEX IF NOT EXISTS idx_restaurant_orders_delivery_exec_id ON restaurant_orders(delivery_executive_id) WHERE delivery_executive_id IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_outlets_brand_id ON outlets(brand_id);
+
+CREATE INDEX IF NOT EXISTS idx_master_menu_items_brand_id ON master_menu_items(brand_id);
+
+CREATE INDEX IF NOT EXISTS idx_outlet_menu_overrides_outlet_item ON outlet_menu_overrides(outlet_id, master_menu_item_id);
+
+CREATE INDEX IF NOT EXISTS idx_restaurant_orders_restaurant_status_created ON restaurant_orders(restaurant_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_brands_owner_id ON brands(owner_id) WHERE owner_id IS NOT NULL;

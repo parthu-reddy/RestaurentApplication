@@ -1,6 +1,48 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     config:
       enabled: false
+  # RateLimitingService and its RateLimitConfig are
+  # @ConditionalOnProperty("spring.redis.enabled", matchIfMissing = true), so they activate by
+  # default and LettuceBasedProxyManager opens a real Redis connection at context refresh. Nothing
+  # in this service injects RateLimitingService -- it is only picked up by the com.fooddelivery
+  # component scan -- so switching it off is safe.
+  #
+  # The Redis autoconfiguration itself is deliberately left ON: RestaurantAcceptanceTimeoutPoller
+  # needs StringRedisTemplate, and that connects lazily, so no server is required at startup.
+  redis:
+    enabled: false
+  # CategoryService.clearCategoriesCacheOnStartup is @CacheEvict on ApplicationReadyEvent, so the
+  # cache abstraction is exercised during startup. With the Redis-backed CacheManager that means a
+  # live connection before any test runs; the no-op manager makes it harmless. Redis
+  # autoconfiguration itself stays on so StringRedisTemplate is still injectable.
+  cache:
+    type: none
+  kafka:
+    listener:
+      # The app's @KafkaListeners would otherwise poll localhost:9092 for the whole run. These
+      # tests assert database constraints only and consume no events.
+      auto-startup: false
 stubrunner:
   stubsMode: LOCAL
+
+# CloudflareR2Service is @ConditionalOnExpression("!'${r2.endpoint:}'.isEmpty()"), and
+# ImageUploadController injects it unconditionally -- so with no r2.endpoint the bean is absent and
+# the whole context fails to build. Production supplies these from R2_* environment variables; the
+# contract-test profile already carries the same dummy block.
+r2:
+  endpoint: http://dummy
+  bucket-name: dummy
+  public-url: http://dummy
+  access-key: dummy
+  secret-key: dummy
+
+# A @SpringBootTest with RANDOM_PORT starts the full app, which otherwise tries to register with
+# Eureka at localhost:8761 and fails the context on connection refused.
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
