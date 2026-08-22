@@ -9,9 +9,11 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 import com.fooddelivery.common.outbox.config.EnableOutbox;
 
-@SpringBootApplication(scanBasePackages = {"com.fooddelivery"})
-@org.springframework.boot.autoconfigure.domain.EntityScan(basePackages = {"com.fooddelivery"})
-@org.springframework.data.jpa.repository.config.EnableJpaRepositories(basePackages = {"com.fooddelivery.restaurant", "com.fooddelivery.common"})
+@SpringBootApplication(
+    scanBasePackages = {"com.fooddelivery", "com.fooddelivery.common"}
+)
+@org.springframework.boot.autoconfigure.domain.EntityScan(basePackages = {"com.fooddelivery", "com.fooddelivery.common.entity"})
+@org.springframework.data.jpa.repository.config.EnableJpaRepositories(basePackages = {"com.fooddelivery", "com.fooddelivery.common.repository"})
 @EnableScheduling
 @EnableOutbox
 @EnableFeignClients
