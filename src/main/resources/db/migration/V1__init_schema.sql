@@ -141,11 +141,41 @@ CREATE TABLE restaurant_orders (
     delivery_executive_id UUID
 );
 
-CREATE INDEX idx_categories_brand_id ON categories(brand_id);
+
 
 CREATE UNIQUE INDEX uq_categories_brand_name ON categories (brand_id, name) WHERE brand_id IS NOT NULL;
 
 CREATE UNIQUE INDEX uq_categories_global_name ON categories (name) WHERE brand_id IS NULL;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE INDEX idx_categories_brand_id ON categories(brand_id);
 
 CREATE INDEX idx_outlet_timings_outlet_id ON outlet_timings(outlet_id);
 
@@ -172,4 +202,5 @@ CREATE INDEX IF NOT EXISTS idx_master_menu_items_brand_id ON master_menu_items(b
 CREATE INDEX IF NOT EXISTS idx_outlet_menu_overrides_outlet_item ON outlet_menu_overrides(outlet_id, master_menu_item_id);
 
 CREATE INDEX IF NOT EXISTS idx_restaurant_orders_restaurant_status_created ON restaurant_orders(restaurant_id, status, created_at DESC);
+
 CREATE INDEX IF NOT EXISTS idx_brands_owner_id ON brands(owner_id) WHERE owner_id IS NOT NULL;
