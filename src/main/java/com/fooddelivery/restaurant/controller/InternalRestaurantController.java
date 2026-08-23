@@ -15,6 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/api/v1/internal/restaurants")
 @lombok.extern.slf4j.Slf4j
 @PreAuthorize("hasRole('SERVICE')")
+@lombok.RequiredArgsConstructor
 public class InternalRestaurantController {
 private final OutletRepository outletRepository;
     private final MasterMenuItemRepository masterMenuItemRepository;
@@ -37,8 +38,4 @@ private final OutletRepository outletRepository;
         return ResponseEntity.ok(ApiResponse.success(exists, "Product existence check completed"));
     }
 
-public InternalRestaurantController(final OutletRepository outletRepository, final MasterMenuItemRepository masterMenuItemRepository) {
-        this.outletRepository = outletRepository;
-        this.masterMenuItemRepository = masterMenuItemRepository;
-    }
 }

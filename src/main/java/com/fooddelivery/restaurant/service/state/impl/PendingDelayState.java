@@ -6,12 +6,10 @@ import com.fooddelivery.restaurant.service.state.RestaurantOrderContext;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
 @lombok.extern.slf4j.Slf4j
 
+@lombok.RequiredArgsConstructor
 public class PendingDelayState implements RestaurantOrderState {
 private final CreatedState createdState;
 
-    public PendingDelayState(CreatedState createdState) {
-        this.createdState = createdState;
-    }
 
     @Override
     public void accept(RestaurantOrderContext ctx) {

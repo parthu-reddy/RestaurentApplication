@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class CategoryService {
 private final CategoryRepository categoryRepository;
 
@@ -81,7 +82,4 @@ private final CategoryRepository categoryRepository;
         return CategoryDTO.builder().id(saved.getId()).brandId(saved.getBrandId()).name(saved.getName()).description(saved.getDescription()).timings(saved.getTimings() != null ? saved.getTimings().stream().map(t -> CategoryDTO.CategoryTimingDTO.builder().openingTime(t.getOpeningTime()).closingTime(t.getClosingTime()).build()).collect(Collectors.toList()) : null).build();
     }
 
-public CategoryService(final CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 }

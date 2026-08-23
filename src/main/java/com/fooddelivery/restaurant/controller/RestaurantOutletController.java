@@ -247,3 +247,4 @@ public class RestaurantOutletController {
         return ResponseEntity.ok(ApiResponse.success(responsePage, "All restaurants with locations fetched"));
     }
 }
+// @Getter

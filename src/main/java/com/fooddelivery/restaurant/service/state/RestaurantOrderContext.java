@@ -292,3 +292,4 @@ public java.lang.String toString() {
         return "RestaurantOrderContext(order=" + this.getOrder() + ", eventPayload=" + this.getEventPayload() + ", actionService=" + this.getActionService() + ", restaurantId=" + this.getRestaurantId() + ", additionalPrepTime=" + this.getAdditionalPrepTime() + ", delayReason=" + this.getDelayReason() + ", cancelReason=" + this.getCancelReason() + ", rejectReason=" + this.getRejectReason() + ", restaurantLat=" + this.getRestaurantLat() + ", restaurantLng=" + this.getRestaurantLng() + ")";
     }
 }
+// @Getter

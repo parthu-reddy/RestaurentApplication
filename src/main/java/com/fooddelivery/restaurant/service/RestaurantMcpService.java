@@ -13,6 +13,7 @@ import com.fooddelivery.restaurant.dto.*;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class RestaurantMcpService {
 private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
@@ -22,15 +23,6 @@ private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.controller.CategoryController categoryController;
     private final ObjectMapper objectMapper;
 
-    public RestaurantMcpService(FulfillmentService fulfillmentService, com.fooddelivery.restaurant.service.CatalogService catalogService, RestaurantOnboardingService onboardingService, com.fooddelivery.restaurant.controller.InternalOrderController internalOrderController, com.fooddelivery.restaurant.controller.InternalRestaurantController internalRestaurantController, com.fooddelivery.restaurant.controller.CategoryController categoryController, ObjectMapper objectMapper) {
-        this.fulfillmentService = fulfillmentService;
-        this.catalogService = catalogService;
-        this.onboardingService = onboardingService;
-        this.internalOrderController = internalOrderController;
-        this.internalRestaurantController = internalRestaurantController;
-        this.categoryController = categoryController;
-        this.objectMapper = objectMapper;
-    }
 
     @Tool(description = "Accept an incoming order. Provide restaurantId, orderId, optional additionalPrepTime (in minutes), and delayReason if additional time is needed.")
     public String acceptOrder(String restaurantId, String orderId, Integer additionalPrepTime, String delayReason) {
@@ -267,3 +259,4 @@ private final FulfillmentService fulfillmentService;
         }
     }
 }
+// @Getter

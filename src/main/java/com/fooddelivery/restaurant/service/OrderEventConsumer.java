@@ -23,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class OrderEventConsumer {
 private final ObjectMapper objectMapper;
     private final RestaurantOrderRepository restaurantOrderRepository;
@@ -48,13 +49,12 @@ private final ObjectMapper objectMapper;
         
         try {
             transactionTemplate.execute(status -> {
-                // DB-backed Idempotency check inside the transaction
-                if (idempotencyKeyRepository.existsById(idempotencyKeyStr)) {
+                // Atomic claim: INSERT .. ON CONFLICT DO NOTHING. existsById-then-save was a
+                // check-then-act race -- two consumers could both observe "absent" and both process.
+                if (idempotencyKeyRepository.tryClaim(idempotencyKeyStr) == 0) {
                     log.info("Duplicate event detected (key={}), ignoring.", idempotencyKeyStr);
                     return null;
                 }
-                // Save idempotency key
-                idempotencyKeyRepository.save(new IdempotencyKey(idempotencyKeyStr));
 
                 try {
                     JsonNode rootNode = objectMapper.readTree(message);
@@ -162,13 +162,4 @@ private final ObjectMapper objectMapper;
         log.info("Restaurant {} received new paid order {} with estimated prep time {}m. Awaiting restaurant staff to accept/reject.", restaurantId, orderId, estimatedPrepTimeMinutes);
     }
 
-public OrderEventConsumer(final ObjectMapper objectMapper, final RestaurantOrderRepository restaurantOrderRepository, final IIdempotencyKeyRepository idempotencyKeyRepository, final RestaurantActionService actionService, final org.springframework.transaction.support.TransactionTemplate transactionTemplate, final org.springframework.data.redis.core.StringRedisTemplate redisTemplate, final MeterRegistry meterRegistry) {
-        this.objectMapper = objectMapper;
-        this.restaurantOrderRepository = restaurantOrderRepository;
-        this.idempotencyKeyRepository = idempotencyKeyRepository;
-        this.actionService = actionService;
-        this.transactionTemplate = transactionTemplate;
-        this.redisTemplate = redisTemplate;
-        this.meterRegistry = meterRegistry;
-    }
 }

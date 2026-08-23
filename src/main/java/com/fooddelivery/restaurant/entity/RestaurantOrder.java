@@ -16,6 +16,11 @@ import com.fooddelivery.common.constants.PaymentIntentStatus;
 @Entity
 @Table(name = "restaurant_orders", indexes = {@jakarta.persistence.Index(name = "idx_rest_order_restaurant", columnList = "restaurantId"), @jakarta.persistence.Index(name = "idx_rest_order_status", columnList = "status")})
 @lombok.extern.slf4j.Slf4j
+@lombok.Getter
+@lombok.Setter
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 public class RestaurantOrder {
 @Id
     @Column(name = "order_id")
@@ -89,509 +94,49 @@ public class RestaurantOrder {
     }
 
 
-public static class RestaurantOrderBuilder {
-private UUID orderId;
-private UUID restaurantId;
-private OrderStatus status;
-private com.fooddelivery.common.enums.DeliveryStatus deliveryStatus;
-private PaymentIntentStatus paymentStatus;
-private Integer version;
-private Integer prepTime;
-private Integer additionalPrepTime;
-private Long estimatedCompletionTime;
-private Double deliveryLat;
-private Double deliveryLng;
-private String deliveryAddress;
-private String pickupOtp;
-private String deliveryOtp;
-private UUID deliveryExecutiveId;
-private String customerName;
-private String riderName;
-private String itemsJson;
-private LocalDateTime createdAt;
-private LocalDateTime updatedAt;
-
-RestaurantOrderBuilder() {
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder orderId(final UUID orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder restaurantId(final UUID restaurantId) {
-            this.restaurantId = restaurantId;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder status(final OrderStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder deliveryStatus(final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus) {
-            this.deliveryStatus = deliveryStatus;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder paymentStatus(final PaymentIntentStatus paymentStatus) {
-            this.paymentStatus = paymentStatus;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder version(final Integer version) {
-            this.version = version;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder prepTime(final Integer prepTime) {
-            this.prepTime = prepTime;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder additionalPrepTime(final Integer additionalPrepTime) {
-            this.additionalPrepTime = additionalPrepTime;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder estimatedCompletionTime(final Long estimatedCompletionTime) {
-            this.estimatedCompletionTime = estimatedCompletionTime;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder deliveryLat(final Double deliveryLat) {
-            this.deliveryLat = deliveryLat;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder deliveryLng(final Double deliveryLng) {
-            this.deliveryLng = deliveryLng;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder deliveryAddress(final String deliveryAddress) {
-            this.deliveryAddress = deliveryAddress;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder pickupOtp(final String pickupOtp) {
-            this.pickupOtp = pickupOtp;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder deliveryOtp(final String deliveryOtp) {
-            this.deliveryOtp = deliveryOtp;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder deliveryExecutiveId(final UUID deliveryExecutiveId) {
-            this.deliveryExecutiveId = deliveryExecutiveId;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder customerName(final String customerName) {
-            this.customerName = customerName;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder riderName(final String riderName) {
-            this.riderName = riderName;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder itemsJson(final String itemsJson) {
-            this.itemsJson = itemsJson;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder createdAt(final LocalDateTime createdAt) {
-            this.createdAt = createdAt;
-            return this;
-        }
-
-        /**
-         * @return {@code this}.
-         */
-public RestaurantOrder.RestaurantOrderBuilder updatedAt(final LocalDateTime updatedAt) {
-            this.updatedAt = updatedAt;
-            return this;
-        }
-
-public RestaurantOrder build() {
-            return new RestaurantOrder(this.orderId, this.restaurantId, this.status, this.deliveryStatus, this.paymentStatus, this.version, this.prepTime, this.additionalPrepTime, this.estimatedCompletionTime, this.deliveryLat, this.deliveryLng, this.deliveryAddress, this.pickupOtp, this.deliveryOtp, this.deliveryExecutiveId, this.customerName, this.riderName, this.itemsJson, this.createdAt, this.updatedAt);
-        }
-
-        @java.lang.Override
-public java.lang.String toString() {
-            return "RestaurantOrder.RestaurantOrderBuilder(orderId=" + this.orderId + ", restaurantId=" + this.restaurantId + ", status=" + this.status + ", deliveryStatus=" + this.deliveryStatus + ", paymentStatus=" + this.paymentStatus + ", version=" + this.version + ", prepTime=" + this.prepTime + ", additionalPrepTime=" + this.additionalPrepTime + ", estimatedCompletionTime=" + this.estimatedCompletionTime + ", deliveryLat=" + this.deliveryLat + ", deliveryLng=" + this.deliveryLng + ", deliveryAddress=" + this.deliveryAddress + ", pickupOtp=" + this.pickupOtp + ", deliveryOtp=" + this.deliveryOtp + ", deliveryExecutiveId=" + this.deliveryExecutiveId + ", customerName=" + this.customerName + ", riderName=" + this.riderName + ", itemsJson=" + this.itemsJson + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ")";
-        }
-    }
-
-public static RestaurantOrder.RestaurantOrderBuilder builder() {
-        return new RestaurantOrder.RestaurantOrderBuilder();
-    }
-
-public UUID getOrderId() {
-        return this.orderId;
-    }
-
-public UUID getRestaurantId() {
-        return this.restaurantId;
-    }
-
-public OrderStatus getStatus() {
-        return this.status;
-    }
-
-public com.fooddelivery.common.enums.DeliveryStatus getDeliveryStatus() {
-        return this.deliveryStatus;
-    }
-
-public PaymentIntentStatus getPaymentStatus() {
-        return this.paymentStatus;
-    }
-
-public Integer getVersion() {
-        return this.version;
-    }
-
-public Integer getPrepTime() {
-        return this.prepTime;
-    }
-
-public Integer getAdditionalPrepTime() {
-        return this.additionalPrepTime;
-    }
-
-public Long getEstimatedCompletionTime() {
-        return this.estimatedCompletionTime;
-    }
-
-public Double getDeliveryLat() {
-        return this.deliveryLat;
-    }
-
-public Double getDeliveryLng() {
-        return this.deliveryLng;
-    }
-
-public String getDeliveryAddress() {
-        return this.deliveryAddress;
-    }
-
-public String getPickupOtp() {
-        return this.pickupOtp;
-    }
-
-public String getDeliveryOtp() {
-        return this.deliveryOtp;
-    }
-
-public UUID getDeliveryExecutiveId() {
-        return this.deliveryExecutiveId;
-    }
-
-public String getCustomerName() {
-        return this.customerName;
-    }
-
-public String getRiderName() {
-        return this.riderName;
-    }
-
-public String getItemsJson() {
-        return this.itemsJson;
-    }
-
-public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-public void setOrderId(final UUID orderId) {
-        this.orderId = orderId;
-    }
-
-public void setRestaurantId(final UUID restaurantId) {
-        this.restaurantId = restaurantId;
-    }
-
-public void setDeliveryStatus(final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus) {
-        this.deliveryStatus = deliveryStatus;
-    }
-
-public void setPaymentStatus(final PaymentIntentStatus paymentStatus) {
-        this.paymentStatus = paymentStatus;
-    }
-
-public void setVersion(final Integer version) {
-        this.version = version;
-    }
-
-public void setPrepTime(final Integer prepTime) {
-        this.prepTime = prepTime;
-    }
-
-public void setAdditionalPrepTime(final Integer additionalPrepTime) {
-        this.additionalPrepTime = additionalPrepTime;
-    }
-
-public void setEstimatedCompletionTime(final Long estimatedCompletionTime) {
-        this.estimatedCompletionTime = estimatedCompletionTime;
-    }
-
-public void setDeliveryLat(final Double deliveryLat) {
-        this.deliveryLat = deliveryLat;
-    }
-
-public void setDeliveryLng(final Double deliveryLng) {
-        this.deliveryLng = deliveryLng;
-    }
-
-public void setDeliveryAddress(final String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-public void setPickupOtp(final String pickupOtp) {
-        this.pickupOtp = pickupOtp;
-    }
-
-public void setDeliveryOtp(final String deliveryOtp) {
-        this.deliveryOtp = deliveryOtp;
-    }
-
-public void setDeliveryExecutiveId(final UUID deliveryExecutiveId) {
-        this.deliveryExecutiveId = deliveryExecutiveId;
-    }
-
-public void setCustomerName(final String customerName) {
-        this.customerName = customerName;
-    }
-
-public void setRiderName(final String riderName) {
-        this.riderName = riderName;
-    }
-
-public void setItemsJson(final String itemsJson) {
-        this.itemsJson = itemsJson;
-    }
-
-public void setCreatedAt(final LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-public void setUpdatedAt(final LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    @java.lang.Override
-public boolean equals(final java.lang.Object o) {
-        if (o == this) return true;
-        if (!(o instanceof RestaurantOrder)) return false;
-        final RestaurantOrder other = (RestaurantOrder) o;
-        if (!other.canEqual((java.lang.Object) this)) return false;
-        final java.lang.Object this$version = this.getVersion();
-        final java.lang.Object other$version = other.getVersion();
-        if (this$version == null ? other$version != null : !this$version.equals(other$version)) return false;
-        final java.lang.Object this$prepTime = this.getPrepTime();
-        final java.lang.Object other$prepTime = other.getPrepTime();
-        if (this$prepTime == null ? other$prepTime != null : !this$prepTime.equals(other$prepTime)) return false;
-        final java.lang.Object this$additionalPrepTime = this.getAdditionalPrepTime();
-        final java.lang.Object other$additionalPrepTime = other.getAdditionalPrepTime();
-        if (this$additionalPrepTime == null ? other$additionalPrepTime != null : !this$additionalPrepTime.equals(other$additionalPrepTime)) return false;
-        final java.lang.Object this$estimatedCompletionTime = this.getEstimatedCompletionTime();
-        final java.lang.Object other$estimatedCompletionTime = other.getEstimatedCompletionTime();
-        if (this$estimatedCompletionTime == null ? other$estimatedCompletionTime != null : !this$estimatedCompletionTime.equals(other$estimatedCompletionTime)) return false;
-        final java.lang.Object this$deliveryLat = this.getDeliveryLat();
-        final java.lang.Object other$deliveryLat = other.getDeliveryLat();
-        if (this$deliveryLat == null ? other$deliveryLat != null : !this$deliveryLat.equals(other$deliveryLat)) return false;
-        final java.lang.Object this$deliveryLng = this.getDeliveryLng();
-        final java.lang.Object other$deliveryLng = other.getDeliveryLng();
-        if (this$deliveryLng == null ? other$deliveryLng != null : !this$deliveryLng.equals(other$deliveryLng)) return false;
-        final java.lang.Object this$orderId = this.getOrderId();
-        final java.lang.Object other$orderId = other.getOrderId();
-        if (this$orderId == null ? other$orderId != null : !this$orderId.equals(other$orderId)) return false;
-        final java.lang.Object this$restaurantId = this.getRestaurantId();
-        final java.lang.Object other$restaurantId = other.getRestaurantId();
-        if (this$restaurantId == null ? other$restaurantId != null : !this$restaurantId.equals(other$restaurantId)) return false;
-        final java.lang.Object this$status = this.getStatus();
-        final java.lang.Object other$status = other.getStatus();
-        if (this$status == null ? other$status != null : !this$status.equals(other$status)) return false;
-        final java.lang.Object this$deliveryStatus = this.getDeliveryStatus();
-        final java.lang.Object other$deliveryStatus = other.getDeliveryStatus();
-        if (this$deliveryStatus == null ? other$deliveryStatus != null : !this$deliveryStatus.equals(other$deliveryStatus)) return false;
-        final java.lang.Object this$paymentStatus = this.getPaymentStatus();
-        final java.lang.Object other$paymentStatus = other.getPaymentStatus();
-        if (this$paymentStatus == null ? other$paymentStatus != null : !this$paymentStatus.equals(other$paymentStatus)) return false;
-        final java.lang.Object this$deliveryAddress = this.getDeliveryAddress();
-        final java.lang.Object other$deliveryAddress = other.getDeliveryAddress();
-        if (this$deliveryAddress == null ? other$deliveryAddress != null : !this$deliveryAddress.equals(other$deliveryAddress)) return false;
-        final java.lang.Object this$pickupOtp = this.getPickupOtp();
-        final java.lang.Object other$pickupOtp = other.getPickupOtp();
-        if (this$pickupOtp == null ? other$pickupOtp != null : !this$pickupOtp.equals(other$pickupOtp)) return false;
-        final java.lang.Object this$deliveryOtp = this.getDeliveryOtp();
-        final java.lang.Object other$deliveryOtp = other.getDeliveryOtp();
-        if (this$deliveryOtp == null ? other$deliveryOtp != null : !this$deliveryOtp.equals(other$deliveryOtp)) return false;
-        final java.lang.Object this$deliveryExecutiveId = this.getDeliveryExecutiveId();
-        final java.lang.Object other$deliveryExecutiveId = other.getDeliveryExecutiveId();
-        if (this$deliveryExecutiveId == null ? other$deliveryExecutiveId != null : !this$deliveryExecutiveId.equals(other$deliveryExecutiveId)) return false;
-        final java.lang.Object this$customerName = this.getCustomerName();
-        final java.lang.Object other$customerName = other.getCustomerName();
-        if (this$customerName == null ? other$customerName != null : !this$customerName.equals(other$customerName)) return false;
-        final java.lang.Object this$riderName = this.getRiderName();
-        final java.lang.Object other$riderName = other.getRiderName();
-        if (this$riderName == null ? other$riderName != null : !this$riderName.equals(other$riderName)) return false;
-        final java.lang.Object this$itemsJson = this.getItemsJson();
-        final java.lang.Object other$itemsJson = other.getItemsJson();
-        if (this$itemsJson == null ? other$itemsJson != null : !this$itemsJson.equals(other$itemsJson)) return false;
-        final java.lang.Object this$createdAt = this.getCreatedAt();
-        final java.lang.Object other$createdAt = other.getCreatedAt();
-        if (this$createdAt == null ? other$createdAt != null : !this$createdAt.equals(other$createdAt)) return false;
-        final java.lang.Object this$updatedAt = this.getUpdatedAt();
-        final java.lang.Object other$updatedAt = other.getUpdatedAt();
-        if (this$updatedAt == null ? other$updatedAt != null : !this$updatedAt.equals(other$updatedAt)) return false;
-        return true;
-    }
-
-protected boolean canEqual(final java.lang.Object other) {
-        return other instanceof RestaurantOrder;
-    }
-
-    @java.lang.Override
-public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final java.lang.Object $version = this.getVersion();
-        result = result * PRIME + ($version == null ? 43 : $version.hashCode());
-        final java.lang.Object $prepTime = this.getPrepTime();
-        result = result * PRIME + ($prepTime == null ? 43 : $prepTime.hashCode());
-        final java.lang.Object $additionalPrepTime = this.getAdditionalPrepTime();
-        result = result * PRIME + ($additionalPrepTime == null ? 43 : $additionalPrepTime.hashCode());
-        final java.lang.Object $estimatedCompletionTime = this.getEstimatedCompletionTime();
-        result = result * PRIME + ($estimatedCompletionTime == null ? 43 : $estimatedCompletionTime.hashCode());
-        final java.lang.Object $deliveryLat = this.getDeliveryLat();
-        result = result * PRIME + ($deliveryLat == null ? 43 : $deliveryLat.hashCode());
-        final java.lang.Object $deliveryLng = this.getDeliveryLng();
-        result = result * PRIME + ($deliveryLng == null ? 43 : $deliveryLng.hashCode());
-        final java.lang.Object $orderId = this.getOrderId();
-        result = result * PRIME + ($orderId == null ? 43 : $orderId.hashCode());
-        final java.lang.Object $restaurantId = this.getRestaurantId();
-        result = result * PRIME + ($restaurantId == null ? 43 : $restaurantId.hashCode());
-        final java.lang.Object $status = this.getStatus();
-        result = result * PRIME + ($status == null ? 43 : $status.hashCode());
-        final java.lang.Object $deliveryStatus = this.getDeliveryStatus();
-        result = result * PRIME + ($deliveryStatus == null ? 43 : $deliveryStatus.hashCode());
-        final java.lang.Object $paymentStatus = this.getPaymentStatus();
-        result = result * PRIME + ($paymentStatus == null ? 43 : $paymentStatus.hashCode());
-        final java.lang.Object $deliveryAddress = this.getDeliveryAddress();
-        result = result * PRIME + ($deliveryAddress == null ? 43 : $deliveryAddress.hashCode());
-        final java.lang.Object $pickupOtp = this.getPickupOtp();
-        result = result * PRIME + ($pickupOtp == null ? 43 : $pickupOtp.hashCode());
-        final java.lang.Object $deliveryOtp = this.getDeliveryOtp();
-        result = result * PRIME + ($deliveryOtp == null ? 43 : $deliveryOtp.hashCode());
-        final java.lang.Object $deliveryExecutiveId = this.getDeliveryExecutiveId();
-        result = result * PRIME + ($deliveryExecutiveId == null ? 43 : $deliveryExecutiveId.hashCode());
-        final java.lang.Object $customerName = this.getCustomerName();
-        result = result * PRIME + ($customerName == null ? 43 : $customerName.hashCode());
-        final java.lang.Object $riderName = this.getRiderName();
-        result = result * PRIME + ($riderName == null ? 43 : $riderName.hashCode());
-        final java.lang.Object $itemsJson = this.getItemsJson();
-        result = result * PRIME + ($itemsJson == null ? 43 : $itemsJson.hashCode());
-        final java.lang.Object $createdAt = this.getCreatedAt();
-        result = result * PRIME + ($createdAt == null ? 43 : $createdAt.hashCode());
-        final java.lang.Object $updatedAt = this.getUpdatedAt();
-        result = result * PRIME + ($updatedAt == null ? 43 : $updatedAt.hashCode());
-        return result;
-    }
-
-    @java.lang.Override
-public java.lang.String toString() {
-        return "RestaurantOrder(orderId=" + this.getOrderId() + ", restaurantId=" + this.getRestaurantId() + ", status=" + this.getStatus() + ", deliveryStatus=" + this.getDeliveryStatus() + ", paymentStatus=" + this.getPaymentStatus() + ", version=" + this.getVersion() + ", prepTime=" + this.getPrepTime() + ", additionalPrepTime=" + this.getAdditionalPrepTime() + ", estimatedCompletionTime=" + this.getEstimatedCompletionTime() + ", deliveryLat=" + this.getDeliveryLat() + ", deliveryLng=" + this.getDeliveryLng() + ", deliveryAddress=" + this.getDeliveryAddress() + ", pickupOtp=" + this.getPickupOtp() + ", deliveryOtp=" + this.getDeliveryOtp() + ", deliveryExecutiveId=" + this.getDeliveryExecutiveId() + ", customerName=" + this.getCustomerName() + ", riderName=" + this.getRiderName() + ", itemsJson=" + this.getItemsJson() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ")";
-    }
-
-public RestaurantOrder() {
-    }
-
-public RestaurantOrder(final UUID orderId, final UUID restaurantId, final OrderStatus status, final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus, final PaymentIntentStatus paymentStatus, final Integer version, final Integer prepTime, final Integer additionalPrepTime, final Long estimatedCompletionTime, final Double deliveryLat, final Double deliveryLng, final String deliveryAddress, final String pickupOtp, final String deliveryOtp, final UUID deliveryExecutiveId, final String customerName, final String riderName, final String itemsJson, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
-        this.orderId = orderId;
-        this.restaurantId = restaurantId;
-        this.status = status;
-        this.deliveryStatus = deliveryStatus;
-        this.paymentStatus = paymentStatus;
-        this.version = version;
-        this.prepTime = prepTime;
-        this.additionalPrepTime = additionalPrepTime;
-        this.estimatedCompletionTime = estimatedCompletionTime;
-        this.deliveryLat = deliveryLat;
-        this.deliveryLng = deliveryLng;
-        this.deliveryAddress = deliveryAddress;
-        this.pickupOtp = pickupOtp;
-        this.deliveryOtp = deliveryOtp;
-        this.deliveryExecutiveId = deliveryExecutiveId;
-        this.customerName = customerName;
-        this.riderName = riderName;
-        this.itemsJson = itemsJson;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -21,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class CategoryController {
 private final CategoryService categoryService;
     private final OutletCategoryTimingService outletCategoryTimingService;
@@ -89,9 +90,5 @@ private final CategoryService categoryService;
         return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings set successfully"));
     }
 
-public CategoryController(final CategoryService categoryService, final OutletCategoryTimingService outletCategoryTimingService, final BrandCategoryTimingService brandCategoryTimingService) {
-        this.categoryService = categoryService;
-        this.outletCategoryTimingService = outletCategoryTimingService;
-        this.brandCategoryTimingService = brandCategoryTimingService;
-    }
 }
+// @Getter

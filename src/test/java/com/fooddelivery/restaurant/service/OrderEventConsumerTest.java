@@ -71,9 +71,12 @@ class OrderEventConsumerTest {
         String message = String.format("{\"eventType\":\"ORDER_PAID\", \"orderId\":\"%s\", \"restaurantId\":\"%s\"}", 
                 orderId, restaurantId);
 
+        when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
         when(restaurantOrderRepository.existsById(orderId)).thenReturn(false);
 
-        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, new java.util.HashMap<>()));
+        java.util.Map<String, Object> headers = new java.util.HashMap<>();
+        headers.put("eventId", UUID.randomUUID().toString());
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, headers));
         
         ArgumentCaptor<RestaurantOrder> captor = ArgumentCaptor.forClass(RestaurantOrder.class);
         verify(actionService).saveOrder(captor.capture());
@@ -90,8 +93,11 @@ class OrderEventConsumerTest {
         
         String message = String.format("{\"eventType\":\"ORDER_CANCELLED\", \"orderId\":\"%s\"}", orderId);
 
+        when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
         when(restaurantOrderRepository.findById(orderId)).thenReturn(Optional.empty());
 
-        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, new java.util.HashMap<>()));
+        java.util.Map<String, Object> headers = new java.util.HashMap<>();
+        headers.put("eventId", UUID.randomUUID().toString());
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(message, headers));
     }
 }

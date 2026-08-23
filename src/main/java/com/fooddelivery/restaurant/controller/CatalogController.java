@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class CatalogController {
 private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
@@ -81,8 +82,4 @@ private final com.fooddelivery.restaurant.service.CatalogService catalogService;
         return ResponseEntity.ok(items);
     }
 
-public CatalogController(final com.fooddelivery.restaurant.service.CatalogService catalogService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper) {
-        this.catalogService = catalogService;
-        this.securityHelper = securityHelper;
-    }
 }

@@ -25,6 +25,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class RestaurantOnboardingController {
 private final RestaurantOnboardingService onboardingService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
@@ -51,9 +52,4 @@ private final RestaurantOnboardingService onboardingService;
 
 
 
-public RestaurantOnboardingController(final RestaurantOnboardingService onboardingService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper, final com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient) {
-        this.onboardingService = onboardingService;
-        this.securityHelper = securityHelper;
-        this.governmentIdClient = governmentIdClient;
-    }
 }

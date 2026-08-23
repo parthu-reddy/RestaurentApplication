@@ -13,14 +13,11 @@ import java.security.Principal;
 @RequestMapping("/api/v1/campaigns")
 @PreAuthorize("hasRole(\'RESTAURANT_OWNER\')")
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class CampaignController {
 private final AdvertisementClient advertisementClient;
     private final com.fooddelivery.restaurant.repository.BrandRepository brandRepository;
 
-    public CampaignController(AdvertisementClient advertisementClient, com.fooddelivery.restaurant.repository.BrandRepository brandRepository) {
-        this.advertisementClient = advertisementClient;
-        this.brandRepository = brandRepository;
-    }
 
     private void verifyOwnership(UUID restaurantId, Principal principal) {
         com.fooddelivery.restaurant.entity.Brand brand = brandRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Restaurant/Brand not found"));

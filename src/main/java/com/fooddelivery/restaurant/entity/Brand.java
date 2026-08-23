@@ -10,6 +10,11 @@ import com.fooddelivery.common.enums.VerificationStatus;
 
 @Entity
 @Table(name = "brands")
+@lombok.Getter
+@lombok.Setter
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 public class Brand {
     @Id
     @Column(name = "id")
@@ -53,310 +58,38 @@ public class Brand {
     private Integer version;
 
 
-public static class BrandBuilder {
-private UUID id;
-private UUID ownerId;
-private String name;
-private String gstin;
-private String pan;
-private String cin;
-private String bankAccountNumber;
-private String bankIfsc;
-private String logoUrl;
-private String legalEntityName;
-private VerificationStatus kycStatus;
-private String bankBeneficiaryName;
-private VerificationStatus pennyDropStatus;
-private Boolean isGstinVerified;
-private Boolean isBankVerified;
-private LocalDateTime createdAt;
-private LocalDateTime updatedAt;
-private Integer version;
 
-BrandBuilder() {
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder id(final UUID id) {
-            this.id = id;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder ownerId(final UUID ownerId) {
-            this.ownerId = ownerId;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder name(final String name) {
-            this.name = name;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder gstin(final String gstin) {
-            this.gstin = gstin;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder pan(final String pan) {
-            this.pan = pan;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder cin(final String cin) {
-            this.cin = cin;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder bankAccountNumber(final String bankAccountNumber) {
-            this.bankAccountNumber = bankAccountNumber;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder bankIfsc(final String bankIfsc) {
-            this.bankIfsc = bankIfsc;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder logoUrl(final String logoUrl) {
-            this.logoUrl = logoUrl;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder legalEntityName(final String legalEntityName) {
-            this.legalEntityName = legalEntityName;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder kycStatus(final VerificationStatus kycStatus) {
-            this.kycStatus = kycStatus;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder bankBeneficiaryName(final String bankBeneficiaryName) {
-            this.bankBeneficiaryName = bankBeneficiaryName;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder pennyDropStatus(final VerificationStatus pennyDropStatus) {
-            this.pennyDropStatus = pennyDropStatus;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder isGstinVerified(final Boolean isGstinVerified) {
-            this.isGstinVerified = isGstinVerified;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder isBankVerified(final Boolean isBankVerified) {
-            this.isBankVerified = isBankVerified;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder createdAt(final LocalDateTime createdAt) {
-            this.createdAt = createdAt;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder updatedAt(final LocalDateTime updatedAt) {
-            this.updatedAt = updatedAt;
-            return this;
-        }
 
-        /**
-         * @return {@code this}.
-         */
-public Brand.BrandBuilder version(final Integer version) {
-            this.version = version;
-            return this;
-        }
 
-public Brand build() {
-            return new Brand(this.id, this.ownerId, this.name, this.gstin, this.pan, this.cin, this.bankAccountNumber, this.bankIfsc, this.logoUrl, this.legalEntityName, this.kycStatus, this.bankBeneficiaryName, this.pennyDropStatus, this.isGstinVerified, this.isBankVerified, this.createdAt, this.updatedAt, this.version);
-        }
 
-        @java.lang.Override
-public java.lang.String toString() {
-            return "Brand.BrandBuilder(id=" + this.id + ", ownerId=" + this.ownerId + ", name=" + this.name + ", gstin=" + this.gstin + ", pan=" + this.pan + ", cin=" + this.cin + ", bankAccountNumber=" + this.bankAccountNumber + ", bankIfsc=" + this.bankIfsc + ", logoUrl=" + this.logoUrl + ", legalEntityName=" + this.legalEntityName + ", kycStatus=" + this.kycStatus + ", bankBeneficiaryName=" + this.bankBeneficiaryName + ", pennyDropStatus=" + this.pennyDropStatus + ", isGstinVerified=" + this.isGstinVerified + ", isBankVerified=" + this.isBankVerified + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ", version=" + this.version + ")";
-        }
-    }
 
-public static Brand.BrandBuilder builder() {
-        return new Brand.BrandBuilder();
-    }
 
-public UUID getId() {
-        return this.id;
-    }
 
-public UUID getOwnerId() {
-        return this.ownerId;
-    }
 
-public String getName() {
-        return this.name;
-    }
 
-public String getGstin() {
-        return this.gstin;
-    }
 
-public String getPan() {
-        return this.pan;
-    }
 
-public String getCin() {
-        return this.cin;
-    }
 
-public String getBankAccountNumber() {
-        return this.bankAccountNumber;
-    }
 
-public String getBankIfsc() {
-        return this.bankIfsc;
-    }
 
-public String getLogoUrl() {
-        return this.logoUrl;
-    }
 
-public String getLegalEntityName() {
-        return this.legalEntityName;
-    }
-
-public VerificationStatus getKycStatus() {
-        return this.kycStatus;
-    }
-
-public String getBankBeneficiaryName() {
-        return this.bankBeneficiaryName;
-    }
-
-public VerificationStatus getPennyDropStatus() {
-        return this.pennyDropStatus;
-    }
-
-public Boolean getIsGstinVerified() {
-        return this.isGstinVerified;
-    }
-
-public Boolean getIsBankVerified() {
-        return this.isBankVerified;
-    }
-
-public LocalDateTime getCreatedAt() {
-        return this.createdAt;
-    }
-
-public LocalDateTime getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-public Integer getVersion() {
-        return this.version;
-    }
-
-public void setId(final UUID id) {
-        this.id = id;
-    }
-
-public void setOwnerId(final UUID ownerId) {
-        this.ownerId = ownerId;
-    }
-
-public void setName(final String name) {
-        this.name = name;
-    }
-
-public void setGstin(final String gstin) {
-        this.gstin = gstin;
-    }
-
-public void setPan(final String pan) {
-        this.pan = pan;
-    }
-
-public void setCin(final String cin) {
-        this.cin = cin;
-    }
-
-public void setBankAccountNumber(final String bankAccountNumber) {
-        this.bankAccountNumber = bankAccountNumber;
-    }
-
-public void setBankIfsc(final String bankIfsc) {
-        this.bankIfsc = bankIfsc;
-    }
-
-public void setLogoUrl(final String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
-public void setLegalEntityName(final String legalEntityName) {
-        this.legalEntityName = legalEntityName;
-    }
-
-public void setKycStatus(final VerificationStatus kycStatus) {
-        this.kycStatus = kycStatus;
-    }
-
-public void setBankBeneficiaryName(final String bankBeneficiaryName) {
-        this.bankBeneficiaryName = bankBeneficiaryName;
-    }
-
-public void setPennyDropStatus(final VerificationStatus pennyDropStatus) {
-        this.pennyDropStatus = pennyDropStatus;
-    }
 
 public void setIsGstinVerified(final Boolean isGstinVerified) {
         this.isGstinVerified = isGstinVerified;
@@ -366,154 +99,11 @@ public void setIsBankVerified(final Boolean isBankVerified) {
         this.isBankVerified = isBankVerified;
     }
 
-public void setCreatedAt(final LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 
-public void setUpdatedAt(final LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 
-public void setVersion(final Integer version) {
-        this.version = version;
-    }
 
-    @java.lang.Override
-public boolean equals(final java.lang.Object o) {
-        if (o == this) return true;
-        if (!(o instanceof Brand)) return false;
-        final Brand other = (Brand) o;
-        if (!other.canEqual((java.lang.Object) this)) return false;
-        final java.lang.Object this$isGstinVerified = this.getIsGstinVerified();
-        final java.lang.Object other$isGstinVerified = other.getIsGstinVerified();
-        if (this$isGstinVerified == null ? other$isGstinVerified != null : !this$isGstinVerified.equals(other$isGstinVerified)) return false;
-        final java.lang.Object this$isBankVerified = this.getIsBankVerified();
-        final java.lang.Object other$isBankVerified = other.getIsBankVerified();
-        if (this$isBankVerified == null ? other$isBankVerified != null : !this$isBankVerified.equals(other$isBankVerified)) return false;
-        final java.lang.Object this$version = this.getVersion();
-        final java.lang.Object other$version = other.getVersion();
-        if (this$version == null ? other$version != null : !this$version.equals(other$version)) return false;
-        final java.lang.Object this$id = this.getId();
-        final java.lang.Object other$id = other.getId();
-        if (this$id == null ? other$id != null : !this$id.equals(other$id)) return false;
-        final java.lang.Object this$ownerId = this.getOwnerId();
-        final java.lang.Object other$ownerId = other.getOwnerId();
-        if (this$ownerId == null ? other$ownerId != null : !this$ownerId.equals(other$ownerId)) return false;
-        final java.lang.Object this$name = this.getName();
-        final java.lang.Object other$name = other.getName();
-        if (this$name == null ? other$name != null : !this$name.equals(other$name)) return false;
-        final java.lang.Object this$gstin = this.getGstin();
-        final java.lang.Object other$gstin = other.getGstin();
-        if (this$gstin == null ? other$gstin != null : !this$gstin.equals(other$gstin)) return false;
-        final java.lang.Object this$pan = this.getPan();
-        final java.lang.Object other$pan = other.getPan();
-        if (this$pan == null ? other$pan != null : !this$pan.equals(other$pan)) return false;
-        final java.lang.Object this$cin = this.getCin();
-        final java.lang.Object other$cin = other.getCin();
-        if (this$cin == null ? other$cin != null : !this$cin.equals(other$cin)) return false;
-        final java.lang.Object this$bankAccountNumber = this.getBankAccountNumber();
-        final java.lang.Object other$bankAccountNumber = other.getBankAccountNumber();
-        if (this$bankAccountNumber == null ? other$bankAccountNumber != null : !this$bankAccountNumber.equals(other$bankAccountNumber)) return false;
-        final java.lang.Object this$bankIfsc = this.getBankIfsc();
-        final java.lang.Object other$bankIfsc = other.getBankIfsc();
-        if (this$bankIfsc == null ? other$bankIfsc != null : !this$bankIfsc.equals(other$bankIfsc)) return false;
-        final java.lang.Object this$logoUrl = this.getLogoUrl();
-        final java.lang.Object other$logoUrl = other.getLogoUrl();
-        if (this$logoUrl == null ? other$logoUrl != null : !this$logoUrl.equals(other$logoUrl)) return false;
-        final java.lang.Object this$legalEntityName = this.getLegalEntityName();
-        final java.lang.Object other$legalEntityName = other.getLegalEntityName();
-        if (this$legalEntityName == null ? other$legalEntityName != null : !this$legalEntityName.equals(other$legalEntityName)) return false;
-        final java.lang.Object this$kycStatus = this.getKycStatus();
-        final java.lang.Object other$kycStatus = other.getKycStatus();
-        if (this$kycStatus == null ? other$kycStatus != null : !this$kycStatus.equals(other$kycStatus)) return false;
-        final java.lang.Object this$bankBeneficiaryName = this.getBankBeneficiaryName();
-        final java.lang.Object other$bankBeneficiaryName = other.getBankBeneficiaryName();
-        if (this$bankBeneficiaryName == null ? other$bankBeneficiaryName != null : !this$bankBeneficiaryName.equals(other$bankBeneficiaryName)) return false;
-        final java.lang.Object this$pennyDropStatus = this.getPennyDropStatus();
-        final java.lang.Object other$pennyDropStatus = other.getPennyDropStatus();
-        if (this$pennyDropStatus == null ? other$pennyDropStatus != null : !this$pennyDropStatus.equals(other$pennyDropStatus)) return false;
-        final java.lang.Object this$createdAt = this.getCreatedAt();
-        final java.lang.Object other$createdAt = other.getCreatedAt();
-        if (this$createdAt == null ? other$createdAt != null : !this$createdAt.equals(other$createdAt)) return false;
-        final java.lang.Object this$updatedAt = this.getUpdatedAt();
-        final java.lang.Object other$updatedAt = other.getUpdatedAt();
-        if (this$updatedAt == null ? other$updatedAt != null : !this$updatedAt.equals(other$updatedAt)) return false;
-        return true;
-    }
 
-protected boolean canEqual(final java.lang.Object other) {
-        return other instanceof Brand;
-    }
 
-    @java.lang.Override
-public int hashCode() {
-        final int PRIME = 59;
-        int result = 1;
-        final java.lang.Object $isGstinVerified = this.getIsGstinVerified();
-        result = result * PRIME + ($isGstinVerified == null ? 43 : $isGstinVerified.hashCode());
-        final java.lang.Object $isBankVerified = this.getIsBankVerified();
-        result = result * PRIME + ($isBankVerified == null ? 43 : $isBankVerified.hashCode());
-        final java.lang.Object $version = this.getVersion();
-        result = result * PRIME + ($version == null ? 43 : $version.hashCode());
-        final java.lang.Object $id = this.getId();
-        result = result * PRIME + ($id == null ? 43 : $id.hashCode());
-        final java.lang.Object $ownerId = this.getOwnerId();
-        result = result * PRIME + ($ownerId == null ? 43 : $ownerId.hashCode());
-        final java.lang.Object $name = this.getName();
-        result = result * PRIME + ($name == null ? 43 : $name.hashCode());
-        final java.lang.Object $gstin = this.getGstin();
-        result = result * PRIME + ($gstin == null ? 43 : $gstin.hashCode());
-        final java.lang.Object $pan = this.getPan();
-        result = result * PRIME + ($pan == null ? 43 : $pan.hashCode());
-        final java.lang.Object $cin = this.getCin();
-        result = result * PRIME + ($cin == null ? 43 : $cin.hashCode());
-        final java.lang.Object $bankAccountNumber = this.getBankAccountNumber();
-        result = result * PRIME + ($bankAccountNumber == null ? 43 : $bankAccountNumber.hashCode());
-        final java.lang.Object $bankIfsc = this.getBankIfsc();
-        result = result * PRIME + ($bankIfsc == null ? 43 : $bankIfsc.hashCode());
-        final java.lang.Object $logoUrl = this.getLogoUrl();
-        result = result * PRIME + ($logoUrl == null ? 43 : $logoUrl.hashCode());
-        final java.lang.Object $legalEntityName = this.getLegalEntityName();
-        result = result * PRIME + ($legalEntityName == null ? 43 : $legalEntityName.hashCode());
-        final java.lang.Object $kycStatus = this.getKycStatus();
-        result = result * PRIME + ($kycStatus == null ? 43 : $kycStatus.hashCode());
-        final java.lang.Object $bankBeneficiaryName = this.getBankBeneficiaryName();
-        result = result * PRIME + ($bankBeneficiaryName == null ? 43 : $bankBeneficiaryName.hashCode());
-        final java.lang.Object $pennyDropStatus = this.getPennyDropStatus();
-        result = result * PRIME + ($pennyDropStatus == null ? 43 : $pennyDropStatus.hashCode());
-        final java.lang.Object $createdAt = this.getCreatedAt();
-        result = result * PRIME + ($createdAt == null ? 43 : $createdAt.hashCode());
-        final java.lang.Object $updatedAt = this.getUpdatedAt();
-        result = result * PRIME + ($updatedAt == null ? 43 : $updatedAt.hashCode());
-        return result;
-    }
 
-    @java.lang.Override
-public java.lang.String toString() {
-        return "Brand(id=" + this.getId() + ", ownerId=" + this.getOwnerId() + ", name=" + this.getName() + ", gstin=" + this.getGstin() + ", pan=" + this.getPan() + ", cin=" + this.getCin() + ", bankAccountNumber=" + this.getBankAccountNumber() + ", bankIfsc=" + this.getBankIfsc() + ", logoUrl=" + this.getLogoUrl() + ", legalEntityName=" + this.getLegalEntityName() + ", kycStatus=" + this.getKycStatus() + ", bankBeneficiaryName=" + this.getBankBeneficiaryName() + ", pennyDropStatus=" + this.getPennyDropStatus() + ", isGstinVerified=" + this.getIsGstinVerified() + ", isBankVerified=" + this.getIsBankVerified() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ", version=" + this.getVersion() + ")";
-    }
 
-public Brand() {
-    }
-
-public Brand(final UUID id, final UUID ownerId, final String name, final String gstin, final String pan, final String cin, final String bankAccountNumber, final String bankIfsc, final String logoUrl, final String legalEntityName, final VerificationStatus kycStatus, final String bankBeneficiaryName, final VerificationStatus pennyDropStatus, final Boolean isGstinVerified, final Boolean isBankVerified, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
-        this.id = id;
-        this.ownerId = ownerId;
-        this.name = name;
-        this.gstin = gstin;
-        this.pan = pan;
-        this.cin = cin;
-        this.bankAccountNumber = bankAccountNumber;
-        this.bankIfsc = bankIfsc;
-        this.logoUrl = logoUrl;
-        this.legalEntityName = legalEntityName;
-        this.kycStatus = kycStatus;
-        this.bankBeneficiaryName = bankBeneficiaryName;
-        this.pennyDropStatus = pennyDropStatus;
-        this.isGstinVerified = isGstinVerified;
-        this.isBankVerified = isBankVerified;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.version = version;
-    }
 }

@@ -3,7 +3,7 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     config:
-      enabled: false
+      fail-fast: false
   # RateLimitingService and its RateLimitConfig are
   # @ConditionalOnProperty("spring.redis.enabled", matchIfMissing = true), so they activate by
   # default and LettuceBasedProxyManager opens a real Redis connection at context refresh. Nothing

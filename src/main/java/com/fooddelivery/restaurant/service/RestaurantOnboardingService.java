@@ -30,6 +30,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class RestaurantOnboardingService {
 private static final String KEY_BRAND_ID = "brandId";
     private static final String KEY_BRAND_NAME = "brandName";
@@ -265,11 +266,5 @@ private static final String KEY_BRAND_ID = "brandId";
         brandRepository.save(brand);
     }
 
-public RestaurantOnboardingService(final BrandRepository brandRepository, final OutletRepository outletRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper, final org.springframework.cache.CacheManager cacheManager) {
-        this.brandRepository = brandRepository;
-        this.outletRepository = outletRepository;
-        this.outboxEventRepository = outboxEventRepository;
-        this.objectMapper = objectMapper;
-        this.cacheManager = cacheManager;
-    }
 }
+// @Getter

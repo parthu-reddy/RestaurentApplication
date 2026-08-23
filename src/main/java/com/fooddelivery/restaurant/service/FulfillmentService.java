@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class FulfillmentService {
 private static final String DRIVER_FIELD_ID = "id";
     private static final String DRIVER_FIELD_FULL_NAME = "fullName";
@@ -217,11 +218,4 @@ private static final String DRIVER_FIELD_ID = "id";
         return response.getBody();
     }
 
-public FulfillmentService(final OutletRepository outletRepository, final RestaurantOrderRepository restaurantOrderRepository, final RestaurantActionService actionService, final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient, final com.fooddelivery.restaurant.client.OrderClient orderClient) {
-        this.outletRepository = outletRepository;
-        this.restaurantOrderRepository = restaurantOrderRepository;
-        this.actionService = actionService;
-        this.deliveryClient = deliveryClient;
-        this.orderClient = orderClient;
-    }
 }

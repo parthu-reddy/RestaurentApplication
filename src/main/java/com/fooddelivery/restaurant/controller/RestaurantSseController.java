@@ -10,14 +10,12 @@ import java.util.List;
 
 @RestController
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class RestaurantSseController {
 
     private final RestaurantOnboardingService onboardingService;
     private final java.util.concurrent.ScheduledExecutorService scheduler = java.util.concurrent.Executors.newScheduledThreadPool(4);
 
-    public RestaurantSseController(RestaurantOnboardingService onboardingService) {
-        this.onboardingService = onboardingService;
-    }
 
     @GetMapping(value = "/api/v1/brands/stream", produces = org.springframework.http.MediaType.TEXT_EVENT_STREAM_VALUE)
     @PreAuthorize("hasRole('RESTAURANT')")

@@ -9,12 +9,10 @@ import java.util.UUID;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class RestaurantEarningsService {
 private final WalletServiceClient walletClient;
 
-    public RestaurantEarningsService(WalletServiceClient walletClient) {
-        this.walletClient = walletClient;
-    }
 
     public WalletDto getRestaurantBalance(UUID restaurantId) {
         try {

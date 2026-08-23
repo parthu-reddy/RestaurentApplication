@@ -32,6 +32,7 @@ import java.util.Map;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class CatalogService {
 private final MasterMenuItemRepository masterMenuItemRepository;
     private final OutletMenuOverrideRepository outletMenuOverrideRepository;
@@ -65,6 +66,7 @@ private final MasterMenuItemRepository masterMenuItemRepository;
             outboxEventRepository.save(outboxEvent);
         } catch (Exception e) {
             log.error("Failed to persist MENU_UPDATED outbox event for brand {}", brandId, e);
+            throw new RuntimeException("Failed to persist outbox event", e);
         }
     }
 
@@ -236,15 +238,4 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         return fullMenu.stream().filter(item -> itemIds.contains(item.getId())).collect(Collectors.toList());
     }
 
-public CatalogService(final MasterMenuItemRepository masterMenuItemRepository, final OutletMenuOverrideRepository outletMenuOverrideRepository, final OutletRepository outletRepository, final CategoryRepository categoryRepository, final OutletCategoryTimingRepository outletCategoryTimingRepository, final BrandCategoryTimingRepository brandCategoryTimingRepository, final org.springframework.cache.CacheManager cacheManager, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper) {
-        this.masterMenuItemRepository = masterMenuItemRepository;
-        this.outletMenuOverrideRepository = outletMenuOverrideRepository;
-        this.outletRepository = outletRepository;
-        this.categoryRepository = categoryRepository;
-        this.outletCategoryTimingRepository = outletCategoryTimingRepository;
-        this.brandCategoryTimingRepository = brandCategoryTimingRepository;
-        this.cacheManager = cacheManager;
-        this.outboxEventRepository = outboxEventRepository;
-        this.objectMapper = objectMapper;
-    }
 }

@@ -2,6 +2,7 @@ package com.fooddelivery.restaurant.entity;
 
 import java.util.List;
 
+@lombok.Getter
 public enum OrderStatus {
     CREATED(10),
     PENDING_ACCEPTANCE(20),
@@ -19,9 +20,6 @@ public enum OrderStatus {
         this.sequence = sequence;
     }
 
-    public int getSequence() {
-        return sequence;
-    }
 
 
 

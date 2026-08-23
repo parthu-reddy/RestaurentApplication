@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/api/v1/internal/restaurants/orders")
 @lombok.extern.slf4j.Slf4j
 @PreAuthorize("hasRole('SERVICE')")
+@lombok.RequiredArgsConstructor
 public class InternalOrderController {
 private final RestaurantOrderRepository orderRepository;
 
@@ -22,7 +23,4 @@ private final RestaurantOrderRepository orderRepository;
         return orderRepository.findById(orderId).map(order -> ResponseEntity.ok(Map.of("orderId", order.getOrderId().toString(), "status", order.getStatus().name()))).orElse(ResponseEntity.notFound().build());
     }
 
-public InternalOrderController(final RestaurantOrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
-    }
 }

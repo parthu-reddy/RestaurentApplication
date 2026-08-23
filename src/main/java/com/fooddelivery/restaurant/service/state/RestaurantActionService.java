@@ -17,6 +17,7 @@ import io.micrometer.observation.annotation.Observed;
 @Service
 @lombok.extern.slf4j.Slf4j
 @Observed(name = "restaurant.order.processing")
+@lombok.RequiredArgsConstructor
 public class RestaurantActionService {
 private final RestaurantOrderRepository orderRepository;
     private final OutboxEventRepository outboxEventRepository;
@@ -43,9 +44,4 @@ private final RestaurantOrderRepository orderRepository;
         return objectMapper.createObjectNode();
     }
 
-public RestaurantActionService(final RestaurantOrderRepository orderRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper) {
-        this.orderRepository = orderRepository;
-        this.outboxEventRepository = outboxEventRepository;
-        this.objectMapper = objectMapper;
-    }
 }

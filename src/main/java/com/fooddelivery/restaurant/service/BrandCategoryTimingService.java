@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @lombok.extern.slf4j.Slf4j
+@lombok.RequiredArgsConstructor
 public class BrandCategoryTimingService {
 private final BrandCategoryTimingRepository brandCategoryTimingRepository;
     private final CategoryRepository categoryRepository;
@@ -39,8 +40,4 @@ private final BrandCategoryTimingRepository brandCategoryTimingRepository;
         return brandCategoryTimingRepository.findByBrandIdAndCategoryId(brandId, categoryId).stream().map(t -> TimingDTO.builder().openingTime(t.getOpeningTime()).closingTime(t.getClosingTime()).build()).collect(Collectors.toList());
     }
 
-public BrandCategoryTimingService(final BrandCategoryTimingRepository brandCategoryTimingRepository, final CategoryRepository categoryRepository) {
-        this.brandCategoryTimingRepository = brandCategoryTimingRepository;
-        this.categoryRepository = categoryRepository;
-    }
 }

@@ -80,13 +80,15 @@ class OrderEventConsumerContractTest {
 
     @Test
     void consumesOrderCreatedAndGracefullyIgnoresIfOrderNotFound() {
-        Mockito.when(idempotencyKeyRepository.existsById(anyString())).thenReturn(false);
+        Mockito.when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
         Mockito.when(restaurantOrderRepository.findById(any())).thenReturn(Optional.empty());
 
         stubTrigger.trigger("order_created");
 
         await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
-            verify(idempotencyKeyRepository).save(any(com.fooddelivery.common.entity.IdempotencyKey.class));
+            // idempotency is claimed with INSERT .. ON CONFLICT DO NOTHING, not save().
+            // Assert the call, not the key format -- the format is deliberately not part of the contract.
+            verify(idempotencyKeyRepository).tryClaim(anyString());
             verify(restaurantOrderRepository).findById(any(java.util.UUID.class));
         });
     }

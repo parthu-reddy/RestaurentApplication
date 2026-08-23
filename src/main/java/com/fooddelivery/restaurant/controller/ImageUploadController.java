@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RequestMapping("/api/v1/images")
 @lombok.extern.slf4j.Slf4j
 @PreAuthorize("isAuthenticated()")
+@lombok.RequiredArgsConstructor
 public class ImageUploadController {
 private final CloudflareR2Service cloudflareR2Service;
 
@@ -139,7 +140,4 @@ private final CloudflareR2Service cloudflareR2Service;
         return currentBytes;
     }
 
-public ImageUploadController(final CloudflareR2Service cloudflareR2Service) {
-        this.cloudflareR2Service = cloudflareR2Service;
-    }
 }
