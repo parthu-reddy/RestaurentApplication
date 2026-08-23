@@ -10,24 +10,20 @@ public class OutletStatusUpdateRequest {
         @com.fasterxml.jackson.annotation.JsonProperty("isActive")
         private Boolean isActive;
 
-        @java.lang.SuppressWarnings("all")
-        public OutletStatusUpdateRequest() {
+public OutletStatusUpdateRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Boolean getIsActive() {
+public Boolean getIsActive() {
             return this.isActive;
         }
 
         @com.fasterxml.jackson.annotation.JsonProperty("isActive")
-        @java.lang.SuppressWarnings("all")
-        public void setIsActive(final Boolean isActive) {
+public void setIsActive(final Boolean isActive) {
             this.isActive = isActive;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof OutletStatusUpdateRequest)) return false;
             final OutletStatusUpdateRequest other = (OutletStatusUpdateRequest) o;
@@ -38,14 +34,12 @@ public class OutletStatusUpdateRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof OutletStatusUpdateRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $isActive = this.getIsActive();
@@ -54,8 +48,7 @@ public class OutletStatusUpdateRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "OutletStatusUpdateRequest(isActive=" + this.getIsActive() + ")";
         }
     }

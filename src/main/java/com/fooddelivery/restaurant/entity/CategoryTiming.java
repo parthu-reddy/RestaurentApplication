@@ -34,32 +34,22 @@ public class CategoryTiming {
     private LocalDateTime updatedAt;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class CategoryTimingBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private Category category;
-        @java.lang.SuppressWarnings("all")
-        private LocalTime openingTime;
-        @java.lang.SuppressWarnings("all")
-        private LocalTime closingTime;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime createdAt;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime updatedAt;
+public static class CategoryTimingBuilder {
+private UUID id;
+private Category category;
+private LocalTime openingTime;
+private LocalTime closingTime;
+private Integer version;
+private LocalDateTime createdAt;
+private LocalDateTime updatedAt;
 
-        @java.lang.SuppressWarnings("all")
-        CategoryTimingBuilder() {
+CategoryTimingBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder id(final UUID id) {
+public CategoryTiming.CategoryTimingBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -68,8 +58,7 @@ public class CategoryTiming {
          * @return {@code this}.
          */
         @JsonIgnore
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder category(final Category category) {
+public CategoryTiming.CategoryTimingBuilder category(final Category category) {
             this.category = category;
             return this;
         }
@@ -77,8 +66,7 @@ public class CategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder openingTime(final LocalTime openingTime) {
+public CategoryTiming.CategoryTimingBuilder openingTime(final LocalTime openingTime) {
             this.openingTime = openingTime;
             return this;
         }
@@ -86,8 +74,7 @@ public class CategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder closingTime(final LocalTime closingTime) {
+public CategoryTiming.CategoryTimingBuilder closingTime(final LocalTime closingTime) {
             this.closingTime = closingTime;
             return this;
         }
@@ -95,8 +82,7 @@ public class CategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder version(final Integer version) {
+public CategoryTiming.CategoryTimingBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
@@ -104,8 +90,7 @@ public class CategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder createdAt(final LocalDateTime createdAt) {
+public CategoryTiming.CategoryTimingBuilder createdAt(final LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
@@ -113,103 +98,84 @@ public class CategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming.CategoryTimingBuilder updatedAt(final LocalDateTime updatedAt) {
+public CategoryTiming.CategoryTimingBuilder updatedAt(final LocalDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public CategoryTiming build() {
+public CategoryTiming build() {
             return new CategoryTiming(this.id, this.category, this.openingTime, this.closingTime, this.version, this.createdAt, this.updatedAt);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "CategoryTiming.CategoryTimingBuilder(id=" + this.id + ", category=" + this.category + ", openingTime=" + this.openingTime + ", closingTime=" + this.closingTime + ", version=" + this.version + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static CategoryTiming.CategoryTimingBuilder builder() {
+public static CategoryTiming.CategoryTimingBuilder builder() {
         return new CategoryTiming.CategoryTimingBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Category getCategory() {
+public Category getCategory() {
         return this.category;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalTime getOpeningTime() {
+public LocalTime getOpeningTime() {
         return this.openingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalTime getClosingTime() {
+public LocalTime getClosingTime() {
         return this.closingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getCreatedAt() {
+public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getUpdatedAt() {
+public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
     @JsonIgnore
-    @java.lang.SuppressWarnings("all")
-    public void setCategory(final Category category) {
+public void setCategory(final Category category) {
         this.category = category;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOpeningTime(final LocalTime openingTime) {
+public void setOpeningTime(final LocalTime openingTime) {
         this.openingTime = openingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setClosingTime(final LocalTime closingTime) {
+public void setClosingTime(final LocalTime closingTime) {
         this.closingTime = closingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCreatedAt(final LocalDateTime createdAt) {
+public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+public void setUpdatedAt(final LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof CategoryTiming)) return false;
         final CategoryTiming other = (CategoryTiming) o;
@@ -238,14 +204,12 @@ public class CategoryTiming {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof CategoryTiming;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $version = this.getVersion();
@@ -266,17 +230,14 @@ public class CategoryTiming {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "CategoryTiming(id=" + this.getId() + ", category=" + this.getCategory() + ", openingTime=" + this.getOpeningTime() + ", closingTime=" + this.getClosingTime() + ", version=" + this.getVersion() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CategoryTiming() {
+public CategoryTiming() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CategoryTiming(final UUID id, final Category category, final LocalTime openingTime, final LocalTime closingTime, final Integer version, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
+public CategoryTiming(final UUID id, final Category category, final LocalTime openingTime, final LocalTime closingTime, final Integer version, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         this.id = id;
         this.category = category;
         this.openingTime = openingTime;

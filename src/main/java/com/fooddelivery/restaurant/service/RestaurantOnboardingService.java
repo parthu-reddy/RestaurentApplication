@@ -31,9 +31,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @lombok.extern.slf4j.Slf4j
 public class RestaurantOnboardingService {
-    @java.lang.SuppressWarnings("all")
-
-    private static final String KEY_BRAND_ID = "brandId";
+private static final String KEY_BRAND_ID = "brandId";
     private static final String KEY_BRAND_NAME = "brandName";
     private static final String KEY_GSTIN = "gstin";
     private static final String KEY_BANK_ACCOUNT_NUMBER = "bankAccountNumber";
@@ -81,7 +79,7 @@ public class RestaurantOnboardingService {
 
     // Phase 2: Outlet & Geospatial Setup
     @org.springframework.transaction.annotation.Transactional
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, Double deliveryFee, String tags) {
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, java.math.BigDecimal deliveryFee, String tags) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new IllegalArgumentException("Brand not found"));
         if (!brand.getIsGstinVerified() || !brand.getIsBankVerified()) {
@@ -267,8 +265,7 @@ public class RestaurantOnboardingService {
         brandRepository.save(brand);
     }
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantOnboardingService(final BrandRepository brandRepository, final OutletRepository outletRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper, final org.springframework.cache.CacheManager cacheManager) {
+public RestaurantOnboardingService(final BrandRepository brandRepository, final OutletRepository outletRepository, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper, final org.springframework.cache.CacheManager cacheManager) {
         this.brandRepository = brandRepository;
         this.outletRepository = outletRepository;
         this.outboxEventRepository = outboxEventRepository;

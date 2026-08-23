@@ -86,7 +86,7 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         Outlet outlet = restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, 0.0, "Tag"
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag"
         );
 
         assertNotNull(outlet);
@@ -110,7 +110,7 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, 0.0, "Tag"
+                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag"
         ));
     }
 }

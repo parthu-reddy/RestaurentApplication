@@ -16,14 +16,14 @@ import java.util.UUID;
 import net.coobird.thumbnailator.Thumbnails;
 import java.io.ByteArrayOutputStream;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/v1/images")
 @lombok.extern.slf4j.Slf4j
+@PreAuthorize("isAuthenticated()")
 public class ImageUploadController {
-    @java.lang.SuppressWarnings("all")
-
-    private final CloudflareR2Service cloudflareR2Service;
+private final CloudflareR2Service cloudflareR2Service;
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<String>> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam("folderId") String folderId, @RequestParam(value = "imageType", defaultValue = "default") String imageType, Authentication authentication) {
@@ -139,8 +139,7 @@ public class ImageUploadController {
         return currentBytes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public ImageUploadController(final CloudflareR2Service cloudflareR2Service) {
+public ImageUploadController(final CloudflareR2Service cloudflareR2Service) {
         this.cloudflareR2Service = cloudflareR2Service;
     }
 }

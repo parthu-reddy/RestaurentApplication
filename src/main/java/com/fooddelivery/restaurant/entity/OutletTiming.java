@@ -35,32 +35,22 @@ public class OutletTiming {
     private Integer version;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class OutletTimingBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private Outlet outlet;
-        @java.lang.SuppressWarnings("all")
-        private LocalTime openingTime;
-        @java.lang.SuppressWarnings("all")
-        private LocalTime closingTime;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime createdAt;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime updatedAt;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
+public static class OutletTimingBuilder {
+private UUID id;
+private Outlet outlet;
+private LocalTime openingTime;
+private LocalTime closingTime;
+private LocalDateTime createdAt;
+private LocalDateTime updatedAt;
+private Integer version;
 
-        @java.lang.SuppressWarnings("all")
-        OutletTimingBuilder() {
+OutletTimingBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder id(final UUID id) {
+public OutletTiming.OutletTimingBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -69,8 +59,7 @@ public class OutletTiming {
          * @return {@code this}.
          */
         @JsonIgnore
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder outlet(final Outlet outlet) {
+public OutletTiming.OutletTimingBuilder outlet(final Outlet outlet) {
             this.outlet = outlet;
             return this;
         }
@@ -78,8 +67,7 @@ public class OutletTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder openingTime(final LocalTime openingTime) {
+public OutletTiming.OutletTimingBuilder openingTime(final LocalTime openingTime) {
             this.openingTime = openingTime;
             return this;
         }
@@ -87,8 +75,7 @@ public class OutletTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder closingTime(final LocalTime closingTime) {
+public OutletTiming.OutletTimingBuilder closingTime(final LocalTime closingTime) {
             this.closingTime = closingTime;
             return this;
         }
@@ -96,8 +83,7 @@ public class OutletTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder createdAt(final LocalDateTime createdAt) {
+public OutletTiming.OutletTimingBuilder createdAt(final LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
@@ -105,8 +91,7 @@ public class OutletTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder updatedAt(final LocalDateTime updatedAt) {
+public OutletTiming.OutletTimingBuilder updatedAt(final LocalDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
@@ -114,106 +99,86 @@ public class OutletTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming.OutletTimingBuilder version(final Integer version) {
+public OutletTiming.OutletTimingBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public OutletTiming build() {
+public OutletTiming build() {
             return new OutletTiming(this.id, this.outlet, this.openingTime, this.closingTime, this.createdAt, this.updatedAt, this.version);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "OutletTiming.OutletTimingBuilder(id=" + this.id + ", outlet=" + this.outlet + ", openingTime=" + this.openingTime + ", closingTime=" + this.closingTime + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ", version=" + this.version + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static OutletTiming.OutletTimingBuilder builder() {
+public static OutletTiming.OutletTimingBuilder builder() {
         return new OutletTiming.OutletTimingBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Outlet getOutlet() {
+public Outlet getOutlet() {
         return this.outlet;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalTime getOpeningTime() {
+public LocalTime getOpeningTime() {
         return this.openingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalTime getClosingTime() {
+public LocalTime getClosingTime() {
         return this.closingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getCreatedAt() {
+public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getUpdatedAt() {
+public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
     @JsonIgnore
-    @java.lang.SuppressWarnings("all")
-    public void setOutlet(final Outlet outlet) {
+public void setOutlet(final Outlet outlet) {
         this.outlet = outlet;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOpeningTime(final LocalTime openingTime) {
+public void setOpeningTime(final LocalTime openingTime) {
         this.openingTime = openingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setClosingTime(final LocalTime closingTime) {
+public void setClosingTime(final LocalTime closingTime) {
         this.closingTime = closingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCreatedAt(final LocalDateTime createdAt) {
+public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+public void setUpdatedAt(final LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public OutletTiming() {
+public OutletTiming() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public OutletTiming(final UUID id, final Outlet outlet, final LocalTime openingTime, final LocalTime closingTime, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
+public OutletTiming(final UUID id, final Outlet outlet, final LocalTime openingTime, final LocalTime closingTime, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
         this.id = id;
         this.outlet = outlet;
         this.openingTime = openingTime;
@@ -224,8 +189,7 @@ public class OutletTiming {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof OutletTiming)) return false;
         final OutletTiming other = (OutletTiming) o;
@@ -251,14 +215,12 @@ public class OutletTiming {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof OutletTiming;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $version = this.getVersion();
@@ -277,8 +239,7 @@ public class OutletTiming {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "OutletTiming(id=" + this.getId() + ", openingTime=" + this.getOpeningTime() + ", closingTime=" + this.getClosingTime() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ", version=" + this.getVersion() + ")";
     }
 }

@@ -24,22 +24,24 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.kafka.core.KafkaTemplate;
-import com.fooddelivery.common.constants.KafkaConstants;
+import com.fooddelivery.common.outbox.repository.OutboxEventRepository;
+import com.fooddelivery.common.outbox.entity.OutboxEventEntity;
+import com.fooddelivery.common.constants.AggregateType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 
 @Service
 @lombok.extern.slf4j.Slf4j
 public class CatalogService {
-    @java.lang.SuppressWarnings("all")
-
-    private final MasterMenuItemRepository masterMenuItemRepository;
+private final MasterMenuItemRepository masterMenuItemRepository;
     private final OutletMenuOverrideRepository outletMenuOverrideRepository;
     private final OutletRepository outletRepository;
     private final CategoryRepository categoryRepository;
     private final OutletCategoryTimingRepository outletCategoryTimingRepository;
     private final BrandCategoryTimingRepository brandCategoryTimingRepository;
     private final org.springframework.cache.CacheManager cacheManager;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
     @org.springframework.beans.factory.annotation.Autowired
     @org.springframework.context.annotation.Lazy
     private CatalogService self;
@@ -47,10 +49,22 @@ public class CatalogService {
     private void notifyMenuUpdate(UUID brandId) {
         try {
             // Notify that a brand's menu has been updated
-            String eventPayload = String.format("{\"brandId\":\"%s\",\"type\":\"MENU_UPDATED\",\"timestamp\":\"%s\"}", brandId, java.time.Instant.now().toString());
-            kafkaTemplate.send(KafkaConstants.TOPIC_MENU_EVENTS, brandId.toString(), eventPayload);
+            Map<String, Object> payloadMap = Map.of(
+                "brandId", brandId.toString(),
+                "type", "MENU_UPDATED",
+                "timestamp", java.time.Instant.now().toString()
+            );
+            String eventPayload = objectMapper.writeValueAsString(payloadMap);
+            
+            OutboxEventEntity outboxEvent = OutboxEventEntity.builder()
+                .aggregateId(brandId.toString())
+                .aggregateType(AggregateType.BRAND)
+                .eventType(com.fooddelivery.common.constants.EventType.MENU_UPDATED)
+                .payload(eventPayload)
+                .build();
+            outboxEventRepository.save(outboxEvent);
         } catch (Exception e) {
-            log.error("Failed to send MENU_UPDATED event for brand {}", brandId, e);
+            log.error("Failed to persist MENU_UPDATED outbox event for brand {}", brandId, e);
         }
     }
 
@@ -222,8 +236,7 @@ public class CatalogService {
         return fullMenu.stream().filter(item -> itemIds.contains(item.getId())).collect(Collectors.toList());
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CatalogService(final MasterMenuItemRepository masterMenuItemRepository, final OutletMenuOverrideRepository outletMenuOverrideRepository, final OutletRepository outletRepository, final CategoryRepository categoryRepository, final OutletCategoryTimingRepository outletCategoryTimingRepository, final BrandCategoryTimingRepository brandCategoryTimingRepository, final org.springframework.cache.CacheManager cacheManager, final KafkaTemplate<String, String> kafkaTemplate) {
+public CatalogService(final MasterMenuItemRepository masterMenuItemRepository, final OutletMenuOverrideRepository outletMenuOverrideRepository, final OutletRepository outletRepository, final CategoryRepository categoryRepository, final OutletCategoryTimingRepository outletCategoryTimingRepository, final BrandCategoryTimingRepository brandCategoryTimingRepository, final org.springframework.cache.CacheManager cacheManager, final OutboxEventRepository outboxEventRepository, final ObjectMapper objectMapper) {
         this.masterMenuItemRepository = masterMenuItemRepository;
         this.outletMenuOverrideRepository = outletMenuOverrideRepository;
         this.outletRepository = outletRepository;
@@ -231,6 +244,7 @@ public class CatalogService {
         this.outletCategoryTimingRepository = outletCategoryTimingRepository;
         this.brandCategoryTimingRepository = brandCategoryTimingRepository;
         this.cacheManager = cacheManager;
-        this.kafkaTemplate = kafkaTemplate;
+        this.outboxEventRepository = outboxEventRepository;
+        this.objectMapper = objectMapper;
     }
 }

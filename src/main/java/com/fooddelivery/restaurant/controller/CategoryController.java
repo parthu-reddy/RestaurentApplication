@@ -22,13 +22,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @lombok.extern.slf4j.Slf4j
 public class CategoryController {
-    @java.lang.SuppressWarnings("all")
-
-    private final CategoryService categoryService;
+private final CategoryService categoryService;
     private final OutletCategoryTimingService outletCategoryTimingService;
     private final BrandCategoryTimingService brandCategoryTimingService;
 
     @GetMapping("/api/v1/categories")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getCategories() {
         List<CategoryDTO> categories = categoryService.getActiveCategories(null);
         return ResponseEntity.ok(ApiResponse.success(categories, "Categories retrieved"));
@@ -49,6 +48,7 @@ public class CategoryController {
     }
 
     @GetMapping("/api/v1/brands/{brandId}/categories")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<CategoryDTO>>> getBrandCategories(@PathVariable UUID brandId) {
         List<CategoryDTO> categories = categoryService.getActiveCategories(brandId);
         return ResponseEntity.ok(ApiResponse.success(categories, "Brand categories retrieved"));
@@ -62,6 +62,7 @@ public class CategoryController {
     }
 
     @GetMapping("/api/v1/outlets/{outletId}/categories/{categoryId}/timings")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<TimingDTO>>> getOutletCategoryTimings(@PathVariable UUID outletId, @PathVariable UUID categoryId) {
         List<TimingDTO> timings = outletCategoryTimingService.getTimings(outletId, categoryId);
         return ResponseEntity.ok(ApiResponse.success(timings, "Outlet category timings retrieved"));
@@ -75,6 +76,7 @@ public class CategoryController {
     }
 
     @GetMapping("/api/v1/brands/{brandId}/categories/{categoryId}/timings")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<TimingDTO>>> getBrandCategoryTimings(@PathVariable UUID brandId, @PathVariable UUID categoryId) {
         List<TimingDTO> timings = brandCategoryTimingService.getTimings(brandId, categoryId);
         return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings retrieved"));
@@ -87,8 +89,7 @@ public class CategoryController {
         return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings set successfully"));
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CategoryController(final CategoryService categoryService, final OutletCategoryTimingService outletCategoryTimingService, final BrandCategoryTimingService brandCategoryTimingService) {
+public CategoryController(final CategoryService categoryService, final OutletCategoryTimingService outletCategoryTimingService, final BrandCategoryTimingService brandCategoryTimingService) {
         this.categoryService = categoryService;
         this.outletCategoryTimingService = outletCategoryTimingService;
         this.brandCategoryTimingService = brandCategoryTimingService;

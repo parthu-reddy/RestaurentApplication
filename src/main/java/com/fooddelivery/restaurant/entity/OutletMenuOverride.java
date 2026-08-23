@@ -35,32 +35,22 @@ public class OutletMenuOverride {
     private Integer version;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class OutletMenuOverrideBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private UUID outletId;
-        @java.lang.SuppressWarnings("all")
-        private UUID masterMenuItemId;
-        @java.lang.SuppressWarnings("all")
-        private BigDecimal overriddenPrice;
-        @java.lang.SuppressWarnings("all")
-        private Boolean isAvailable;
-        @java.lang.SuppressWarnings("all")
-        private Integer overriddenPrepTimeMinutes;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
+public static class OutletMenuOverrideBuilder {
+private UUID id;
+private UUID outletId;
+private UUID masterMenuItemId;
+private BigDecimal overriddenPrice;
+private Boolean isAvailable;
+private Integer overriddenPrepTimeMinutes;
+private Integer version;
 
-        @java.lang.SuppressWarnings("all")
-        OutletMenuOverrideBuilder() {
+OutletMenuOverrideBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder id(final UUID id) {
+public OutletMenuOverride.OutletMenuOverrideBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -68,8 +58,7 @@ public class OutletMenuOverride {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder outletId(final UUID outletId) {
+public OutletMenuOverride.OutletMenuOverrideBuilder outletId(final UUID outletId) {
             this.outletId = outletId;
             return this;
         }
@@ -77,8 +66,7 @@ public class OutletMenuOverride {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder masterMenuItemId(final UUID masterMenuItemId) {
+public OutletMenuOverride.OutletMenuOverrideBuilder masterMenuItemId(final UUID masterMenuItemId) {
             this.masterMenuItemId = masterMenuItemId;
             return this;
         }
@@ -86,8 +74,7 @@ public class OutletMenuOverride {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder overriddenPrice(final BigDecimal overriddenPrice) {
+public OutletMenuOverride.OutletMenuOverrideBuilder overriddenPrice(final BigDecimal overriddenPrice) {
             this.overriddenPrice = overriddenPrice;
             return this;
         }
@@ -95,8 +82,7 @@ public class OutletMenuOverride {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder isAvailable(final Boolean isAvailable) {
+public OutletMenuOverride.OutletMenuOverrideBuilder isAvailable(final Boolean isAvailable) {
             this.isAvailable = isAvailable;
             return this;
         }
@@ -104,8 +90,7 @@ public class OutletMenuOverride {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder overriddenPrepTimeMinutes(final Integer overriddenPrepTimeMinutes) {
+public OutletMenuOverride.OutletMenuOverrideBuilder overriddenPrepTimeMinutes(final Integer overriddenPrepTimeMinutes) {
             this.overriddenPrepTimeMinutes = overriddenPrepTimeMinutes;
             return this;
         }
@@ -113,102 +98,83 @@ public class OutletMenuOverride {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride.OutletMenuOverrideBuilder version(final Integer version) {
+public OutletMenuOverride.OutletMenuOverrideBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public OutletMenuOverride build() {
+public OutletMenuOverride build() {
             return new OutletMenuOverride(this.id, this.outletId, this.masterMenuItemId, this.overriddenPrice, this.isAvailable, this.overriddenPrepTimeMinutes, this.version);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "OutletMenuOverride.OutletMenuOverrideBuilder(id=" + this.id + ", outletId=" + this.outletId + ", masterMenuItemId=" + this.masterMenuItemId + ", overriddenPrice=" + this.overriddenPrice + ", isAvailable=" + this.isAvailable + ", overriddenPrepTimeMinutes=" + this.overriddenPrepTimeMinutes + ", version=" + this.version + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static OutletMenuOverride.OutletMenuOverrideBuilder builder() {
+public static OutletMenuOverride.OutletMenuOverrideBuilder builder() {
         return new OutletMenuOverride.OutletMenuOverrideBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getOutletId() {
+public UUID getOutletId() {
         return this.outletId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getMasterMenuItemId() {
+public UUID getMasterMenuItemId() {
         return this.masterMenuItemId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public BigDecimal getOverriddenPrice() {
+public BigDecimal getOverriddenPrice() {
         return this.overriddenPrice;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Boolean getIsAvailable() {
+public Boolean getIsAvailable() {
         return this.isAvailable;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getOverriddenPrepTimeMinutes() {
+public Integer getOverriddenPrepTimeMinutes() {
         return this.overriddenPrepTimeMinutes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOutletId(final UUID outletId) {
+public void setOutletId(final UUID outletId) {
         this.outletId = outletId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setMasterMenuItemId(final UUID masterMenuItemId) {
+public void setMasterMenuItemId(final UUID masterMenuItemId) {
         this.masterMenuItemId = masterMenuItemId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOverriddenPrice(final BigDecimal overriddenPrice) {
+public void setOverriddenPrice(final BigDecimal overriddenPrice) {
         this.overriddenPrice = overriddenPrice;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setIsAvailable(final Boolean isAvailable) {
+public void setIsAvailable(final Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOverriddenPrepTimeMinutes(final Integer overriddenPrepTimeMinutes) {
+public void setOverriddenPrepTimeMinutes(final Integer overriddenPrepTimeMinutes) {
         this.overriddenPrepTimeMinutes = overriddenPrepTimeMinutes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof OutletMenuOverride)) return false;
         final OutletMenuOverride other = (OutletMenuOverride) o;
@@ -237,14 +203,12 @@ public class OutletMenuOverride {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof OutletMenuOverride;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $isAvailable = this.getIsAvailable();
@@ -265,17 +229,14 @@ public class OutletMenuOverride {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "OutletMenuOverride(id=" + this.getId() + ", outletId=" + this.getOutletId() + ", masterMenuItemId=" + this.getMasterMenuItemId() + ", overriddenPrice=" + this.getOverriddenPrice() + ", isAvailable=" + this.getIsAvailable() + ", overriddenPrepTimeMinutes=" + this.getOverriddenPrepTimeMinutes() + ", version=" + this.getVersion() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public OutletMenuOverride() {
+public OutletMenuOverride() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public OutletMenuOverride(final UUID id, final UUID outletId, final UUID masterMenuItemId, final BigDecimal overriddenPrice, final Boolean isAvailable, final Integer overriddenPrepTimeMinutes, final Integer version) {
+public OutletMenuOverride(final UUID id, final UUID outletId, final UUID masterMenuItemId, final BigDecimal overriddenPrice, final Boolean isAvailable, final Integer overriddenPrepTimeMinutes, final Integer version) {
         this.id = id;
         this.outletId = outletId;
         this.masterMenuItemId = masterMenuItemId;

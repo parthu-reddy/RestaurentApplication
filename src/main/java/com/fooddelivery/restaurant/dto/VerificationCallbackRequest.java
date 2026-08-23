@@ -12,63 +12,51 @@ public class VerificationCallbackRequest {
         private String bankBeneficiaryName;
         private Double matchScore;
 
-        @java.lang.SuppressWarnings("all")
-        public VerificationCallbackRequest() {
+public VerificationCallbackRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getVerificationType() {
+public String getVerificationType() {
             return this.verificationType;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getStatus() {
+public String getStatus() {
             return this.status;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getLegalEntityName() {
+public String getLegalEntityName() {
             return this.legalEntityName;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getBankBeneficiaryName() {
+public String getBankBeneficiaryName() {
             return this.bankBeneficiaryName;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Double getMatchScore() {
+public Double getMatchScore() {
             return this.matchScore;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setVerificationType(final String verificationType) {
+public void setVerificationType(final String verificationType) {
             this.verificationType = verificationType;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setStatus(final String status) {
+public void setStatus(final String status) {
             this.status = status;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setLegalEntityName(final String legalEntityName) {
+public void setLegalEntityName(final String legalEntityName) {
             this.legalEntityName = legalEntityName;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setBankBeneficiaryName(final String bankBeneficiaryName) {
+public void setBankBeneficiaryName(final String bankBeneficiaryName) {
             this.bankBeneficiaryName = bankBeneficiaryName;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setMatchScore(final Double matchScore) {
+public void setMatchScore(final Double matchScore) {
             this.matchScore = matchScore;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof VerificationCallbackRequest)) return false;
             final VerificationCallbackRequest other = (VerificationCallbackRequest) o;
@@ -91,14 +79,12 @@ public class VerificationCallbackRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof VerificationCallbackRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $matchScore = this.getMatchScore();
@@ -115,8 +101,7 @@ public class VerificationCallbackRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "VerificationCallbackRequest(verificationType=" + this.getVerificationType() + ", status=" + this.getStatus() + ", legalEntityName=" + this.getLegalEntityName() + ", bankBeneficiaryName=" + this.getBankBeneficiaryName() + ", matchScore=" + this.getMatchScore() + ")";
         }
     }

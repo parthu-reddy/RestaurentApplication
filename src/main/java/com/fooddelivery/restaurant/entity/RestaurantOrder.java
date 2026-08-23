@@ -17,9 +17,7 @@ import com.fooddelivery.common.constants.PaymentIntentStatus;
 @Table(name = "restaurant_orders", indexes = {@jakarta.persistence.Index(name = "idx_rest_order_restaurant", columnList = "restaurantId"), @jakarta.persistence.Index(name = "idx_rest_order_status", columnList = "status")})
 @lombok.extern.slf4j.Slf4j
 public class RestaurantOrder {
-    @java.lang.SuppressWarnings("all")
-
-    @Id
+@Id
     @Column(name = "order_id")
     private UUID orderId;
     @Column(name = "restaurant_id")
@@ -91,58 +89,35 @@ public class RestaurantOrder {
     }
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class RestaurantOrderBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID orderId;
-        @java.lang.SuppressWarnings("all")
-        private UUID restaurantId;
-        @java.lang.SuppressWarnings("all")
-        private OrderStatus status;
-        @java.lang.SuppressWarnings("all")
-        private com.fooddelivery.common.enums.DeliveryStatus deliveryStatus;
-        @java.lang.SuppressWarnings("all")
-        private PaymentIntentStatus paymentStatus;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
-        @java.lang.SuppressWarnings("all")
-        private Integer prepTime;
-        @java.lang.SuppressWarnings("all")
-        private Integer additionalPrepTime;
-        @java.lang.SuppressWarnings("all")
-        private Long estimatedCompletionTime;
-        @java.lang.SuppressWarnings("all")
-        private Double deliveryLat;
-        @java.lang.SuppressWarnings("all")
-        private Double deliveryLng;
-        @java.lang.SuppressWarnings("all")
-        private String deliveryAddress;
-        @java.lang.SuppressWarnings("all")
-        private String pickupOtp;
-        @java.lang.SuppressWarnings("all")
-        private String deliveryOtp;
-        @java.lang.SuppressWarnings("all")
-        private UUID deliveryExecutiveId;
-        @java.lang.SuppressWarnings("all")
-        private String customerName;
-        @java.lang.SuppressWarnings("all")
-        private String riderName;
-        @java.lang.SuppressWarnings("all")
-        private String itemsJson;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime createdAt;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime updatedAt;
+public static class RestaurantOrderBuilder {
+private UUID orderId;
+private UUID restaurantId;
+private OrderStatus status;
+private com.fooddelivery.common.enums.DeliveryStatus deliveryStatus;
+private PaymentIntentStatus paymentStatus;
+private Integer version;
+private Integer prepTime;
+private Integer additionalPrepTime;
+private Long estimatedCompletionTime;
+private Double deliveryLat;
+private Double deliveryLng;
+private String deliveryAddress;
+private String pickupOtp;
+private String deliveryOtp;
+private UUID deliveryExecutiveId;
+private String customerName;
+private String riderName;
+private String itemsJson;
+private LocalDateTime createdAt;
+private LocalDateTime updatedAt;
 
-        @java.lang.SuppressWarnings("all")
-        RestaurantOrderBuilder() {
+RestaurantOrderBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder orderId(final UUID orderId) {
+public RestaurantOrder.RestaurantOrderBuilder orderId(final UUID orderId) {
             this.orderId = orderId;
             return this;
         }
@@ -150,8 +125,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder restaurantId(final UUID restaurantId) {
+public RestaurantOrder.RestaurantOrderBuilder restaurantId(final UUID restaurantId) {
             this.restaurantId = restaurantId;
             return this;
         }
@@ -159,8 +133,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder status(final OrderStatus status) {
+public RestaurantOrder.RestaurantOrderBuilder status(final OrderStatus status) {
             this.status = status;
             return this;
         }
@@ -168,8 +141,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder deliveryStatus(final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus) {
+public RestaurantOrder.RestaurantOrderBuilder deliveryStatus(final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus) {
             this.deliveryStatus = deliveryStatus;
             return this;
         }
@@ -177,8 +149,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder paymentStatus(final PaymentIntentStatus paymentStatus) {
+public RestaurantOrder.RestaurantOrderBuilder paymentStatus(final PaymentIntentStatus paymentStatus) {
             this.paymentStatus = paymentStatus;
             return this;
         }
@@ -186,8 +157,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder version(final Integer version) {
+public RestaurantOrder.RestaurantOrderBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
@@ -195,8 +165,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder prepTime(final Integer prepTime) {
+public RestaurantOrder.RestaurantOrderBuilder prepTime(final Integer prepTime) {
             this.prepTime = prepTime;
             return this;
         }
@@ -204,8 +173,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder additionalPrepTime(final Integer additionalPrepTime) {
+public RestaurantOrder.RestaurantOrderBuilder additionalPrepTime(final Integer additionalPrepTime) {
             this.additionalPrepTime = additionalPrepTime;
             return this;
         }
@@ -213,8 +181,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder estimatedCompletionTime(final Long estimatedCompletionTime) {
+public RestaurantOrder.RestaurantOrderBuilder estimatedCompletionTime(final Long estimatedCompletionTime) {
             this.estimatedCompletionTime = estimatedCompletionTime;
             return this;
         }
@@ -222,8 +189,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder deliveryLat(final Double deliveryLat) {
+public RestaurantOrder.RestaurantOrderBuilder deliveryLat(final Double deliveryLat) {
             this.deliveryLat = deliveryLat;
             return this;
         }
@@ -231,8 +197,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder deliveryLng(final Double deliveryLng) {
+public RestaurantOrder.RestaurantOrderBuilder deliveryLng(final Double deliveryLng) {
             this.deliveryLng = deliveryLng;
             return this;
         }
@@ -240,8 +205,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder deliveryAddress(final String deliveryAddress) {
+public RestaurantOrder.RestaurantOrderBuilder deliveryAddress(final String deliveryAddress) {
             this.deliveryAddress = deliveryAddress;
             return this;
         }
@@ -249,8 +213,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder pickupOtp(final String pickupOtp) {
+public RestaurantOrder.RestaurantOrderBuilder pickupOtp(final String pickupOtp) {
             this.pickupOtp = pickupOtp;
             return this;
         }
@@ -258,8 +221,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder deliveryOtp(final String deliveryOtp) {
+public RestaurantOrder.RestaurantOrderBuilder deliveryOtp(final String deliveryOtp) {
             this.deliveryOtp = deliveryOtp;
             return this;
         }
@@ -267,8 +229,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder deliveryExecutiveId(final UUID deliveryExecutiveId) {
+public RestaurantOrder.RestaurantOrderBuilder deliveryExecutiveId(final UUID deliveryExecutiveId) {
             this.deliveryExecutiveId = deliveryExecutiveId;
             return this;
         }
@@ -276,8 +237,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder customerName(final String customerName) {
+public RestaurantOrder.RestaurantOrderBuilder customerName(final String customerName) {
             this.customerName = customerName;
             return this;
         }
@@ -285,8 +245,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder riderName(final String riderName) {
+public RestaurantOrder.RestaurantOrderBuilder riderName(final String riderName) {
             this.riderName = riderName;
             return this;
         }
@@ -294,8 +253,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder itemsJson(final String itemsJson) {
+public RestaurantOrder.RestaurantOrderBuilder itemsJson(final String itemsJson) {
             this.itemsJson = itemsJson;
             return this;
         }
@@ -303,8 +261,7 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder createdAt(final LocalDateTime createdAt) {
+public RestaurantOrder.RestaurantOrderBuilder createdAt(final LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
@@ -312,227 +269,183 @@ public class RestaurantOrder {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder.RestaurantOrderBuilder updatedAt(final LocalDateTime updatedAt) {
+public RestaurantOrder.RestaurantOrderBuilder updatedAt(final LocalDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrder build() {
+public RestaurantOrder build() {
             return new RestaurantOrder(this.orderId, this.restaurantId, this.status, this.deliveryStatus, this.paymentStatus, this.version, this.prepTime, this.additionalPrepTime, this.estimatedCompletionTime, this.deliveryLat, this.deliveryLng, this.deliveryAddress, this.pickupOtp, this.deliveryOtp, this.deliveryExecutiveId, this.customerName, this.riderName, this.itemsJson, this.createdAt, this.updatedAt);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "RestaurantOrder.RestaurantOrderBuilder(orderId=" + this.orderId + ", restaurantId=" + this.restaurantId + ", status=" + this.status + ", deliveryStatus=" + this.deliveryStatus + ", paymentStatus=" + this.paymentStatus + ", version=" + this.version + ", prepTime=" + this.prepTime + ", additionalPrepTime=" + this.additionalPrepTime + ", estimatedCompletionTime=" + this.estimatedCompletionTime + ", deliveryLat=" + this.deliveryLat + ", deliveryLng=" + this.deliveryLng + ", deliveryAddress=" + this.deliveryAddress + ", pickupOtp=" + this.pickupOtp + ", deliveryOtp=" + this.deliveryOtp + ", deliveryExecutiveId=" + this.deliveryExecutiveId + ", customerName=" + this.customerName + ", riderName=" + this.riderName + ", itemsJson=" + this.itemsJson + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static RestaurantOrder.RestaurantOrderBuilder builder() {
+public static RestaurantOrder.RestaurantOrderBuilder builder() {
         return new RestaurantOrder.RestaurantOrderBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getOrderId() {
+public UUID getOrderId() {
         return this.orderId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getRestaurantId() {
+public UUID getRestaurantId() {
         return this.restaurantId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public OrderStatus getStatus() {
+public OrderStatus getStatus() {
         return this.status;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public com.fooddelivery.common.enums.DeliveryStatus getDeliveryStatus() {
+public com.fooddelivery.common.enums.DeliveryStatus getDeliveryStatus() {
         return this.deliveryStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public PaymentIntentStatus getPaymentStatus() {
+public PaymentIntentStatus getPaymentStatus() {
         return this.paymentStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getPrepTime() {
+public Integer getPrepTime() {
         return this.prepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getAdditionalPrepTime() {
+public Integer getAdditionalPrepTime() {
         return this.additionalPrepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Long getEstimatedCompletionTime() {
+public Long getEstimatedCompletionTime() {
         return this.estimatedCompletionTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Double getDeliveryLat() {
+public Double getDeliveryLat() {
         return this.deliveryLat;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Double getDeliveryLng() {
+public Double getDeliveryLng() {
         return this.deliveryLng;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getDeliveryAddress() {
+public String getDeliveryAddress() {
         return this.deliveryAddress;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getPickupOtp() {
+public String getPickupOtp() {
         return this.pickupOtp;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getDeliveryOtp() {
+public String getDeliveryOtp() {
         return this.deliveryOtp;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getDeliveryExecutiveId() {
+public UUID getDeliveryExecutiveId() {
         return this.deliveryExecutiveId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getCustomerName() {
+public String getCustomerName() {
         return this.customerName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getRiderName() {
+public String getRiderName() {
         return this.riderName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getItemsJson() {
+public String getItemsJson() {
         return this.itemsJson;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getCreatedAt() {
+public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getUpdatedAt() {
+public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOrderId(final UUID orderId) {
+public void setOrderId(final UUID orderId) {
         this.orderId = orderId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRestaurantId(final UUID restaurantId) {
+public void setRestaurantId(final UUID restaurantId) {
         this.restaurantId = restaurantId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryStatus(final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus) {
+public void setDeliveryStatus(final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus) {
         this.deliveryStatus = deliveryStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPaymentStatus(final PaymentIntentStatus paymentStatus) {
+public void setPaymentStatus(final PaymentIntentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPrepTime(final Integer prepTime) {
+public void setPrepTime(final Integer prepTime) {
         this.prepTime = prepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setAdditionalPrepTime(final Integer additionalPrepTime) {
+public void setAdditionalPrepTime(final Integer additionalPrepTime) {
         this.additionalPrepTime = additionalPrepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setEstimatedCompletionTime(final Long estimatedCompletionTime) {
+public void setEstimatedCompletionTime(final Long estimatedCompletionTime) {
         this.estimatedCompletionTime = estimatedCompletionTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryLat(final Double deliveryLat) {
+public void setDeliveryLat(final Double deliveryLat) {
         this.deliveryLat = deliveryLat;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryLng(final Double deliveryLng) {
+public void setDeliveryLng(final Double deliveryLng) {
         this.deliveryLng = deliveryLng;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryAddress(final String deliveryAddress) {
+public void setDeliveryAddress(final String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPickupOtp(final String pickupOtp) {
+public void setPickupOtp(final String pickupOtp) {
         this.pickupOtp = pickupOtp;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryOtp(final String deliveryOtp) {
+public void setDeliveryOtp(final String deliveryOtp) {
         this.deliveryOtp = deliveryOtp;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryExecutiveId(final UUID deliveryExecutiveId) {
+public void setDeliveryExecutiveId(final UUID deliveryExecutiveId) {
         this.deliveryExecutiveId = deliveryExecutiveId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCustomerName(final String customerName) {
+public void setCustomerName(final String customerName) {
         this.customerName = customerName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRiderName(final String riderName) {
+public void setRiderName(final String riderName) {
         this.riderName = riderName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setItemsJson(final String itemsJson) {
+public void setItemsJson(final String itemsJson) {
         this.itemsJson = itemsJson;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCreatedAt(final LocalDateTime createdAt) {
+public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+public void setUpdatedAt(final LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof RestaurantOrder)) return false;
         final RestaurantOrder other = (RestaurantOrder) o;
@@ -600,14 +513,12 @@ public class RestaurantOrder {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof RestaurantOrder;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $version = this.getVersion();
@@ -654,17 +565,14 @@ public class RestaurantOrder {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "RestaurantOrder(orderId=" + this.getOrderId() + ", restaurantId=" + this.getRestaurantId() + ", status=" + this.getStatus() + ", deliveryStatus=" + this.getDeliveryStatus() + ", paymentStatus=" + this.getPaymentStatus() + ", version=" + this.getVersion() + ", prepTime=" + this.getPrepTime() + ", additionalPrepTime=" + this.getAdditionalPrepTime() + ", estimatedCompletionTime=" + this.getEstimatedCompletionTime() + ", deliveryLat=" + this.getDeliveryLat() + ", deliveryLng=" + this.getDeliveryLng() + ", deliveryAddress=" + this.getDeliveryAddress() + ", pickupOtp=" + this.getPickupOtp() + ", deliveryOtp=" + this.getDeliveryOtp() + ", deliveryExecutiveId=" + this.getDeliveryExecutiveId() + ", customerName=" + this.getCustomerName() + ", riderName=" + this.getRiderName() + ", itemsJson=" + this.getItemsJson() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantOrder() {
+public RestaurantOrder() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantOrder(final UUID orderId, final UUID restaurantId, final OrderStatus status, final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus, final PaymentIntentStatus paymentStatus, final Integer version, final Integer prepTime, final Integer additionalPrepTime, final Long estimatedCompletionTime, final Double deliveryLat, final Double deliveryLng, final String deliveryAddress, final String pickupOtp, final String deliveryOtp, final UUID deliveryExecutiveId, final String customerName, final String riderName, final String itemsJson, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
+public RestaurantOrder(final UUID orderId, final UUID restaurantId, final OrderStatus status, final com.fooddelivery.common.enums.DeliveryStatus deliveryStatus, final PaymentIntentStatus paymentStatus, final Integer version, final Integer prepTime, final Integer additionalPrepTime, final Long estimatedCompletionTime, final Double deliveryLat, final Double deliveryLng, final String deliveryAddress, final String pickupOtp, final String deliveryOtp, final UUID deliveryExecutiveId, final String customerName, final String riderName, final String itemsJson, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
         this.orderId = orderId;
         this.restaurantId = restaurantId;
         this.status = status;

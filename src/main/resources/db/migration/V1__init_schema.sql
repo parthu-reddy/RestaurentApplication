@@ -47,7 +47,7 @@ CREATE TABLE outlets (
     rating DOUBLE PRECISION DEFAULT 0.0,
     reviews_count INTEGER DEFAULT 0,
     delivery_time INTEGER,
-    delivery_fee DOUBLE PRECISION,
+    delivery_fee DECIMAL(15,2),
     tags TEXT,
     default_prep_time_seconds INTEGER DEFAULT 900,
     CONSTRAINT uq_outlets_fssai UNIQUE (fssai_license_number)

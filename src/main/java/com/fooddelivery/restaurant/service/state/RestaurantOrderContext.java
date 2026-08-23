@@ -18,8 +18,7 @@ public class RestaurantOrderContext {
     private double restaurantLat;
     private double restaurantLng;
 
-    @java.lang.SuppressWarnings("all")
-    RestaurantOrderContext(final RestaurantOrder order, final JsonNode eventPayload, final RestaurantActionService actionService, final UUID restaurantId, final Integer additionalPrepTime, final String delayReason, final String cancelReason, final String rejectReason, final double restaurantLat, final double restaurantLng) {
+RestaurantOrderContext(final RestaurantOrder order, final JsonNode eventPayload, final RestaurantActionService actionService, final UUID restaurantId, final Integer additionalPrepTime, final String delayReason, final String cancelReason, final String rejectReason, final double restaurantLat, final double restaurantLng) {
         this.order = order;
         this.eventPayload = eventPayload;
         this.actionService = actionService;
@@ -33,38 +32,25 @@ public class RestaurantOrderContext {
     }
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class RestaurantOrderContextBuilder {
-        @java.lang.SuppressWarnings("all")
-        private RestaurantOrder order;
-        @java.lang.SuppressWarnings("all")
-        private JsonNode eventPayload;
-        @java.lang.SuppressWarnings("all")
-        private RestaurantActionService actionService;
-        @java.lang.SuppressWarnings("all")
-        private UUID restaurantId;
-        @java.lang.SuppressWarnings("all")
-        private Integer additionalPrepTime;
-        @java.lang.SuppressWarnings("all")
-        private String delayReason;
-        @java.lang.SuppressWarnings("all")
-        private String cancelReason;
-        @java.lang.SuppressWarnings("all")
-        private String rejectReason;
-        @java.lang.SuppressWarnings("all")
-        private double restaurantLat;
-        @java.lang.SuppressWarnings("all")
-        private double restaurantLng;
+public static class RestaurantOrderContextBuilder {
+private RestaurantOrder order;
+private JsonNode eventPayload;
+private RestaurantActionService actionService;
+private UUID restaurantId;
+private Integer additionalPrepTime;
+private String delayReason;
+private String cancelReason;
+private String rejectReason;
+private double restaurantLat;
+private double restaurantLng;
 
-        @java.lang.SuppressWarnings("all")
-        RestaurantOrderContextBuilder() {
+RestaurantOrderContextBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder order(final RestaurantOrder order) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder order(final RestaurantOrder order) {
             this.order = order;
             return this;
         }
@@ -72,8 +58,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder eventPayload(final JsonNode eventPayload) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder eventPayload(final JsonNode eventPayload) {
             this.eventPayload = eventPayload;
             return this;
         }
@@ -81,8 +66,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder actionService(final RestaurantActionService actionService) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder actionService(final RestaurantActionService actionService) {
             this.actionService = actionService;
             return this;
         }
@@ -90,8 +74,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder restaurantId(final UUID restaurantId) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder restaurantId(final UUID restaurantId) {
             this.restaurantId = restaurantId;
             return this;
         }
@@ -99,8 +82,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder additionalPrepTime(final Integer additionalPrepTime) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder additionalPrepTime(final Integer additionalPrepTime) {
             this.additionalPrepTime = additionalPrepTime;
             return this;
         }
@@ -108,8 +90,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder delayReason(final String delayReason) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder delayReason(final String delayReason) {
             this.delayReason = delayReason;
             return this;
         }
@@ -117,8 +98,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder cancelReason(final String cancelReason) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder cancelReason(final String cancelReason) {
             this.cancelReason = cancelReason;
             return this;
         }
@@ -126,8 +106,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder rejectReason(final String rejectReason) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder rejectReason(final String rejectReason) {
             this.rejectReason = rejectReason;
             return this;
         }
@@ -135,8 +114,7 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder restaurantLat(final double restaurantLat) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder restaurantLat(final double restaurantLat) {
             this.restaurantLat = restaurantLat;
             return this;
         }
@@ -144,132 +122,107 @@ public class RestaurantOrderContext {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext.RestaurantOrderContextBuilder restaurantLng(final double restaurantLng) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder restaurantLng(final double restaurantLng) {
             this.restaurantLng = restaurantLng;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public RestaurantOrderContext build() {
+public RestaurantOrderContext build() {
             return new RestaurantOrderContext(this.order, this.eventPayload, this.actionService, this.restaurantId, this.additionalPrepTime, this.delayReason, this.cancelReason, this.rejectReason, this.restaurantLat, this.restaurantLng);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "RestaurantOrderContext.RestaurantOrderContextBuilder(order=" + this.order + ", eventPayload=" + this.eventPayload + ", actionService=" + this.actionService + ", restaurantId=" + this.restaurantId + ", additionalPrepTime=" + this.additionalPrepTime + ", delayReason=" + this.delayReason + ", cancelReason=" + this.cancelReason + ", rejectReason=" + this.rejectReason + ", restaurantLat=" + this.restaurantLat + ", restaurantLng=" + this.restaurantLng + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static RestaurantOrderContext.RestaurantOrderContextBuilder builder() {
+public static RestaurantOrderContext.RestaurantOrderContextBuilder builder() {
         return new RestaurantOrderContext.RestaurantOrderContextBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantOrder getOrder() {
+public RestaurantOrder getOrder() {
         return this.order;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public JsonNode getEventPayload() {
+public JsonNode getEventPayload() {
         return this.eventPayload;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantActionService getActionService() {
+public RestaurantActionService getActionService() {
         return this.actionService;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getRestaurantId() {
+public UUID getRestaurantId() {
         return this.restaurantId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getAdditionalPrepTime() {
+public Integer getAdditionalPrepTime() {
         return this.additionalPrepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getDelayReason() {
+public String getDelayReason() {
         return this.delayReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getCancelReason() {
+public String getCancelReason() {
         return this.cancelReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getRejectReason() {
+public String getRejectReason() {
         return this.rejectReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public double getRestaurantLat() {
+public double getRestaurantLat() {
         return this.restaurantLat;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public double getRestaurantLng() {
+public double getRestaurantLng() {
         return this.restaurantLng;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOrder(final RestaurantOrder order) {
+public void setOrder(final RestaurantOrder order) {
         this.order = order;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setEventPayload(final JsonNode eventPayload) {
+public void setEventPayload(final JsonNode eventPayload) {
         this.eventPayload = eventPayload;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setActionService(final RestaurantActionService actionService) {
+public void setActionService(final RestaurantActionService actionService) {
         this.actionService = actionService;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRestaurantId(final UUID restaurantId) {
+public void setRestaurantId(final UUID restaurantId) {
         this.restaurantId = restaurantId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setAdditionalPrepTime(final Integer additionalPrepTime) {
+public void setAdditionalPrepTime(final Integer additionalPrepTime) {
         this.additionalPrepTime = additionalPrepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDelayReason(final String delayReason) {
+public void setDelayReason(final String delayReason) {
         this.delayReason = delayReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCancelReason(final String cancelReason) {
+public void setCancelReason(final String cancelReason) {
         this.cancelReason = cancelReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRejectReason(final String rejectReason) {
+public void setRejectReason(final String rejectReason) {
         this.rejectReason = rejectReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRestaurantLat(final double restaurantLat) {
+public void setRestaurantLat(final double restaurantLat) {
         this.restaurantLat = restaurantLat;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRestaurantLng(final double restaurantLng) {
+public void setRestaurantLng(final double restaurantLng) {
         this.restaurantLng = restaurantLng;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof RestaurantOrderContext)) return false;
         final RestaurantOrderContext other = (RestaurantOrderContext) o;
@@ -303,14 +256,12 @@ public class RestaurantOrderContext {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof RestaurantOrderContext;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final long $restaurantLat = java.lang.Double.doubleToLongBits(this.getRestaurantLat());
@@ -337,8 +288,7 @@ public class RestaurantOrderContext {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "RestaurantOrderContext(order=" + this.getOrder() + ", eventPayload=" + this.getEventPayload() + ", actionService=" + this.getActionService() + ", restaurantId=" + this.getRestaurantId() + ", additionalPrepTime=" + this.getAdditionalPrepTime() + ", delayReason=" + this.getDelayReason() + ", cancelReason=" + this.getCancelReason() + ", rejectReason=" + this.getRejectReason() + ", restaurantLat=" + this.getRestaurantLat() + ", restaurantLng=" + this.getRestaurantLng() + ")";
     }
 }

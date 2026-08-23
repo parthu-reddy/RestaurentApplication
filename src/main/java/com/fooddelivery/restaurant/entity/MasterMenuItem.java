@@ -47,46 +47,31 @@ public class MasterMenuItem {
     @Column(name = "version")
     private Integer version;
 
-    @java.lang.SuppressWarnings("all")
-    private static BigDecimal $default$packingCharge() {
+private static BigDecimal $default$packingCharge() {
         return BigDecimal.ZERO;
     }
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class MasterMenuItemBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private UUID brandId;
-        @java.lang.SuppressWarnings("all")
-        private UUID categoryId;
-        @java.lang.SuppressWarnings("all")
-        private String name;
-        @java.lang.SuppressWarnings("all")
-        private String description;
-        @java.lang.SuppressWarnings("all")
-        private String imageUrl;
-        @java.lang.SuppressWarnings("all")
-        private BigDecimal basePrice;
-        @java.lang.SuppressWarnings("all")
-        private boolean packingCharge$set;
-        @java.lang.SuppressWarnings("all")
-        private BigDecimal packingCharge$value;
-        @java.lang.SuppressWarnings("all")
-        private Integer defaultPrepTimeMinutes;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
+public static class MasterMenuItemBuilder {
+private UUID id;
+private UUID brandId;
+private UUID categoryId;
+private String name;
+private String description;
+private String imageUrl;
+private BigDecimal basePrice;
+private boolean packingCharge$set;
+private BigDecimal packingCharge$value;
+private Integer defaultPrepTimeMinutes;
+private Integer version;
 
-        @java.lang.SuppressWarnings("all")
-        MasterMenuItemBuilder() {
+MasterMenuItemBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder id(final UUID id) {
+public MasterMenuItem.MasterMenuItemBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -94,8 +79,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder brandId(final UUID brandId) {
+public MasterMenuItem.MasterMenuItemBuilder brandId(final UUID brandId) {
             this.brandId = brandId;
             return this;
         }
@@ -103,8 +87,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder categoryId(final UUID categoryId) {
+public MasterMenuItem.MasterMenuItemBuilder categoryId(final UUID categoryId) {
             this.categoryId = categoryId;
             return this;
         }
@@ -112,8 +95,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder name(final String name) {
+public MasterMenuItem.MasterMenuItemBuilder name(final String name) {
             this.name = name;
             return this;
         }
@@ -121,8 +103,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder description(final String description) {
+public MasterMenuItem.MasterMenuItemBuilder description(final String description) {
             this.description = description;
             return this;
         }
@@ -130,8 +111,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder imageUrl(final String imageUrl) {
+public MasterMenuItem.MasterMenuItemBuilder imageUrl(final String imageUrl) {
             this.imageUrl = imageUrl;
             return this;
         }
@@ -139,8 +119,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder basePrice(final BigDecimal basePrice) {
+public MasterMenuItem.MasterMenuItemBuilder basePrice(final BigDecimal basePrice) {
             this.basePrice = basePrice;
             return this;
         }
@@ -148,8 +127,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder packingCharge(final BigDecimal packingCharge) {
+public MasterMenuItem.MasterMenuItemBuilder packingCharge(final BigDecimal packingCharge) {
             this.packingCharge$value = packingCharge;
             packingCharge$set = true;
             return this;
@@ -158,8 +136,7 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder defaultPrepTimeMinutes(final Integer defaultPrepTimeMinutes) {
+public MasterMenuItem.MasterMenuItemBuilder defaultPrepTimeMinutes(final Integer defaultPrepTimeMinutes) {
             this.defaultPrepTimeMinutes = defaultPrepTimeMinutes;
             return this;
         }
@@ -167,134 +144,109 @@ public class MasterMenuItem {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem.MasterMenuItemBuilder version(final Integer version) {
+public MasterMenuItem.MasterMenuItemBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public MasterMenuItem build() {
+public MasterMenuItem build() {
             BigDecimal packingCharge$value = this.packingCharge$value;
             if (!this.packingCharge$set) packingCharge$value = MasterMenuItem.$default$packingCharge();
             return new MasterMenuItem(this.id, this.brandId, this.categoryId, this.name, this.description, this.imageUrl, this.basePrice, packingCharge$value, this.defaultPrepTimeMinutes, this.version);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "MasterMenuItem.MasterMenuItemBuilder(id=" + this.id + ", brandId=" + this.brandId + ", categoryId=" + this.categoryId + ", name=" + this.name + ", description=" + this.description + ", imageUrl=" + this.imageUrl + ", basePrice=" + this.basePrice + ", packingCharge$value=" + this.packingCharge$value + ", defaultPrepTimeMinutes=" + this.defaultPrepTimeMinutes + ", version=" + this.version + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static MasterMenuItem.MasterMenuItemBuilder builder() {
+public static MasterMenuItem.MasterMenuItemBuilder builder() {
         return new MasterMenuItem.MasterMenuItemBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getBrandId() {
+public UUID getBrandId() {
         return this.brandId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getCategoryId() {
+public UUID getCategoryId() {
         return this.categoryId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getName() {
+public String getName() {
         return this.name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getDescription() {
+public String getDescription() {
         return this.description;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getImageUrl() {
+public String getImageUrl() {
         return this.imageUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public BigDecimal getBasePrice() {
+public BigDecimal getBasePrice() {
         return this.basePrice;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public BigDecimal getPackingCharge() {
+public BigDecimal getPackingCharge() {
         return this.packingCharge;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getDefaultPrepTimeMinutes() {
+public Integer getDefaultPrepTimeMinutes() {
         return this.defaultPrepTimeMinutes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBrandId(final UUID brandId) {
+public void setBrandId(final UUID brandId) {
         this.brandId = brandId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCategoryId(final UUID categoryId) {
+public void setCategoryId(final UUID categoryId) {
         this.categoryId = categoryId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setName(final String name) {
+public void setName(final String name) {
         this.name = name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDescription(final String description) {
+public void setDescription(final String description) {
         this.description = description;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setImageUrl(final String imageUrl) {
+public void setImageUrl(final String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBasePrice(final BigDecimal basePrice) {
+public void setBasePrice(final BigDecimal basePrice) {
         this.basePrice = basePrice;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPackingCharge(final BigDecimal packingCharge) {
+public void setPackingCharge(final BigDecimal packingCharge) {
         this.packingCharge = packingCharge;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDefaultPrepTimeMinutes(final Integer defaultPrepTimeMinutes) {
+public void setDefaultPrepTimeMinutes(final Integer defaultPrepTimeMinutes) {
         this.defaultPrepTimeMinutes = defaultPrepTimeMinutes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof MasterMenuItem)) return false;
         final MasterMenuItem other = (MasterMenuItem) o;
@@ -332,14 +284,12 @@ public class MasterMenuItem {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof MasterMenuItem;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $defaultPrepTimeMinutes = this.getDefaultPrepTimeMinutes();
@@ -366,18 +316,15 @@ public class MasterMenuItem {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "MasterMenuItem(id=" + this.getId() + ", brandId=" + this.getBrandId() + ", categoryId=" + this.getCategoryId() + ", name=" + this.getName() + ", description=" + this.getDescription() + ", imageUrl=" + this.getImageUrl() + ", basePrice=" + this.getBasePrice() + ", packingCharge=" + this.getPackingCharge() + ", defaultPrepTimeMinutes=" + this.getDefaultPrepTimeMinutes() + ", version=" + this.getVersion() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public MasterMenuItem() {
+public MasterMenuItem() {
         this.packingCharge = MasterMenuItem.$default$packingCharge();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public MasterMenuItem(final UUID id, final UUID brandId, final UUID categoryId, final String name, final String description, final String imageUrl, final BigDecimal basePrice, final BigDecimal packingCharge, final Integer defaultPrepTimeMinutes, final Integer version) {
+public MasterMenuItem(final UUID id, final UUID brandId, final UUID categoryId, final String name, final String description, final String imageUrl, final BigDecimal basePrice, final BigDecimal packingCharge, final Integer defaultPrepTimeMinutes, final Integer version) {
         this.id = id;
         this.brandId = brandId;
         this.categoryId = categoryId;

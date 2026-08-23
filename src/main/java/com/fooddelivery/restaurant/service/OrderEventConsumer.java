@@ -24,9 +24,7 @@ import java.util.UUID;
 @Service
 @lombok.extern.slf4j.Slf4j
 public class OrderEventConsumer {
-    @java.lang.SuppressWarnings("all")
-
-    private final ObjectMapper objectMapper;
+private final ObjectMapper objectMapper;
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final IIdempotencyKeyRepository idempotencyKeyRepository;
     private final RestaurantActionService actionService;
@@ -35,21 +33,15 @@ public class OrderEventConsumer {
     private final MeterRegistry meterRegistry;
 
     @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 100, multiplier = 2.0, maxDelay = 2000), include = {org.springframework.orm.ObjectOptimisticLockingFailureException.class, RuntimeException.class})
-    @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE)
+    @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE + "-ordereventconsumer")
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
         log.info("Consumed event from {}: {}", com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, message);
         
         // Idempotency check
         String eventId = com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId");
         if (eventId == null) {
-            Long offset = (Long) headers.get(org.springframework.kafka.support.KafkaHeaders.OFFSET);
-            Integer partition = (Integer) headers.get(org.springframework.kafka.support.KafkaHeaders.RECEIVED_PARTITION);
-            String topic = (String) headers.get(org.springframework.kafka.support.KafkaHeaders.RECEIVED_TOPIC);
-            if (offset != null && partition != null && topic != null) {
-                eventId = topic + "-" + partition + "-" + offset;
-            } else {
-                eventId = UUID.randomUUID().toString();
-            }
+            log.error("Missing eventId header in OrderEventConsumer, sending to DLT.");
+            throw new IllegalArgumentException("Missing eventId header");
         }
         
         String idempotencyKeyStr = "processed_event:restaurant:" + eventId;
@@ -170,8 +162,7 @@ public class OrderEventConsumer {
         log.info("Restaurant {} received new paid order {} with estimated prep time {}m. Awaiting restaurant staff to accept/reject.", restaurantId, orderId, estimatedPrepTimeMinutes);
     }
 
-    @java.lang.SuppressWarnings("all")
-    public OrderEventConsumer(final ObjectMapper objectMapper, final RestaurantOrderRepository restaurantOrderRepository, final IIdempotencyKeyRepository idempotencyKeyRepository, final RestaurantActionService actionService, final org.springframework.transaction.support.TransactionTemplate transactionTemplate, final org.springframework.data.redis.core.StringRedisTemplate redisTemplate, final MeterRegistry meterRegistry) {
+public OrderEventConsumer(final ObjectMapper objectMapper, final RestaurantOrderRepository restaurantOrderRepository, final IIdempotencyKeyRepository idempotencyKeyRepository, final RestaurantActionService actionService, final org.springframework.transaction.support.TransactionTemplate transactionTemplate, final org.springframework.data.redis.core.StringRedisTemplate redisTemplate, final MeterRegistry meterRegistry) {
         this.objectMapper = objectMapper;
         this.restaurantOrderRepository = restaurantOrderRepository;
         this.idempotencyKeyRepository = idempotencyKeyRepository;

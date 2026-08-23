@@ -4,33 +4,27 @@ public class AcceptOrderRequest {
     private Integer additionalPrepTime;
     private String delayReason;
 
-    @java.lang.SuppressWarnings("all")
-    public AcceptOrderRequest() {
+public AcceptOrderRequest() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getAdditionalPrepTime() {
+public Integer getAdditionalPrepTime() {
         return this.additionalPrepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getDelayReason() {
+public String getDelayReason() {
         return this.delayReason;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setAdditionalPrepTime(final Integer additionalPrepTime) {
+public void setAdditionalPrepTime(final Integer additionalPrepTime) {
         this.additionalPrepTime = additionalPrepTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDelayReason(final String delayReason) {
+public void setDelayReason(final String delayReason) {
         this.delayReason = delayReason;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof AcceptOrderRequest)) return false;
         final AcceptOrderRequest other = (AcceptOrderRequest) o;
@@ -44,14 +38,12 @@ public class AcceptOrderRequest {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof AcceptOrderRequest;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $additionalPrepTime = this.getAdditionalPrepTime();
@@ -62,8 +54,7 @@ public class AcceptOrderRequest {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "AcceptOrderRequest(additionalPrepTime=" + this.getAdditionalPrepTime() + ", delayReason=" + this.getDelayReason() + ")";
     }
 }

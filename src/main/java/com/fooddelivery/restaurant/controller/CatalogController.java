@@ -22,9 +22,7 @@ import jakarta.validation.Valid;
 @RestController
 @lombok.extern.slf4j.Slf4j
 public class CatalogController {
-    @java.lang.SuppressWarnings("all")
-
-    private final com.fooddelivery.restaurant.service.CatalogService catalogService;
+private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     // Phase 3: Brand uploads Master Menu
@@ -65,6 +63,7 @@ public class CatalogController {
 
     // Customer fetching the effective menu for an Outlet
     @GetMapping("/api/v1/restaurants/{restaurantId}/catalog/items")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<MenuItemDTO>>> getEffectiveMenu(@PathVariable UUID restaurantId) {
         List<MenuItemDTO> items = catalogService.getEffectiveMenuForOutlet(restaurantId);
         return ResponseEntity.ok(ApiResponse.success(items, "Menu items retrieved"));
@@ -72,6 +71,7 @@ public class CatalogController {
 
     // Batch endpoint used by CustomerOrderService to validate and fetch prices
     @GetMapping("/api/v1/restaurants/{restaurantId}/menu/batch")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<MenuItemDTO>> getEffectiveMenuBatch(@PathVariable UUID restaurantId, @RequestParam("ids") String idsStr) {
         if (idsStr == null || idsStr.isBlank()) {
             return ResponseEntity.badRequest().build();
@@ -81,8 +81,7 @@ public class CatalogController {
         return ResponseEntity.ok(items);
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CatalogController(final com.fooddelivery.restaurant.service.CatalogService catalogService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper) {
+public CatalogController(final com.fooddelivery.restaurant.service.CatalogService catalogService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper) {
         this.catalogService = catalogService;
         this.securityHelper = securityHelper;
     }

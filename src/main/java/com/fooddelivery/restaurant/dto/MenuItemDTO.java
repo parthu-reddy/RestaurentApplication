@@ -17,38 +17,25 @@ public class MenuItemDTO implements Serializable {
     private String categoryName;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class MenuItemDTOBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private UUID restaurantId;
-        @java.lang.SuppressWarnings("all")
-        private String name;
-        @java.lang.SuppressWarnings("all")
-        private String description;
-        @java.lang.SuppressWarnings("all")
-        private BigDecimal price;
-        @java.lang.SuppressWarnings("all")
-        private Boolean isAvailable;
-        @java.lang.SuppressWarnings("all")
-        private Integer prepTimeMinutes;
-        @java.lang.SuppressWarnings("all")
-        private String imageUrl;
-        @java.lang.SuppressWarnings("all")
-        private UUID categoryId;
-        @java.lang.SuppressWarnings("all")
-        private String categoryName;
+public static class MenuItemDTOBuilder {
+private UUID id;
+private UUID restaurantId;
+private String name;
+private String description;
+private BigDecimal price;
+private Boolean isAvailable;
+private Integer prepTimeMinutes;
+private String imageUrl;
+private UUID categoryId;
+private String categoryName;
 
-        @java.lang.SuppressWarnings("all")
-        MenuItemDTOBuilder() {
+MenuItemDTOBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder id(final UUID id) {
+public MenuItemDTO.MenuItemDTOBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -56,8 +43,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder restaurantId(final UUID restaurantId) {
+public MenuItemDTO.MenuItemDTOBuilder restaurantId(final UUID restaurantId) {
             this.restaurantId = restaurantId;
             return this;
         }
@@ -65,8 +51,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder name(final String name) {
+public MenuItemDTO.MenuItemDTOBuilder name(final String name) {
             this.name = name;
             return this;
         }
@@ -74,8 +59,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder description(final String description) {
+public MenuItemDTO.MenuItemDTOBuilder description(final String description) {
             this.description = description;
             return this;
         }
@@ -83,8 +67,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder price(final BigDecimal price) {
+public MenuItemDTO.MenuItemDTOBuilder price(final BigDecimal price) {
             this.price = price;
             return this;
         }
@@ -92,8 +75,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder isAvailable(final Boolean isAvailable) {
+public MenuItemDTO.MenuItemDTOBuilder isAvailable(final Boolean isAvailable) {
             this.isAvailable = isAvailable;
             return this;
         }
@@ -101,8 +83,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder prepTimeMinutes(final Integer prepTimeMinutes) {
+public MenuItemDTO.MenuItemDTOBuilder prepTimeMinutes(final Integer prepTimeMinutes) {
             this.prepTimeMinutes = prepTimeMinutes;
             return this;
         }
@@ -110,8 +91,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder imageUrl(final String imageUrl) {
+public MenuItemDTO.MenuItemDTOBuilder imageUrl(final String imageUrl) {
             this.imageUrl = imageUrl;
             return this;
         }
@@ -119,8 +99,7 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder categoryId(final UUID categoryId) {
+public MenuItemDTO.MenuItemDTOBuilder categoryId(final UUID categoryId) {
             this.categoryId = categoryId;
             return this;
         }
@@ -128,132 +107,107 @@ public class MenuItemDTO implements Serializable {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO.MenuItemDTOBuilder categoryName(final String categoryName) {
+public MenuItemDTO.MenuItemDTOBuilder categoryName(final String categoryName) {
             this.categoryName = categoryName;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public MenuItemDTO build() {
+public MenuItemDTO build() {
             return new MenuItemDTO(this.id, this.restaurantId, this.name, this.description, this.price, this.isAvailable, this.prepTimeMinutes, this.imageUrl, this.categoryId, this.categoryName);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "MenuItemDTO.MenuItemDTOBuilder(id=" + this.id + ", restaurantId=" + this.restaurantId + ", name=" + this.name + ", description=" + this.description + ", price=" + this.price + ", isAvailable=" + this.isAvailable + ", prepTimeMinutes=" + this.prepTimeMinutes + ", imageUrl=" + this.imageUrl + ", categoryId=" + this.categoryId + ", categoryName=" + this.categoryName + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static MenuItemDTO.MenuItemDTOBuilder builder() {
+public static MenuItemDTO.MenuItemDTOBuilder builder() {
         return new MenuItemDTO.MenuItemDTOBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getRestaurantId() {
+public UUID getRestaurantId() {
         return this.restaurantId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getName() {
+public String getName() {
         return this.name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getDescription() {
+public String getDescription() {
         return this.description;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public BigDecimal getPrice() {
+public BigDecimal getPrice() {
         return this.price;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Boolean getIsAvailable() {
+public Boolean getIsAvailable() {
         return this.isAvailable;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getPrepTimeMinutes() {
+public Integer getPrepTimeMinutes() {
         return this.prepTimeMinutes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getImageUrl() {
+public String getImageUrl() {
         return this.imageUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getCategoryId() {
+public UUID getCategoryId() {
         return this.categoryId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getCategoryName() {
+public String getCategoryName() {
         return this.categoryName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRestaurantId(final UUID restaurantId) {
+public void setRestaurantId(final UUID restaurantId) {
         this.restaurantId = restaurantId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setName(final String name) {
+public void setName(final String name) {
         this.name = name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDescription(final String description) {
+public void setDescription(final String description) {
         this.description = description;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPrice(final BigDecimal price) {
+public void setPrice(final BigDecimal price) {
         this.price = price;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setIsAvailable(final Boolean isAvailable) {
+public void setIsAvailable(final Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPrepTimeMinutes(final Integer prepTimeMinutes) {
+public void setPrepTimeMinutes(final Integer prepTimeMinutes) {
         this.prepTimeMinutes = prepTimeMinutes;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setImageUrl(final String imageUrl) {
+public void setImageUrl(final String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCategoryId(final UUID categoryId) {
+public void setCategoryId(final UUID categoryId) {
         this.categoryId = categoryId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCategoryName(final String categoryName) {
+public void setCategoryName(final String categoryName) {
         this.categoryName = categoryName;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof MenuItemDTO)) return false;
         final MenuItemDTO other = (MenuItemDTO) o;
@@ -291,14 +245,12 @@ public class MenuItemDTO implements Serializable {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof MenuItemDTO;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $isAvailable = this.getIsAvailable();
@@ -325,17 +277,14 @@ public class MenuItemDTO implements Serializable {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "MenuItemDTO(id=" + this.getId() + ", restaurantId=" + this.getRestaurantId() + ", name=" + this.getName() + ", description=" + this.getDescription() + ", price=" + this.getPrice() + ", isAvailable=" + this.getIsAvailable() + ", prepTimeMinutes=" + this.getPrepTimeMinutes() + ", imageUrl=" + this.getImageUrl() + ", categoryId=" + this.getCategoryId() + ", categoryName=" + this.getCategoryName() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public MenuItemDTO() {
+public MenuItemDTO() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public MenuItemDTO(final UUID id, final UUID restaurantId, final String name, final String description, final BigDecimal price, final Boolean isAvailable, final Integer prepTimeMinutes, final String imageUrl, final UUID categoryId, final String categoryName) {
+public MenuItemDTO(final UUID id, final UUID restaurantId, final String name, final String description, final BigDecimal price, final Boolean isAvailable, final Integer prepTimeMinutes, final String imageUrl, final UUID categoryId, final String categoryName) {
         this.id = id;
         this.restaurantId = restaurantId;
         this.name = name;

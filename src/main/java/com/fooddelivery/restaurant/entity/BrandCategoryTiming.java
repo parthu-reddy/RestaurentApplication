@@ -41,34 +41,23 @@ public class BrandCategoryTiming {
     private Integer version;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class BrandCategoryTimingBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private UUID brandId;
-        @java.lang.SuppressWarnings("all")
-        private Category category;
-        @java.lang.SuppressWarnings("all")
-        private LocalTime openingTime;
-        @java.lang.SuppressWarnings("all")
-        private LocalTime closingTime;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime createdAt;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime updatedAt;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
+public static class BrandCategoryTimingBuilder {
+private UUID id;
+private UUID brandId;
+private Category category;
+private LocalTime openingTime;
+private LocalTime closingTime;
+private LocalDateTime createdAt;
+private LocalDateTime updatedAt;
+private Integer version;
 
-        @java.lang.SuppressWarnings("all")
-        BrandCategoryTimingBuilder() {
+BrandCategoryTimingBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder id(final UUID id) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -76,8 +65,7 @@ public class BrandCategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder brandId(final UUID brandId) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder brandId(final UUID brandId) {
             this.brandId = brandId;
             return this;
         }
@@ -86,8 +74,7 @@ public class BrandCategoryTiming {
          * @return {@code this}.
          */
         @JsonIgnore
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder category(final Category category) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder category(final Category category) {
             this.category = category;
             return this;
         }
@@ -95,8 +82,7 @@ public class BrandCategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder openingTime(final LocalTime openingTime) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder openingTime(final LocalTime openingTime) {
             this.openingTime = openingTime;
             return this;
         }
@@ -104,8 +90,7 @@ public class BrandCategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder closingTime(final LocalTime closingTime) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder closingTime(final LocalTime closingTime) {
             this.closingTime = closingTime;
             return this;
         }
@@ -113,8 +98,7 @@ public class BrandCategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder createdAt(final LocalDateTime createdAt) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder createdAt(final LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
@@ -122,8 +106,7 @@ public class BrandCategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder updatedAt(final LocalDateTime updatedAt) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder updatedAt(final LocalDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
@@ -131,116 +114,94 @@ public class BrandCategoryTiming {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming.BrandCategoryTimingBuilder version(final Integer version) {
+public BrandCategoryTiming.BrandCategoryTimingBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public BrandCategoryTiming build() {
+public BrandCategoryTiming build() {
             return new BrandCategoryTiming(this.id, this.brandId, this.category, this.openingTime, this.closingTime, this.createdAt, this.updatedAt, this.version);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "BrandCategoryTiming.BrandCategoryTimingBuilder(id=" + this.id + ", brandId=" + this.brandId + ", category=" + this.category + ", openingTime=" + this.openingTime + ", closingTime=" + this.closingTime + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ", version=" + this.version + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static BrandCategoryTiming.BrandCategoryTimingBuilder builder() {
+public static BrandCategoryTiming.BrandCategoryTimingBuilder builder() {
         return new BrandCategoryTiming.BrandCategoryTimingBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getBrandId() {
+public UUID getBrandId() {
         return this.brandId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Category getCategory() {
+public Category getCategory() {
         return this.category;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalTime getOpeningTime() {
+public LocalTime getOpeningTime() {
         return this.openingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalTime getClosingTime() {
+public LocalTime getClosingTime() {
         return this.closingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getCreatedAt() {
+public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getUpdatedAt() {
+public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBrandId(final UUID brandId) {
+public void setBrandId(final UUID brandId) {
         this.brandId = brandId;
     }
 
     @JsonIgnore
-    @java.lang.SuppressWarnings("all")
-    public void setCategory(final Category category) {
+public void setCategory(final Category category) {
         this.category = category;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOpeningTime(final LocalTime openingTime) {
+public void setOpeningTime(final LocalTime openingTime) {
         this.openingTime = openingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setClosingTime(final LocalTime closingTime) {
+public void setClosingTime(final LocalTime closingTime) {
         this.closingTime = closingTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCreatedAt(final LocalDateTime createdAt) {
+public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+public void setUpdatedAt(final LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public BrandCategoryTiming() {
+public BrandCategoryTiming() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public BrandCategoryTiming(final UUID id, final UUID brandId, final Category category, final LocalTime openingTime, final LocalTime closingTime, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
+public BrandCategoryTiming(final UUID id, final UUID brandId, final Category category, final LocalTime openingTime, final LocalTime closingTime, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
         this.id = id;
         this.brandId = brandId;
         this.category = category;
@@ -252,8 +213,7 @@ public class BrandCategoryTiming {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof BrandCategoryTiming)) return false;
         final BrandCategoryTiming other = (BrandCategoryTiming) o;
@@ -282,14 +242,12 @@ public class BrandCategoryTiming {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof BrandCategoryTiming;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $version = this.getVersion();
@@ -310,8 +268,7 @@ public class BrandCategoryTiming {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "BrandCategoryTiming(id=" + this.getId() + ", brandId=" + this.getBrandId() + ", openingTime=" + this.getOpeningTime() + ", closingTime=" + this.getClosingTime() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ", version=" + this.getVersion() + ")";
     }
 }

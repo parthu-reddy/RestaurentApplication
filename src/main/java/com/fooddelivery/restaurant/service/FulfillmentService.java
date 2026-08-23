@@ -15,9 +15,7 @@ import java.util.UUID;
 @Service
 @lombok.extern.slf4j.Slf4j
 public class FulfillmentService {
-    @java.lang.SuppressWarnings("all")
-
-    private static final String DRIVER_FIELD_ID = "id";
+private static final String DRIVER_FIELD_ID = "id";
     private static final String DRIVER_FIELD_FULL_NAME = "fullName";
     private static final String DRIVER_FIELD_PHONE_NUMBER = "phoneNumber";
     private static final String SORT_FIELD_CREATED_AT = "createdAt";
@@ -91,16 +89,23 @@ public class FulfillmentService {
     public void acceptOrder(UUID restaurantId, UUID orderId, Integer additionalPrepTime, String delayReason) {
         log.info("Restaurant {} accepting order {} with additional prep time {} and reason {}", restaurantId, orderId, additionalPrepTime, delayReason);
         Outlet restaurant = outletRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
-        double lat = 0.0;
-        double lng = 0.0;
         String locationWkt = outletRepository.findLocationWktById(restaurantId);
-        if (locationWkt != null && locationWkt.startsWith("POINT(")) {
+        if (locationWkt == null || !locationWkt.startsWith("POINT(")) {
+            throw new IllegalArgumentException("Invalid or missing location for restaurant: " + restaurantId);
+        }
+        
+        double lat;
+        double lng;
+        try {
             String coords = locationWkt.substring(6, locationWkt.length() - 1);
-            String[] parts = coords.split(" ");
-            if (parts.length == 2) {
-                lng = Double.parseDouble(parts[0]); // PostGIS X is Longitude
-                lat = Double.parseDouble(parts[1]); // PostGIS Y is Latitude
+            String[] parts = coords.split("\\s+");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Invalid coordinates format");
             }
+            lng = Double.parseDouble(parts[0]); // PostGIS X is Longitude
+            lat = Double.parseDouble(parts[1]); // PostGIS Y is Latitude
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to parse restaurant location: " + locationWkt, e);
         }
         RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
         RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).additionalPrepTime(additionalPrepTime).delayReason(delayReason).restaurantLat(lat).restaurantLng(lng).build();
@@ -212,8 +217,7 @@ public class FulfillmentService {
         return response.getBody();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public FulfillmentService(final OutletRepository outletRepository, final RestaurantOrderRepository restaurantOrderRepository, final RestaurantActionService actionService, final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient, final com.fooddelivery.restaurant.client.OrderClient orderClient) {
+public FulfillmentService(final OutletRepository outletRepository, final RestaurantOrderRepository restaurantOrderRepository, final RestaurantActionService actionService, final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient, final com.fooddelivery.restaurant.client.OrderClient orderClient) {
         this.outletRepository = outletRepository;
         this.restaurantOrderRepository = restaurantOrderRepository;
         this.actionService = actionService;

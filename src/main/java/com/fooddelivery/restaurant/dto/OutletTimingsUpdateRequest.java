@@ -9,23 +9,19 @@ public class OutletTimingsUpdateRequest {
         @NotNull
         private List<TimingRequest> timings;
 
-        @java.lang.SuppressWarnings("all")
-        public OutletTimingsUpdateRequest() {
+public OutletTimingsUpdateRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public List<TimingRequest> getTimings() {
+public List<TimingRequest> getTimings() {
             return this.timings;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setTimings(final List<TimingRequest> timings) {
+public void setTimings(final List<TimingRequest> timings) {
             this.timings = timings;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof OutletTimingsUpdateRequest)) return false;
             final OutletTimingsUpdateRequest other = (OutletTimingsUpdateRequest) o;
@@ -36,14 +32,12 @@ public class OutletTimingsUpdateRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof OutletTimingsUpdateRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $timings = this.getTimings();
@@ -52,8 +46,7 @@ public class OutletTimingsUpdateRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "OutletTimingsUpdateRequest(timings=" + this.getTimings() + ")";
         }
     }

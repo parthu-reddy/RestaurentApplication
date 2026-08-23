@@ -19,83 +19,67 @@ public class BrandOnboardRequest {
         private String ifscCode;
         private String logoUrl;
 
-        @java.lang.SuppressWarnings("all")
-        public BrandOnboardRequest() {
+public BrandOnboardRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getName() {
+public String getName() {
             return this.name;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getGstin() {
+public String getGstin() {
             return this.gstin;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getPan() {
+public String getPan() {
             return this.pan;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getCin() {
+public String getCin() {
             return this.cin;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getBankAccountNumber() {
+public String getBankAccountNumber() {
             return this.bankAccountNumber;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getIfscCode() {
+public String getIfscCode() {
             return this.ifscCode;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getLogoUrl() {
+public String getLogoUrl() {
             return this.logoUrl;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setName(final String name) {
+public void setName(final String name) {
             this.name = name;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setGstin(final String gstin) {
+public void setGstin(final String gstin) {
             this.gstin = gstin;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setPan(final String pan) {
+public void setPan(final String pan) {
             this.pan = pan;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setCin(final String cin) {
+public void setCin(final String cin) {
             this.cin = cin;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setBankAccountNumber(final String bankAccountNumber) {
+public void setBankAccountNumber(final String bankAccountNumber) {
             this.bankAccountNumber = bankAccountNumber;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setIfscCode(final String ifscCode) {
+public void setIfscCode(final String ifscCode) {
             this.ifscCode = ifscCode;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setLogoUrl(final String logoUrl) {
+public void setLogoUrl(final String logoUrl) {
             this.logoUrl = logoUrl;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof BrandOnboardRequest)) return false;
             final BrandOnboardRequest other = (BrandOnboardRequest) o;
@@ -124,14 +108,12 @@ public class BrandOnboardRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof BrandOnboardRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $name = this.getName();
@@ -152,8 +134,7 @@ public class BrandOnboardRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "BrandOnboardRequest(name=" + this.getName() + ", gstin=" + this.getGstin() + ", pan=" + this.getPan() + ", cin=" + this.getCin() + ", bankAccountNumber=" + this.getBankAccountNumber() + ", ifscCode=" + this.getIfscCode() + ", logoUrl=" + this.getLogoUrl() + ")";
         }
     }

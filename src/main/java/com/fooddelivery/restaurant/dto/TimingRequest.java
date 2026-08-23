@@ -11,33 +11,27 @@ public class TimingRequest {
         @NotNull
         private LocalTime closingTime;
 
-        @java.lang.SuppressWarnings("all")
-        public TimingRequest() {
+public TimingRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public LocalTime getOpeningTime() {
+public LocalTime getOpeningTime() {
             return this.openingTime;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public LocalTime getClosingTime() {
+public LocalTime getClosingTime() {
             return this.closingTime;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setOpeningTime(final LocalTime openingTime) {
+public void setOpeningTime(final LocalTime openingTime) {
             this.openingTime = openingTime;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setClosingTime(final LocalTime closingTime) {
+public void setClosingTime(final LocalTime closingTime) {
             this.closingTime = closingTime;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof TimingRequest)) return false;
             final TimingRequest other = (TimingRequest) o;
@@ -51,14 +45,12 @@ public class TimingRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof TimingRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $openingTime = this.getOpeningTime();
@@ -69,8 +61,7 @@ public class TimingRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "TimingRequest(openingTime=" + this.getOpeningTime() + ", closingTime=" + this.getClosingTime() + ")";
         }
     }

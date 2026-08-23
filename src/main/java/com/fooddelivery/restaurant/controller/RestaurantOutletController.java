@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.HashMap;
 import jakarta.validation.Valid;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 public class RestaurantOutletController {
     private final RestaurantOnboardingService onboardingService;
@@ -66,6 +69,7 @@ public class RestaurantOutletController {
 
     // Legacy backwards compatibility: CustomerApp uses /api/v1/restaurants/{id}
     @GetMapping("/api/v1/restaurants/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getRestaurant(@PathVariable UUID id) {
         Outlet outlet = onboardingService.getOutletById(id);
         Map<String, Object> response = new HashMap<>();
@@ -107,6 +111,7 @@ public class RestaurantOutletController {
     }
 
     @GetMapping("/api/v1/restaurants/nearby")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getNearbyRestaurants(@RequestParam double lat, @RequestParam double lng, @RequestParam(defaultValue = "5.0") double radius) {
         List<Outlet> nearbyOutlets = onboardingService.getNearbyOutlets(lat, lng, radius);
         List<Map<String, Object>> responseList = new java.util.ArrayList<>();
@@ -154,6 +159,7 @@ public class RestaurantOutletController {
                     response.put("image", brand.getLogoUrl());
                 }
             } catch (Exception e) {
+                log.debug("Brand not found for outlet: {}", outlet.getId());
             }
             // Ignore missing brand
             responseList.add(response);
@@ -164,6 +170,7 @@ public class RestaurantOutletController {
     }
 
     @GetMapping("/api/v1/restaurants/brands/{brandId}/outlets")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<Map<String, Object>>>> getBrandOutlets(@PathVariable UUID brandId, @RequestParam double lat, @RequestParam double lng, @RequestParam(defaultValue = "5.0") double radius) {
         List<Outlet> nearbyOutlets = onboardingService.getNearbyOutletsByBrand(brandId, lat, lng, radius);
         List<Map<String, Object>> responseList = 
@@ -208,6 +215,7 @@ public class RestaurantOutletController {
                     response.put("image", brand.getLogoUrl());
                 }
             } catch (Exception e) {
+                log.debug("Brand not found for outlet: {}", outlet.getId());
             }
             return response;
         }).sorted(java.util.Comparator.comparingDouble(m -> (Double) m.get("distance"))).collect(java.util.stream.Collectors.toList());
@@ -215,6 +223,7 @@ public class RestaurantOutletController {
     }
 
     @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<Map<String, Object>>>> getAllOutletsWithLocation(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "100") int size) {

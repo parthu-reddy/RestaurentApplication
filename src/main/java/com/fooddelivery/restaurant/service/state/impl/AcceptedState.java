@@ -9,9 +9,7 @@ import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
 @lombok.extern.slf4j.Slf4j
 
 public class AcceptedState implements RestaurantOrderState {
-    @java.lang.SuppressWarnings("all")
-
-    @Override
+@Override
     public void prepare(RestaurantOrderContext ctx) {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.PREPARING);

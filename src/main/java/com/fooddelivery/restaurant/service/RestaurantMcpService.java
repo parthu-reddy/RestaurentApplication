@@ -14,9 +14,7 @@ import com.fooddelivery.restaurant.dto.*;
 @Service
 @lombok.extern.slf4j.Slf4j
 public class RestaurantMcpService {
-    @java.lang.SuppressWarnings("all")
-
-    private final FulfillmentService fulfillmentService;
+private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     private final RestaurantOnboardingService onboardingService;
     private final com.fooddelivery.restaurant.controller.InternalOrderController internalOrderController;

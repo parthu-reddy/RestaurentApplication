@@ -26,12 +26,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @lombok.extern.slf4j.Slf4j
 public class RestaurantOnboardingController {
-    @java.lang.SuppressWarnings("all")
-
-    private final RestaurantOnboardingService onboardingService;
+private final RestaurantOnboardingService onboardingService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
     private final com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient;
-    private final java.util.concurrent.ScheduledExecutorService scheduler = java.util.concurrent.Executors.newScheduledThreadPool(4);
+
 
     // Phase 1: Brand Onboarding
     @PostMapping("/api/v1/brands")
@@ -53,8 +51,7 @@ public class RestaurantOnboardingController {
 
 
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantOnboardingController(final RestaurantOnboardingService onboardingService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper, final com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient) {
+public RestaurantOnboardingController(final RestaurantOnboardingService onboardingService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper, final com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient) {
         this.onboardingService = onboardingService;
         this.securityHelper = securityHelper;
         this.governmentIdClient = governmentIdClient;

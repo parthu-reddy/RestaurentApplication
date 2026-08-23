@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 @Service
 @lombok.extern.slf4j.Slf4j
 public class CategoryService {
-    @java.lang.SuppressWarnings("all")
-
-    private final CategoryRepository categoryRepository;
+private final CategoryRepository categoryRepository;
 
     @Cacheable(value = "categories", key = "#brandId != null ? #brandId.toString() : \'global\'")
     public List<CategoryDTO> getActiveCategories(java.util.UUID brandId) {
@@ -83,8 +81,7 @@ public class CategoryService {
         return CategoryDTO.builder().id(saved.getId()).brandId(saved.getBrandId()).name(saved.getName()).description(saved.getDescription()).timings(saved.getTimings() != null ? saved.getTimings().stream().map(t -> CategoryDTO.CategoryTimingDTO.builder().openingTime(t.getOpeningTime()).closingTime(t.getClosingTime()).build()).collect(Collectors.toList()) : null).build();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public CategoryService(final CategoryRepository categoryRepository) {
+public CategoryService(final CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
 }

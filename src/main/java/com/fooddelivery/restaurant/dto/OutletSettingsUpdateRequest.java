@@ -9,23 +9,19 @@ public class OutletSettingsUpdateRequest {
         @NotNull
         private Integer defaultPrepTimeSeconds;
 
-        @java.lang.SuppressWarnings("all")
-        public OutletSettingsUpdateRequest() {
+public OutletSettingsUpdateRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Integer getDefaultPrepTimeSeconds() {
+public Integer getDefaultPrepTimeSeconds() {
             return this.defaultPrepTimeSeconds;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setDefaultPrepTimeSeconds(final Integer defaultPrepTimeSeconds) {
+public void setDefaultPrepTimeSeconds(final Integer defaultPrepTimeSeconds) {
             this.defaultPrepTimeSeconds = defaultPrepTimeSeconds;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof OutletSettingsUpdateRequest)) return false;
             final OutletSettingsUpdateRequest other = (OutletSettingsUpdateRequest) o;
@@ -36,14 +32,12 @@ public class OutletSettingsUpdateRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof OutletSettingsUpdateRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $defaultPrepTimeSeconds = this.getDefaultPrepTimeSeconds();
@@ -52,8 +46,7 @@ public class OutletSettingsUpdateRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "OutletSettingsUpdateRequest(defaultPrepTimeSeconds=" + this.getDefaultPrepTimeSeconds() + ")";
         }
     }

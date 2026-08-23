@@ -14,9 +14,7 @@ import java.security.Principal;
 @PreAuthorize("hasRole(\'RESTAURANT_OWNER\')")
 @lombok.extern.slf4j.Slf4j
 public class CampaignController {
-    @java.lang.SuppressWarnings("all")
-
-    private final AdvertisementClient advertisementClient;
+private final AdvertisementClient advertisementClient;
     private final com.fooddelivery.restaurant.repository.BrandRepository brandRepository;
 
     public CampaignController(AdvertisementClient advertisementClient, com.fooddelivery.restaurant.repository.BrandRepository brandRepository) {

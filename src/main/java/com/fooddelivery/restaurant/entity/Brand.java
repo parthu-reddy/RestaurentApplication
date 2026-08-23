@@ -53,54 +53,33 @@ public class Brand {
     private Integer version;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class BrandBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private UUID ownerId;
-        @java.lang.SuppressWarnings("all")
-        private String name;
-        @java.lang.SuppressWarnings("all")
-        private String gstin;
-        @java.lang.SuppressWarnings("all")
-        private String pan;
-        @java.lang.SuppressWarnings("all")
-        private String cin;
-        @java.lang.SuppressWarnings("all")
-        private String bankAccountNumber;
-        @java.lang.SuppressWarnings("all")
-        private String bankIfsc;
-        @java.lang.SuppressWarnings("all")
-        private String logoUrl;
-        @java.lang.SuppressWarnings("all")
-        private String legalEntityName;
-        @java.lang.SuppressWarnings("all")
-        private VerificationStatus kycStatus;
-        @java.lang.SuppressWarnings("all")
-        private String bankBeneficiaryName;
-        @java.lang.SuppressWarnings("all")
-        private VerificationStatus pennyDropStatus;
-        @java.lang.SuppressWarnings("all")
-        private Boolean isGstinVerified;
-        @java.lang.SuppressWarnings("all")
-        private Boolean isBankVerified;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime createdAt;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime updatedAt;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
+public static class BrandBuilder {
+private UUID id;
+private UUID ownerId;
+private String name;
+private String gstin;
+private String pan;
+private String cin;
+private String bankAccountNumber;
+private String bankIfsc;
+private String logoUrl;
+private String legalEntityName;
+private VerificationStatus kycStatus;
+private String bankBeneficiaryName;
+private VerificationStatus pennyDropStatus;
+private Boolean isGstinVerified;
+private Boolean isBankVerified;
+private LocalDateTime createdAt;
+private LocalDateTime updatedAt;
+private Integer version;
 
-        @java.lang.SuppressWarnings("all")
-        BrandBuilder() {
+BrandBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder id(final UUID id) {
+public Brand.BrandBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -108,8 +87,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder ownerId(final UUID ownerId) {
+public Brand.BrandBuilder ownerId(final UUID ownerId) {
             this.ownerId = ownerId;
             return this;
         }
@@ -117,8 +95,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder name(final String name) {
+public Brand.BrandBuilder name(final String name) {
             this.name = name;
             return this;
         }
@@ -126,8 +103,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder gstin(final String gstin) {
+public Brand.BrandBuilder gstin(final String gstin) {
             this.gstin = gstin;
             return this;
         }
@@ -135,8 +111,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder pan(final String pan) {
+public Brand.BrandBuilder pan(final String pan) {
             this.pan = pan;
             return this;
         }
@@ -144,8 +119,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder cin(final String cin) {
+public Brand.BrandBuilder cin(final String cin) {
             this.cin = cin;
             return this;
         }
@@ -153,8 +127,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder bankAccountNumber(final String bankAccountNumber) {
+public Brand.BrandBuilder bankAccountNumber(final String bankAccountNumber) {
             this.bankAccountNumber = bankAccountNumber;
             return this;
         }
@@ -162,8 +135,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder bankIfsc(final String bankIfsc) {
+public Brand.BrandBuilder bankIfsc(final String bankIfsc) {
             this.bankIfsc = bankIfsc;
             return this;
         }
@@ -171,8 +143,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder logoUrl(final String logoUrl) {
+public Brand.BrandBuilder logoUrl(final String logoUrl) {
             this.logoUrl = logoUrl;
             return this;
         }
@@ -180,8 +151,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder legalEntityName(final String legalEntityName) {
+public Brand.BrandBuilder legalEntityName(final String legalEntityName) {
             this.legalEntityName = legalEntityName;
             return this;
         }
@@ -189,8 +159,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder kycStatus(final VerificationStatus kycStatus) {
+public Brand.BrandBuilder kycStatus(final VerificationStatus kycStatus) {
             this.kycStatus = kycStatus;
             return this;
         }
@@ -198,8 +167,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder bankBeneficiaryName(final String bankBeneficiaryName) {
+public Brand.BrandBuilder bankBeneficiaryName(final String bankBeneficiaryName) {
             this.bankBeneficiaryName = bankBeneficiaryName;
             return this;
         }
@@ -207,8 +175,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder pennyDropStatus(final VerificationStatus pennyDropStatus) {
+public Brand.BrandBuilder pennyDropStatus(final VerificationStatus pennyDropStatus) {
             this.pennyDropStatus = pennyDropStatus;
             return this;
         }
@@ -216,8 +183,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder isGstinVerified(final Boolean isGstinVerified) {
+public Brand.BrandBuilder isGstinVerified(final Boolean isGstinVerified) {
             this.isGstinVerified = isGstinVerified;
             return this;
         }
@@ -225,8 +191,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder isBankVerified(final Boolean isBankVerified) {
+public Brand.BrandBuilder isBankVerified(final Boolean isBankVerified) {
             this.isBankVerified = isBankVerified;
             return this;
         }
@@ -234,8 +199,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder createdAt(final LocalDateTime createdAt) {
+public Brand.BrandBuilder createdAt(final LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
@@ -243,8 +207,7 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder updatedAt(final LocalDateTime updatedAt) {
+public Brand.BrandBuilder updatedAt(final LocalDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
@@ -252,212 +215,171 @@ public class Brand {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Brand.BrandBuilder version(final Integer version) {
+public Brand.BrandBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Brand build() {
+public Brand build() {
             return new Brand(this.id, this.ownerId, this.name, this.gstin, this.pan, this.cin, this.bankAccountNumber, this.bankIfsc, this.logoUrl, this.legalEntityName, this.kycStatus, this.bankBeneficiaryName, this.pennyDropStatus, this.isGstinVerified, this.isBankVerified, this.createdAt, this.updatedAt, this.version);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "Brand.BrandBuilder(id=" + this.id + ", ownerId=" + this.ownerId + ", name=" + this.name + ", gstin=" + this.gstin + ", pan=" + this.pan + ", cin=" + this.cin + ", bankAccountNumber=" + this.bankAccountNumber + ", bankIfsc=" + this.bankIfsc + ", logoUrl=" + this.logoUrl + ", legalEntityName=" + this.legalEntityName + ", kycStatus=" + this.kycStatus + ", bankBeneficiaryName=" + this.bankBeneficiaryName + ", pennyDropStatus=" + this.pennyDropStatus + ", isGstinVerified=" + this.isGstinVerified + ", isBankVerified=" + this.isBankVerified + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ", version=" + this.version + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static Brand.BrandBuilder builder() {
+public static Brand.BrandBuilder builder() {
         return new Brand.BrandBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getOwnerId() {
+public UUID getOwnerId() {
         return this.ownerId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getName() {
+public String getName() {
         return this.name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getGstin() {
+public String getGstin() {
         return this.gstin;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getPan() {
+public String getPan() {
         return this.pan;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getCin() {
+public String getCin() {
         return this.cin;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getBankAccountNumber() {
+public String getBankAccountNumber() {
         return this.bankAccountNumber;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getBankIfsc() {
+public String getBankIfsc() {
         return this.bankIfsc;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getLogoUrl() {
+public String getLogoUrl() {
         return this.logoUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getLegalEntityName() {
+public String getLegalEntityName() {
         return this.legalEntityName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public VerificationStatus getKycStatus() {
+public VerificationStatus getKycStatus() {
         return this.kycStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getBankBeneficiaryName() {
+public String getBankBeneficiaryName() {
         return this.bankBeneficiaryName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public VerificationStatus getPennyDropStatus() {
+public VerificationStatus getPennyDropStatus() {
         return this.pennyDropStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Boolean getIsGstinVerified() {
+public Boolean getIsGstinVerified() {
         return this.isGstinVerified;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Boolean getIsBankVerified() {
+public Boolean getIsBankVerified() {
         return this.isBankVerified;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getCreatedAt() {
+public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getUpdatedAt() {
+public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setOwnerId(final UUID ownerId) {
+public void setOwnerId(final UUID ownerId) {
         this.ownerId = ownerId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setName(final String name) {
+public void setName(final String name) {
         this.name = name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setGstin(final String gstin) {
+public void setGstin(final String gstin) {
         this.gstin = gstin;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPan(final String pan) {
+public void setPan(final String pan) {
         this.pan = pan;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCin(final String cin) {
+public void setCin(final String cin) {
         this.cin = cin;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBankAccountNumber(final String bankAccountNumber) {
+public void setBankAccountNumber(final String bankAccountNumber) {
         this.bankAccountNumber = bankAccountNumber;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBankIfsc(final String bankIfsc) {
+public void setBankIfsc(final String bankIfsc) {
         this.bankIfsc = bankIfsc;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setLogoUrl(final String logoUrl) {
+public void setLogoUrl(final String logoUrl) {
         this.logoUrl = logoUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setLegalEntityName(final String legalEntityName) {
+public void setLegalEntityName(final String legalEntityName) {
         this.legalEntityName = legalEntityName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setKycStatus(final VerificationStatus kycStatus) {
+public void setKycStatus(final VerificationStatus kycStatus) {
         this.kycStatus = kycStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBankBeneficiaryName(final String bankBeneficiaryName) {
+public void setBankBeneficiaryName(final String bankBeneficiaryName) {
         this.bankBeneficiaryName = bankBeneficiaryName;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setPennyDropStatus(final VerificationStatus pennyDropStatus) {
+public void setPennyDropStatus(final VerificationStatus pennyDropStatus) {
         this.pennyDropStatus = pennyDropStatus;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setIsGstinVerified(final Boolean isGstinVerified) {
+public void setIsGstinVerified(final Boolean isGstinVerified) {
         this.isGstinVerified = isGstinVerified;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setIsBankVerified(final Boolean isBankVerified) {
+public void setIsBankVerified(final Boolean isBankVerified) {
         this.isBankVerified = isBankVerified;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCreatedAt(final LocalDateTime createdAt) {
+public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+public void setUpdatedAt(final LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof Brand)) return false;
         final Brand other = (Brand) o;
@@ -519,14 +441,12 @@ public class Brand {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof Brand;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $isGstinVerified = this.getIsGstinVerified();
@@ -569,17 +489,14 @@ public class Brand {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "Brand(id=" + this.getId() + ", ownerId=" + this.getOwnerId() + ", name=" + this.getName() + ", gstin=" + this.getGstin() + ", pan=" + this.getPan() + ", cin=" + this.getCin() + ", bankAccountNumber=" + this.getBankAccountNumber() + ", bankIfsc=" + this.getBankIfsc() + ", logoUrl=" + this.getLogoUrl() + ", legalEntityName=" + this.getLegalEntityName() + ", kycStatus=" + this.getKycStatus() + ", bankBeneficiaryName=" + this.getBankBeneficiaryName() + ", pennyDropStatus=" + this.getPennyDropStatus() + ", isGstinVerified=" + this.getIsGstinVerified() + ", isBankVerified=" + this.getIsBankVerified() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ", version=" + this.getVersion() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Brand() {
+public Brand() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Brand(final UUID id, final UUID ownerId, final String name, final String gstin, final String pan, final String cin, final String bankAccountNumber, final String bankIfsc, final String logoUrl, final String legalEntityName, final VerificationStatus kycStatus, final String bankBeneficiaryName, final VerificationStatus pennyDropStatus, final Boolean isGstinVerified, final Boolean isBankVerified, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
+public Brand(final UUID id, final UUID ownerId, final String name, final String gstin, final String pan, final String cin, final String bankAccountNumber, final String bankIfsc, final String logoUrl, final String legalEntityName, final VerificationStatus kycStatus, final String bankBeneficiaryName, final VerificationStatus pennyDropStatus, final Boolean isGstinVerified, final Boolean isBankVerified, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
         this.id = id;
         this.ownerId = ownerId;
         this.name = name;

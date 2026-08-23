@@ -10,22 +10,17 @@ public class SetBrandCategoryTimingRequest {
     private List<TimingDTO> timings;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class SetBrandCategoryTimingRequestBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID categoryId;
-        @java.lang.SuppressWarnings("all")
-        private List<TimingDTO> timings;
+public static class SetBrandCategoryTimingRequestBuilder {
+private UUID categoryId;
+private List<TimingDTO> timings;
 
-        @java.lang.SuppressWarnings("all")
-        SetBrandCategoryTimingRequestBuilder() {
+SetBrandCategoryTimingRequestBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder categoryId(final UUID categoryId) {
+public SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder categoryId(final UUID categoryId) {
             this.categoryId = categoryId;
             return this;
         }
@@ -33,52 +28,43 @@ public class SetBrandCategoryTimingRequest {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder timings(final List<TimingDTO> timings) {
+public SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder timings(final List<TimingDTO> timings) {
             this.timings = timings;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public SetBrandCategoryTimingRequest build() {
+public SetBrandCategoryTimingRequest build() {
             return new SetBrandCategoryTimingRequest(this.categoryId, this.timings);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder(categoryId=" + this.categoryId + ", timings=" + this.timings + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder builder() {
+public static SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder builder() {
         return new SetBrandCategoryTimingRequest.SetBrandCategoryTimingRequestBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getCategoryId() {
+public UUID getCategoryId() {
         return this.categoryId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public List<TimingDTO> getTimings() {
+public List<TimingDTO> getTimings() {
         return this.timings;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCategoryId(final UUID categoryId) {
+public void setCategoryId(final UUID categoryId) {
         this.categoryId = categoryId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setTimings(final List<TimingDTO> timings) {
+public void setTimings(final List<TimingDTO> timings) {
         this.timings = timings;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof SetBrandCategoryTimingRequest)) return false;
         final SetBrandCategoryTimingRequest other = (SetBrandCategoryTimingRequest) o;
@@ -92,14 +78,12 @@ public class SetBrandCategoryTimingRequest {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof SetBrandCategoryTimingRequest;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $categoryId = this.getCategoryId();
@@ -110,17 +94,14 @@ public class SetBrandCategoryTimingRequest {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "SetBrandCategoryTimingRequest(categoryId=" + this.getCategoryId() + ", timings=" + this.getTimings() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public SetBrandCategoryTimingRequest() {
+public SetBrandCategoryTimingRequest() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public SetBrandCategoryTimingRequest(final UUID categoryId, final List<TimingDTO> timings) {
+public SetBrandCategoryTimingRequest(final UUID categoryId, final List<TimingDTO> timings) {
         this.categoryId = categoryId;
         this.timings = timings;
     }

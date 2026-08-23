@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/v1/internal/restaurants")
 @lombok.extern.slf4j.Slf4j
+@PreAuthorize("hasRole('SERVICE')")
 public class InternalRestaurantController {
-    @java.lang.SuppressWarnings("all")
-
-    private final OutletRepository outletRepository;
+private final OutletRepository outletRepository;
     private final MasterMenuItemRepository masterMenuItemRepository;
 
     @GetMapping("/owner/{ownerId}/outlets")
@@ -37,8 +37,7 @@ public class InternalRestaurantController {
         return ResponseEntity.ok(ApiResponse.success(exists, "Product existence check completed"));
     }
 
-    @java.lang.SuppressWarnings("all")
-    public InternalRestaurantController(final OutletRepository outletRepository, final MasterMenuItemRepository masterMenuItemRepository) {
+public InternalRestaurantController(final OutletRepository outletRepository, final MasterMenuItemRepository masterMenuItemRepository) {
         this.outletRepository = outletRepository;
         this.masterMenuItemRepository = masterMenuItemRepository;
     }

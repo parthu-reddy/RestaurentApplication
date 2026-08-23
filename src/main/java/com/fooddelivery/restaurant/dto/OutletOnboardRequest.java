@@ -21,136 +21,110 @@ public class OutletOnboardRequest {
         private Double rating;
         private Integer reviewsCount;
         private Integer deliveryTime;
-        private Double deliveryFee;
+        private java.math.BigDecimal deliveryFee;
         private String tags;
 
-        @java.lang.SuppressWarnings("all")
-        public OutletOnboardRequest() {
+public OutletOnboardRequest() {
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getName() {
+public String getName() {
             return this.name;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getFssaiLicenseNumber() {
+public String getFssaiLicenseNumber() {
             return this.fssaiLicenseNumber;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Double getLat() {
+public Double getLat() {
             return this.lat;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Double getLng() {
+public Double getLng() {
             return this.lng;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public List<TimingRequest> getTimings() {
+public List<TimingRequest> getTimings() {
             return this.timings;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getBannerUrl() {
+public String getBannerUrl() {
             return this.bannerUrl;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getCuisine() {
+public String getCuisine() {
             return this.cuisine;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Double getRating() {
+public Double getRating() {
             return this.rating;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Integer getReviewsCount() {
+public Integer getReviewsCount() {
             return this.reviewsCount;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Integer getDeliveryTime() {
+public Integer getDeliveryTime() {
             return this.deliveryTime;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Double getDeliveryFee() {
+public java.math.BigDecimal getDeliveryFee() {
             return this.deliveryFee;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public String getTags() {
+public String getTags() {
             return this.tags;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setName(final String name) {
+public void setName(final String name) {
             this.name = name;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setFssaiLicenseNumber(final String fssaiLicenseNumber) {
+public void setFssaiLicenseNumber(final String fssaiLicenseNumber) {
             this.fssaiLicenseNumber = fssaiLicenseNumber;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setLat(final Double lat) {
+public void setLat(final Double lat) {
             this.lat = lat;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setLng(final Double lng) {
+public void setLng(final Double lng) {
             this.lng = lng;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setTimings(final List<TimingRequest> timings) {
+public void setTimings(final List<TimingRequest> timings) {
             this.timings = timings;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setBannerUrl(final String bannerUrl) {
+public void setBannerUrl(final String bannerUrl) {
             this.bannerUrl = bannerUrl;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setCuisine(final String cuisine) {
+public void setCuisine(final String cuisine) {
             this.cuisine = cuisine;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setRating(final Double rating) {
+public void setRating(final Double rating) {
             this.rating = rating;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setReviewsCount(final Integer reviewsCount) {
+public void setReviewsCount(final Integer reviewsCount) {
             this.reviewsCount = reviewsCount;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setDeliveryTime(final Integer deliveryTime) {
+public void setDeliveryTime(final Integer deliveryTime) {
             this.deliveryTime = deliveryTime;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setDeliveryFee(final Double deliveryFee) {
+public void setDeliveryFee(final java.math.BigDecimal deliveryFee) {
             this.deliveryFee = deliveryFee;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public void setTags(final String tags) {
+public void setTags(final String tags) {
             this.tags = tags;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
             if (o == this) return true;
             if (!(o instanceof OutletOnboardRequest)) return false;
             final OutletOnboardRequest other = (OutletOnboardRequest) o;
@@ -194,14 +168,12 @@ public class OutletOnboardRequest {
             return true;
         }
 
-        @java.lang.SuppressWarnings("all")
-        protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
             return other instanceof OutletOnboardRequest;
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public int hashCode() {
+public int hashCode() {
             final int PRIME = 59;
             int result = 1;
             final java.lang.Object $lat = this.getLat();
@@ -232,8 +204,7 @@ public class OutletOnboardRequest {
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "OutletOnboardRequest(name=" + this.getName() + ", fssaiLicenseNumber=" + this.getFssaiLicenseNumber() + ", lat=" + this.getLat() + ", lng=" + this.getLng() + ", timings=" + this.getTimings() + ", bannerUrl=" + this.getBannerUrl() + ", cuisine=" + this.getCuisine() + ", rating=" + this.getRating() + ", reviewsCount=" + this.getReviewsCount() + ", deliveryTime=" + this.getDeliveryTime() + ", deliveryFee=" + this.getDeliveryFee() + ", tags=" + this.getTags() + ")";
         }
     }

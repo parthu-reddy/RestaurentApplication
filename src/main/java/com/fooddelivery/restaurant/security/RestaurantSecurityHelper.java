@@ -34,8 +34,7 @@ public class RestaurantSecurityHelper {
         return isBrandOwner(outlet.getBrandId(), userId);
     }
 
-    @java.lang.SuppressWarnings("all")
-    public RestaurantSecurityHelper(final BrandRepository brandRepository, final OutletRepository outletRepository) {
+public RestaurantSecurityHelper(final BrandRepository brandRepository, final OutletRepository outletRepository) {
         this.brandRepository = brandRepository;
         this.outletRepository = outletRepository;
     }

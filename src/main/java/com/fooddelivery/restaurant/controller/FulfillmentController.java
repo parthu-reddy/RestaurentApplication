@@ -16,9 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @PreAuthorize("hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.principal)")
 @lombok.extern.slf4j.Slf4j
 public class FulfillmentController {
-    @java.lang.SuppressWarnings("all")
-
-    private final FulfillmentService fulfillmentService;
+private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     @org.springframework.web.bind.annotation.GetMapping("/orders")
@@ -99,8 +97,7 @@ public class FulfillmentController {
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public FulfillmentController(final FulfillmentService fulfillmentService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper) {
+public FulfillmentController(final FulfillmentService fulfillmentService, final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper) {
         this.fulfillmentService = fulfillmentService;
         this.securityHelper = securityHelper;
     }

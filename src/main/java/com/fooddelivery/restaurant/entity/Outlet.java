@@ -42,7 +42,7 @@ public class Outlet {
     @Column(name = "delivery_time")
     private Integer deliveryTime;
     @Column(name = "delivery_fee")
-    private Double deliveryFee;
+    private java.math.BigDecimal deliveryFee;
     @Column(name = "tags")
     private String tags;
     @Column(name = "created_at")
@@ -54,54 +54,33 @@ public class Outlet {
     private Integer version;
 
 
-    @java.lang.SuppressWarnings("all")
-    public static class OutletBuilder {
-        @java.lang.SuppressWarnings("all")
-        private UUID id;
-        @java.lang.SuppressWarnings("all")
-        private UUID brandId;
-        @java.lang.SuppressWarnings("all")
-        private String name;
-        @java.lang.SuppressWarnings("all")
-        private String fssaiLicenseNumber;
-        @java.lang.SuppressWarnings("all")
-        private org.locationtech.jts.geom.Point location;
-        @java.lang.SuppressWarnings("all")
-        private String bannerUrl;
-        @java.lang.SuppressWarnings("all")
-        private java.util.List<OutletTiming> timings;
-        @java.lang.SuppressWarnings("all")
-        private Boolean isActive;
-        @java.lang.SuppressWarnings("all")
-        private Integer defaultPrepTimeSeconds;
-        @java.lang.SuppressWarnings("all")
-        private String cuisine;
-        @java.lang.SuppressWarnings("all")
-        private Double rating;
-        @java.lang.SuppressWarnings("all")
-        private Integer reviewsCount;
-        @java.lang.SuppressWarnings("all")
-        private Integer deliveryTime;
-        @java.lang.SuppressWarnings("all")
-        private Double deliveryFee;
-        @java.lang.SuppressWarnings("all")
-        private String tags;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime createdAt;
-        @java.lang.SuppressWarnings("all")
-        private LocalDateTime updatedAt;
-        @java.lang.SuppressWarnings("all")
-        private Integer version;
+public static class OutletBuilder {
+private UUID id;
+private UUID brandId;
+private String name;
+private String fssaiLicenseNumber;
+private org.locationtech.jts.geom.Point location;
+private String bannerUrl;
+private java.util.List<OutletTiming> timings;
+private Boolean isActive;
+private Integer defaultPrepTimeSeconds;
+private String cuisine;
+private Double rating;
+private Integer reviewsCount;
+private Integer deliveryTime;
+private java.math.BigDecimal deliveryFee;
+private String tags;
+private LocalDateTime createdAt;
+private LocalDateTime updatedAt;
+private Integer version;
 
-        @java.lang.SuppressWarnings("all")
-        OutletBuilder() {
+OutletBuilder() {
         }
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder id(final UUID id) {
+public Outlet.OutletBuilder id(final UUID id) {
             this.id = id;
             return this;
         }
@@ -109,8 +88,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder brandId(final UUID brandId) {
+public Outlet.OutletBuilder brandId(final UUID brandId) {
             this.brandId = brandId;
             return this;
         }
@@ -118,8 +96,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder name(final String name) {
+public Outlet.OutletBuilder name(final String name) {
             this.name = name;
             return this;
         }
@@ -127,8 +104,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder fssaiLicenseNumber(final String fssaiLicenseNumber) {
+public Outlet.OutletBuilder fssaiLicenseNumber(final String fssaiLicenseNumber) {
             this.fssaiLicenseNumber = fssaiLicenseNumber;
             return this;
         }
@@ -137,8 +113,7 @@ public class Outlet {
          * @return {@code this}.
          */
         @JsonIgnore
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder location(final org.locationtech.jts.geom.Point location) {
+public Outlet.OutletBuilder location(final org.locationtech.jts.geom.Point location) {
             this.location = location;
             return this;
         }
@@ -146,8 +121,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder bannerUrl(final String bannerUrl) {
+public Outlet.OutletBuilder bannerUrl(final String bannerUrl) {
             this.bannerUrl = bannerUrl;
             return this;
         }
@@ -155,8 +129,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder timings(final java.util.List<OutletTiming> timings) {
+public Outlet.OutletBuilder timings(final java.util.List<OutletTiming> timings) {
             this.timings = timings;
             return this;
         }
@@ -164,8 +137,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder isActive(final Boolean isActive) {
+public Outlet.OutletBuilder isActive(final Boolean isActive) {
             this.isActive = isActive;
             return this;
         }
@@ -173,8 +145,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder defaultPrepTimeSeconds(final Integer defaultPrepTimeSeconds) {
+public Outlet.OutletBuilder defaultPrepTimeSeconds(final Integer defaultPrepTimeSeconds) {
             this.defaultPrepTimeSeconds = defaultPrepTimeSeconds;
             return this;
         }
@@ -182,8 +153,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder cuisine(final String cuisine) {
+public Outlet.OutletBuilder cuisine(final String cuisine) {
             this.cuisine = cuisine;
             return this;
         }
@@ -191,8 +161,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder rating(final Double rating) {
+public Outlet.OutletBuilder rating(final Double rating) {
             this.rating = rating;
             return this;
         }
@@ -200,8 +169,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder reviewsCount(final Integer reviewsCount) {
+public Outlet.OutletBuilder reviewsCount(final Integer reviewsCount) {
             this.reviewsCount = reviewsCount;
             return this;
         }
@@ -209,8 +177,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder deliveryTime(final Integer deliveryTime) {
+public Outlet.OutletBuilder deliveryTime(final Integer deliveryTime) {
             this.deliveryTime = deliveryTime;
             return this;
         }
@@ -218,8 +185,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder deliveryFee(final Double deliveryFee) {
+public Outlet.OutletBuilder deliveryFee(final java.math.BigDecimal deliveryFee) {
             this.deliveryFee = deliveryFee;
             return this;
         }
@@ -227,8 +193,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder tags(final String tags) {
+public Outlet.OutletBuilder tags(final String tags) {
             this.tags = tags;
             return this;
         }
@@ -236,8 +201,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder createdAt(final LocalDateTime createdAt) {
+public Outlet.OutletBuilder createdAt(final LocalDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
@@ -245,8 +209,7 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder updatedAt(final LocalDateTime updatedAt) {
+public Outlet.OutletBuilder updatedAt(final LocalDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
@@ -254,213 +217,172 @@ public class Outlet {
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        public Outlet.OutletBuilder version(final Integer version) {
+public Outlet.OutletBuilder version(final Integer version) {
             this.version = version;
             return this;
         }
 
-        @java.lang.SuppressWarnings("all")
-        public Outlet build() {
+public Outlet build() {
             return new Outlet(this.id, this.brandId, this.name, this.fssaiLicenseNumber, this.location, this.bannerUrl, this.timings, this.isActive, this.defaultPrepTimeSeconds, this.cuisine, this.rating, this.reviewsCount, this.deliveryTime, this.deliveryFee, this.tags, this.createdAt, this.updatedAt, this.version);
         }
 
         @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        public java.lang.String toString() {
+public java.lang.String toString() {
             return "Outlet.OutletBuilder(id=" + this.id + ", brandId=" + this.brandId + ", name=" + this.name + ", fssaiLicenseNumber=" + this.fssaiLicenseNumber + ", location=" + this.location + ", bannerUrl=" + this.bannerUrl + ", timings=" + this.timings + ", isActive=" + this.isActive + ", defaultPrepTimeSeconds=" + this.defaultPrepTimeSeconds + ", cuisine=" + this.cuisine + ", rating=" + this.rating + ", reviewsCount=" + this.reviewsCount + ", deliveryTime=" + this.deliveryTime + ", deliveryFee=" + this.deliveryFee + ", tags=" + this.tags + ", createdAt=" + this.createdAt + ", updatedAt=" + this.updatedAt + ", version=" + this.version + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    public static Outlet.OutletBuilder builder() {
+public static Outlet.OutletBuilder builder() {
         return new Outlet.OutletBuilder();
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getId() {
+public UUID getId() {
         return this.id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public UUID getBrandId() {
+public UUID getBrandId() {
         return this.brandId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getName() {
+public String getName() {
         return this.name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getFssaiLicenseNumber() {
+public String getFssaiLicenseNumber() {
         return this.fssaiLicenseNumber;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public org.locationtech.jts.geom.Point getLocation() {
+public org.locationtech.jts.geom.Point getLocation() {
         return this.location;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getBannerUrl() {
+public String getBannerUrl() {
         return this.bannerUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public java.util.List<OutletTiming> getTimings() {
+public java.util.List<OutletTiming> getTimings() {
         return this.timings;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Boolean getIsActive() {
+public Boolean getIsActive() {
         return this.isActive;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getDefaultPrepTimeSeconds() {
+public Integer getDefaultPrepTimeSeconds() {
         return this.defaultPrepTimeSeconds;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getCuisine() {
+public String getCuisine() {
         return this.cuisine;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Double getRating() {
+public Double getRating() {
         return this.rating;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getReviewsCount() {
+public Integer getReviewsCount() {
         return this.reviewsCount;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getDeliveryTime() {
+public Integer getDeliveryTime() {
         return this.deliveryTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Double getDeliveryFee() {
+public java.math.BigDecimal getDeliveryFee() {
         return this.deliveryFee;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public String getTags() {
+public String getTags() {
         return this.tags;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getCreatedAt() {
+public LocalDateTime getCreatedAt() {
         return this.createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public LocalDateTime getUpdatedAt() {
+public LocalDateTime getUpdatedAt() {
         return this.updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Integer getVersion() {
+public Integer getVersion() {
         return this.version;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setId(final UUID id) {
+public void setId(final UUID id) {
         this.id = id;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBrandId(final UUID brandId) {
+public void setBrandId(final UUID brandId) {
         this.brandId = brandId;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setName(final String name) {
+public void setName(final String name) {
         this.name = name;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setFssaiLicenseNumber(final String fssaiLicenseNumber) {
+public void setFssaiLicenseNumber(final String fssaiLicenseNumber) {
         this.fssaiLicenseNumber = fssaiLicenseNumber;
     }
 
     @JsonIgnore
-    @java.lang.SuppressWarnings("all")
-    public void setLocation(final org.locationtech.jts.geom.Point location) {
+public void setLocation(final org.locationtech.jts.geom.Point location) {
         this.location = location;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setBannerUrl(final String bannerUrl) {
+public void setBannerUrl(final String bannerUrl) {
         this.bannerUrl = bannerUrl;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setTimings(final java.util.List<OutletTiming> timings) {
+public void setTimings(final java.util.List<OutletTiming> timings) {
         this.timings = timings;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setIsActive(final Boolean isActive) {
+public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDefaultPrepTimeSeconds(final Integer defaultPrepTimeSeconds) {
+public void setDefaultPrepTimeSeconds(final Integer defaultPrepTimeSeconds) {
         this.defaultPrepTimeSeconds = defaultPrepTimeSeconds;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCuisine(final String cuisine) {
+public void setCuisine(final String cuisine) {
         this.cuisine = cuisine;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setRating(final Double rating) {
+public void setRating(final Double rating) {
         this.rating = rating;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setReviewsCount(final Integer reviewsCount) {
+public void setReviewsCount(final Integer reviewsCount) {
         this.reviewsCount = reviewsCount;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryTime(final Integer deliveryTime) {
+public void setDeliveryTime(final Integer deliveryTime) {
         this.deliveryTime = deliveryTime;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setDeliveryFee(final Double deliveryFee) {
+public void setDeliveryFee(final java.math.BigDecimal deliveryFee) {
         this.deliveryFee = deliveryFee;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setTags(final String tags) {
+public void setTags(final String tags) {
         this.tags = tags;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setCreatedAt(final LocalDateTime createdAt) {
+public void setCreatedAt(final LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
+public void setUpdatedAt(final LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    @java.lang.SuppressWarnings("all")
-    public void setVersion(final Integer version) {
+public void setVersion(final Integer version) {
         this.version = version;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public boolean equals(final java.lang.Object o) {
+public boolean equals(final java.lang.Object o) {
         if (o == this) return true;
         if (!(o instanceof Outlet)) return false;
         final Outlet other = (Outlet) o;
@@ -522,14 +444,12 @@ public class Outlet {
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    protected boolean canEqual(final java.lang.Object other) {
+protected boolean canEqual(final java.lang.Object other) {
         return other instanceof Outlet;
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public int hashCode() {
+public int hashCode() {
         final int PRIME = 59;
         int result = 1;
         final java.lang.Object $isActive = this.getIsActive();
@@ -572,17 +492,14 @@ public class Outlet {
     }
 
     @java.lang.Override
-    @java.lang.SuppressWarnings("all")
-    public java.lang.String toString() {
+public java.lang.String toString() {
         return "Outlet(id=" + this.getId() + ", brandId=" + this.getBrandId() + ", name=" + this.getName() + ", fssaiLicenseNumber=" + this.getFssaiLicenseNumber() + ", location=" + this.getLocation() + ", bannerUrl=" + this.getBannerUrl() + ", timings=" + this.getTimings() + ", isActive=" + this.getIsActive() + ", defaultPrepTimeSeconds=" + this.getDefaultPrepTimeSeconds() + ", cuisine=" + this.getCuisine() + ", rating=" + this.getRating() + ", reviewsCount=" + this.getReviewsCount() + ", deliveryTime=" + this.getDeliveryTime() + ", deliveryFee=" + this.getDeliveryFee() + ", tags=" + this.getTags() + ", createdAt=" + this.getCreatedAt() + ", updatedAt=" + this.getUpdatedAt() + ", version=" + this.getVersion() + ")";
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Outlet() {
+public Outlet() {
     }
 
-    @java.lang.SuppressWarnings("all")
-    public Outlet(final UUID id, final UUID brandId, final String name, final String fssaiLicenseNumber, final org.locationtech.jts.geom.Point location, final String bannerUrl, final java.util.List<OutletTiming> timings, final Boolean isActive, final Integer defaultPrepTimeSeconds, final String cuisine, final Double rating, final Integer reviewsCount, final Integer deliveryTime, final Double deliveryFee, final String tags, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
+public Outlet(final UUID id, final UUID brandId, final String name, final String fssaiLicenseNumber, final org.locationtech.jts.geom.Point location, final String bannerUrl, final java.util.List<OutletTiming> timings, final Boolean isActive, final Integer defaultPrepTimeSeconds, final String cuisine, final Double rating, final Integer reviewsCount, final Integer deliveryTime, final java.math.BigDecimal deliveryFee, final String tags, final LocalDateTime createdAt, final LocalDateTime updatedAt, final Integer version) {
         this.id = id;
         this.brandId = brandId;
         this.name = name;

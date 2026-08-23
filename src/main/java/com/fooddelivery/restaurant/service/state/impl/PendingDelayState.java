@@ -7,9 +7,7 @@ import com.fooddelivery.restaurant.service.state.RestaurantOrderState;
 @lombok.extern.slf4j.Slf4j
 
 public class PendingDelayState implements RestaurantOrderState {
-    @java.lang.SuppressWarnings("all")
-
-    private final CreatedState createdState;
+private final CreatedState createdState;
 
     public PendingDelayState(CreatedState createdState) {
         this.createdState = createdState;

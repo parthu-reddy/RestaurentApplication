@@ -22,6 +22,7 @@ public class RestaurantKycController {
 
     // Callback from GovernmentIDValidationService
     @PostMapping("/api/v1/internal/brands/{brandId}/verification-callback")
+    @PreAuthorize("hasRole('SERVICE')")
     public ResponseEntity<Void> updateVerificationStatus(@PathVariable UUID brandId, @RequestBody VerificationCallbackRequest request) {
         onboardingService.updateVerificationStatusFromCallback(brandId, request.getVerificationType(), request.getStatus(), request.getLegalEntityName(), request.getBankBeneficiaryName());
         return ResponseEntity.ok().build();
