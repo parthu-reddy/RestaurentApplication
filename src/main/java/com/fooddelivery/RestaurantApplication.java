@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.EnableCaching;
 
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-import com.fooddelivery.common.outbox.config.EnableOutbox;
 
 @SpringBootApplication(
     scanBasePackages = {"com.fooddelivery", "com.fooddelivery.common"}
@@ -15,7 +14,6 @@ import com.fooddelivery.common.outbox.config.EnableOutbox;
 @org.springframework.boot.autoconfigure.domain.EntityScan(basePackages = {"com.fooddelivery", "com.fooddelivery.common.entity"})
 @org.springframework.data.jpa.repository.config.EnableJpaRepositories(basePackages = {"com.fooddelivery", "com.fooddelivery.common.repository"})
 @EnableScheduling
-@EnableOutbox
 @EnableFeignClients
 @EnableCaching
 @org.springframework.scheduling.annotation.EnableAsync
