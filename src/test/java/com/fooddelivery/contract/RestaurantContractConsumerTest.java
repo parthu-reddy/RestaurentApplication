@@ -39,8 +39,8 @@ public class RestaurantContractConsumerTest {
     private com.fooddelivery.restaurant.client.DeliveryClient deliveryClient;
 
 
-    @Configuration
-    @EnableAutoConfiguration(exclude = {
+    @org.springframework.boot.SpringBootConfiguration
+    @org.springframework.boot.autoconfigure.EnableAutoConfiguration(exclude = {
             DataSourceAutoConfiguration.class,
             DataSourceTransactionManagerAutoConfiguration.class,
             HibernateJpaAutoConfiguration.class

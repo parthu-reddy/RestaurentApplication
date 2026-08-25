@@ -46,6 +46,7 @@ class OrderEventConsumerContractTest {
 
     @org.springframework.boot.SpringBootConfiguration
     @org.springframework.boot.autoconfigure.EnableAutoConfiguration
+    
     @Import(OrderEventConsumer.class)
     static class TestConfig {
         @Bean
