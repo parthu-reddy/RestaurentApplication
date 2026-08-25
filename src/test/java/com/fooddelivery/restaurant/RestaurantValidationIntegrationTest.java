@@ -15,9 +15,15 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import org.springframework.boot.test.mock.mockito.MockBean;
+import com.fooddelivery.common.service.RateLimitingService;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = {"spring.main.allow-bean-definition-overriding=true"})
 @ActiveProfiles("test")
 public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
+
+    @MockBean
+    private RateLimitingService rateLimitingService;
 
     @Autowired
     private BrandRepository brandRepository;
