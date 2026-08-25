@@ -1,5 +1,7 @@
 package com.fooddelivery.restaurant.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -24,11 +26,14 @@ import com.fooddelivery.common.constants.PaymentIntentStatus;
 public class RestaurantOrder {
 @Id
     @Column(name = "order_id")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID orderId;
     @Column(name = "restaurant_id")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID restaurantId;
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     @Column(name = "status")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private OrderStatus status;
 
     public void setStatus(OrderStatus status) {
@@ -46,6 +51,7 @@ public class RestaurantOrder {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "delivery_status")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private com.fooddelivery.common.enums.DeliveryStatus deliveryStatus;
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status")
@@ -78,6 +84,7 @@ public class RestaurantOrder {
     @Column(name = "items_json", columnDefinition = "TEXT")
     private String itemsJson;
     @Column(name = "created_at")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;

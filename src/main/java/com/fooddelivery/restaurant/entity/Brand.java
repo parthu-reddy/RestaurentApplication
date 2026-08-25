@@ -1,5 +1,7 @@
 package com.fooddelivery.restaurant.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,10 +20,13 @@ import com.fooddelivery.common.enums.VerificationStatus;
 public class Brand {
     @Id
     @Column(name = "id")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID id;
     @Column(name = "owner_id")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID ownerId;
     @Column(name = "name")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private String name;
     @Column(name = "gstin", unique = true)
     private String gstin;

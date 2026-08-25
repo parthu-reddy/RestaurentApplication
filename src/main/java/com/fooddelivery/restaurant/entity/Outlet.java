@@ -1,5 +1,7 @@
 package com.fooddelivery.restaurant.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -20,10 +22,13 @@ import java.util.UUID;
 public class Outlet {
     @Id
     @Column(name = "id")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID id;
     @Column(name = "brand_id")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID brandId;
     @Column(name = "name")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private String name;
     @Column(name = "fssai_license_number", unique = true)
     private String fssaiLicenseNumber;
@@ -35,6 +40,7 @@ public class Outlet {
     @jakarta.persistence.OneToMany(mappedBy = "outlet", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private java.util.List<OutletTiming> timings = new java.util.ArrayList<>();
     @Column(name = "is_active")
+    @Schema(requiredMode = RequiredMode.REQUIRED)
     private Boolean isActive;
     @Column(name = "default_prep_time_seconds")
     private Integer defaultPrepTimeSeconds;
