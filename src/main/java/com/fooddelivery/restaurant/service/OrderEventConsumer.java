@@ -156,6 +156,7 @@ private final ObjectMapper objectMapper;
         String itemsJson = root.path("itemsJson").asText("[]");
         String pickupOtp = root.path("pickupOtp").asText("");
         String deliveryOtp = root.path("deliveryOtp").asText("");
+        log.info("Received ORDER_CREATED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", orderId, pickupOtp, deliveryOtp);
         String customerName = root.path("customerName").asText("");
         RestaurantOrder order = RestaurantOrder.builder().orderId(orderId).restaurantId(UUID.fromString(restaurantId)).customerName(customerName).status(OrderStatus.CREATED).prepTime(estimatedPrepTimeMinutes).additionalPrepTime(0).deliveryLat(deliveryLat).deliveryLng(deliveryLng).deliveryAddress(deliveryAddress).pickupOtp(pickupOtp).deliveryOtp(deliveryOtp).itemsJson(itemsJson).build();
         actionService.saveOrder(order);

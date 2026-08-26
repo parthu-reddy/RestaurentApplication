@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @RestController
 @RequestMapping("/api/v1/internal/restaurants")
 @lombok.extern.slf4j.Slf4j
-@PreAuthorize("hasRole('SERVICE')")
+@PreAuthorize("hasAnyRole('SERVICE', 'RESTAURANT', 'ADMIN')")
 @lombok.RequiredArgsConstructor
 public class InternalRestaurantController {
 private final OutletRepository outletRepository;
