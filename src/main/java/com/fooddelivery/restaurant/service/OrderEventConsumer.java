@@ -80,7 +80,24 @@ private final ObjectMapper objectMapper;
                         log.warn("Order {} not found for event type: {}", orderId, eventType);
                         return null;
                     }
-                    RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).eventPayload(root).actionService(actionService).build();
+                    double lat = 0.0;
+                    double lng = 0.0;
+                    try {
+                        double[] coords = actionService.getRestaurantCoordinates(order.getRestaurantId());
+                        lat = coords[0];
+                        lng = coords[1];
+                    } catch (Exception e) {
+                        log.error("Failed to fetch coordinates for order {}", orderId, e);
+                        throw e;
+                    }
+                    RestaurantOrderContext ctx = RestaurantOrderContext.builder()
+                        .order(order)
+                        .eventPayload(root)
+                        .actionService(actionService)
+                        .restaurantId(order.getRestaurantId())
+                        .restaurantLat(lat)
+                        .restaurantLng(lng)
+                        .build();
                     RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
                     try {
                         switch (EventType.valueOf(eventType)) {

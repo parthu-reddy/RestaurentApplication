@@ -90,24 +90,9 @@ private static final String DRIVER_FIELD_ID = "id";
     public void acceptOrder(UUID restaurantId, UUID orderId, Integer additionalPrepTime, String delayReason) {
         log.info("Restaurant {} accepting order {} with additional prep time {} and reason {}", restaurantId, orderId, additionalPrepTime, delayReason);
         Outlet restaurant = outletRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
-        String locationWkt = outletRepository.findLocationWktById(restaurantId);
-        if (locationWkt == null || !locationWkt.startsWith("POINT(")) {
-            throw new IllegalArgumentException("Invalid or missing location for restaurant: " + restaurantId);
-        }
-        
-        double lat;
-        double lng;
-        try {
-            String coords = locationWkt.substring(6, locationWkt.length() - 1);
-            String[] parts = coords.split("\\s+");
-            if (parts.length != 2) {
-                throw new IllegalArgumentException("Invalid coordinates format");
-            }
-            lng = Double.parseDouble(parts[0]); // PostGIS X is Longitude
-            lat = Double.parseDouble(parts[1]); // PostGIS Y is Latitude
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to parse restaurant location: " + locationWkt, e);
-        }
+        double[] coords = actionService.getRestaurantCoordinates(restaurantId);
+        double lat = coords[0];
+        double lng = coords[1];
         RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
         RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).additionalPrepTime(additionalPrepTime).delayReason(delayReason).restaurantLat(lat).restaurantLng(lng).build();
         RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());

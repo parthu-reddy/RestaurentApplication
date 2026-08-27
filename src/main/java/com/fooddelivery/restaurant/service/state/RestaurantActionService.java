@@ -8,6 +8,7 @@ import com.fooddelivery.common.outbox.entity.OutboxEventEntity;
 import com.fooddelivery.common.outbox.repository.OutboxEventRepository;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
+import com.fooddelivery.restaurant.repository.OutletRepository;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,9 +20,10 @@ import io.micrometer.observation.annotation.Observed;
 @Observed(name = "restaurant.order.processing")
 @lombok.RequiredArgsConstructor
 public class RestaurantActionService {
-private final RestaurantOrderRepository orderRepository;
+    private final RestaurantOrderRepository orderRepository;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
+    private final OutletRepository outletRepository;
 
     public void saveOrder(RestaurantOrder order) {
         orderRepository.save(order);
@@ -44,4 +46,19 @@ private final RestaurantOrderRepository orderRepository;
         return objectMapper.createObjectNode();
     }
 
+    public double[] getRestaurantCoordinates(UUID restaurantId) {
+        String locationWkt = outletRepository.findLocationWktById(restaurantId);
+        if (locationWkt == null || !locationWkt.startsWith("POINT(")) {
+            throw new IllegalStateException("Invalid or missing location for restaurant: " + restaurantId);
+        }
+        try {
+            String coords = locationWkt.substring(6, locationWkt.length() - 1);
+            String[] parts = coords.split("\\s+");
+            double lng = Double.parseDouble(parts[0]);
+            double lat = Double.parseDouble(parts[1]);
+            return new double[]{lat, lng};
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to parse restaurant location: " + locationWkt, e);
+        }
+    }
 }
