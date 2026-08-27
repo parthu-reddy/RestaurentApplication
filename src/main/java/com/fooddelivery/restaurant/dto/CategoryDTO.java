@@ -26,7 +26,9 @@ public class CategoryDTO implements Serializable {
     @lombok.NoArgsConstructor
     public static class CategoryTimingDTO implements Serializable {
         private static final long serialVersionUID = 1L;
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
         private java.time.LocalTime openingTime;
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
         private java.time.LocalTime closingTime;
 
 

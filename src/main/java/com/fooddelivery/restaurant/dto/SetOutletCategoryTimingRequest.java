@@ -8,7 +8,9 @@ import java.util.UUID;
 @lombok.NoArgsConstructor
 @lombok.AllArgsConstructor
 public class SetOutletCategoryTimingRequest {
+    @jakarta.validation.constraints.NotNull
     private UUID categoryId;
+    @jakarta.validation.constraints.NotNull
     private List<TimingDTO> timings;
 
 

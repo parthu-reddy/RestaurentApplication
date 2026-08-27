@@ -159,7 +159,33 @@ private final ObjectMapper objectMapper;
         String deliveryOtp = root.path("deliveryOtp").asText("");
         log.info("Received ORDER_CREATED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", orderId, pickupOtp, deliveryOtp);
         String customerName = root.path("customerName").asText("");
-        RestaurantOrder order = RestaurantOrder.builder().orderId(orderId).restaurantId(UUID.fromString(restaurantId)).customerName(customerName).status(OrderStatus.CREATED).prepTime(estimatedPrepTimeMinutes).additionalPrepTime(0).deliveryLat(deliveryLat).deliveryLng(deliveryLng).deliveryAddress(deliveryAddress).pickupOtp(pickupOtp).deliveryOtp(deliveryOtp).itemsJson(itemsJson).build();
+        java.math.BigDecimal totalAmount = root.has("totalAmount") && !root.path("totalAmount").isNull() ? new java.math.BigDecimal(root.path("totalAmount").asText()) : null;
+        java.math.BigDecimal foodCost = root.has("itemTotal") && !root.path("itemTotal").isNull() ? new java.math.BigDecimal(root.path("itemTotal").asText()) : null;
+        java.math.BigDecimal restaurantPlatformFee = root.has("restaurantPlatformFee") && !root.path("restaurantPlatformFee").isNull() ? new java.math.BigDecimal(root.path("restaurantPlatformFee").asText()) : null;
+        java.math.BigDecimal restaurantDeliveryContribution = root.has("restaurantDeliveryContribution") && !root.path("restaurantDeliveryContribution").isNull() ? new java.math.BigDecimal(root.path("restaurantDeliveryContribution").asText()) : null;
+        java.math.BigDecimal platformBonus = root.has("platformBonus") && !root.path("platformBonus").isNull() ? new java.math.BigDecimal(root.path("platformBonus").asText()) : null;
+        java.math.BigDecimal restaurantPayout = root.has("restaurantPayout") && !root.path("restaurantPayout").isNull() ? new java.math.BigDecimal(root.path("restaurantPayout").asText()) : null;
+
+        RestaurantOrder order = RestaurantOrder.builder()
+                .orderId(orderId)
+                .restaurantId(UUID.fromString(restaurantId))
+                .customerName(customerName)
+                .status(OrderStatus.CREATED)
+                .prepTime(estimatedPrepTimeMinutes)
+                .additionalPrepTime(0)
+                .deliveryLat(deliveryLat)
+                .deliveryLng(deliveryLng)
+                .deliveryAddress(deliveryAddress)
+                .pickupOtp(pickupOtp)
+                .deliveryOtp(deliveryOtp)
+                .itemsJson(itemsJson)
+                .totalAmount(totalAmount)
+                .foodCost(foodCost)
+                .restaurantPlatformFee(restaurantPlatformFee)
+                .restaurantDeliveryContribution(restaurantDeliveryContribution)
+                .platformBonus(platformBonus)
+                .restaurantPayout(restaurantPayout)
+                .build();
         actionService.saveOrder(order);
         log.info("Restaurant {} received new paid order {} with estimated prep time {}m. Awaiting restaurant staff to accept/reject.", restaurantId, orderId, estimatedPrepTimeMinutes);
     }

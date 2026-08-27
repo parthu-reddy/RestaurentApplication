@@ -22,18 +22,23 @@ import java.util.UUID;
 public class OutletTiming {
     @Id
     @Column(name = "id")
+    @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
     private UUID id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "outlet_id", nullable = false)
     @JsonIgnore
     private Outlet outlet;
     @Column(name = "opening_time")
+    @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
     private LocalTime openingTime;
     @Column(name = "closing_time")
+    @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
     private LocalTime closingTime;
     @Column(name = "created_at")
+    @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
     private LocalDateTime createdAt;
     @Column(name = "updated_at")
+    @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
     private LocalDateTime updatedAt;
     @jakarta.persistence.Version
     @Column(name = "version")

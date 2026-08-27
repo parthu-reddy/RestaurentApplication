@@ -83,6 +83,18 @@ public class RestaurantOrder {
     private String riderName;
     @Column(name = "items_json", columnDefinition = "TEXT")
     private String itemsJson;
+    @Column(name = "total_amount")
+    private java.math.BigDecimal totalAmount;
+    @Column(name = "food_cost")
+    private java.math.BigDecimal foodCost;
+    @Column(name = "restaurant_platform_fee")
+    private java.math.BigDecimal restaurantPlatformFee;
+    @Column(name = "restaurant_delivery_contribution")
+    private java.math.BigDecimal restaurantDeliveryContribution;
+    @Column(name = "platform_bonus")
+    private java.math.BigDecimal platformBonus;
+    @Column(name = "restaurant_payout")
+    private java.math.BigDecimal restaurantPayout;
     @Column(name = "created_at")
     @Schema(requiredMode = RequiredMode.REQUIRED)
     private LocalDateTime createdAt;

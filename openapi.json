@@ -1859,6 +1859,7 @@
         }
       },
       "CategoryTimingDTO" : {
+        "required" : [ "closingTime", "openingTime" ],
         "type" : "object",
         "properties" : {
           "openingTime" : {
@@ -2082,6 +2083,7 @@
         }
       },
       "SetOutletCategoryTimingRequest" : {
+        "required" : [ "categoryId", "timings" ],
         "type" : "object",
         "properties" : {
           "categoryId" : {
@@ -2097,6 +2099,7 @@
         }
       },
       "TimingDTO" : {
+        "required" : [ "closingTime", "openingTime" ],
         "type" : "object",
         "properties" : {
           "openingTime" : {
@@ -2135,6 +2138,7 @@
         }
       },
       "VerificationCallbackRequest" : {
+        "required" : [ "status", "verificationType" ],
         "type" : "object",
         "properties" : {
           "verificationType" : {
@@ -2457,6 +2461,7 @@
         }
       },
       "OutletTiming" : {
+        "required" : [ "closingTime", "createdAt", "id", "openingTime", "updatedAt" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2692,6 +2697,7 @@
         }
       },
       "PageRestaurantOrder" : {
+        "required" : [ "content", "empty", "first", "last", "number", "numberOfElements", "size", "totalElements", "totalPages" ],
         "type" : "object",
         "properties" : {
           "totalPages" : {
@@ -2701,6 +2707,10 @@
           "totalElements" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "numberOfElements" : {
+            "type" : "integer",
+            "format" : "int32"
           },
           "number" : {
             "type" : "integer",
@@ -2725,10 +2735,6 @@
           "pageable" : {
             "$ref" : "#/components/schemas/PageableObject"
           },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
           "first" : {
             "type" : "boolean"
           },
@@ -2741,11 +2747,15 @@
         }
       },
       "PageableObject" : {
+        "required" : [ "offset", "pageNumber", "pageSize", "paged", "unpaged" ],
         "type" : "object",
         "properties" : {
           "offset" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "paged" : {
+            "type" : "boolean"
           },
           "sort" : {
             "type" : "array",
@@ -2753,19 +2763,16 @@
               "$ref" : "#/components/schemas/SortObject"
             }
           },
-          "pageNumber" : {
-            "type" : "integer",
-            "format" : "int32"
+          "unpaged" : {
+            "type" : "boolean"
           },
           "pageSize" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "paged" : {
-            "type" : "boolean"
-          },
-          "unpaged" : {
-            "type" : "boolean"
+          "pageNumber" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -2962,6 +2969,7 @@
         }
       },
       "PageMapStringObject" : {
+        "required" : [ "content", "empty", "first", "last", "number", "numberOfElements", "size", "totalElements", "totalPages" ],
         "type" : "object",
         "properties" : {
           "totalPages" : {
@@ -2971,6 +2979,10 @@
           "totalElements" : {
             "type" : "integer",
             "format" : "int64"
+          },
+          "numberOfElements" : {
+            "type" : "integer",
+            "format" : "int32"
           },
           "number" : {
             "type" : "integer",
@@ -2997,10 +3009,6 @@
           },
           "pageable" : {
             "$ref" : "#/components/schemas/PageableObject"
-          },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
           },
           "first" : {
             "type" : "boolean"
