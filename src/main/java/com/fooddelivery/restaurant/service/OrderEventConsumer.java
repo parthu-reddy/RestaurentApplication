@@ -86,6 +86,7 @@ private final ObjectMapper objectMapper;
                         switch (EventType.valueOf(eventType)) {
                         case ORDER_CANCELLED: 
                         case ORDER_CANCELLED_BY_ADMIN: 
+                        case ORDER_CANCELLED_BY_RESTAURANT:
                             state.handleOrderCancelled(ctx);
                             break;
                         case ORDER_CANCELLED_BY_CUSTOMER: 

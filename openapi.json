@@ -1797,6 +1797,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "object"
           },
@@ -1876,6 +1879,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "$ref" : "#/components/schemas/CategoryDTO"
           },
@@ -1893,6 +1899,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -1957,6 +1966,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2057,6 +2069,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "$ref" : "#/components/schemas/OutletMenuOverride"
           },
@@ -2104,6 +2119,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "array",
             "items" : {
@@ -2147,6 +2165,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "array",
             "items" : {
@@ -2167,6 +2188,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2213,6 +2237,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2349,6 +2376,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2519,6 +2549,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "array",
             "items" : {
@@ -2621,6 +2654,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "object",
             "additionalProperties" : {
@@ -2643,6 +2679,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "$ref" : "#/components/schemas/PageRestaurantOrder"
           },
@@ -2663,17 +2702,7 @@
             "type" : "integer",
             "format" : "int64"
           },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
           "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
             "type" : "integer",
             "format" : "int32"
           },
@@ -2696,6 +2725,16 @@
           "pageable" : {
             "$ref" : "#/components/schemas/PageableObject"
           },
+          "numberOfElements" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "first" : {
+            "type" : "boolean"
+          },
+          "last" : {
+            "type" : "boolean"
+          },
           "empty" : {
             "type" : "boolean"
           }
@@ -2714,9 +2753,6 @@
               "$ref" : "#/components/schemas/SortObject"
             }
           },
-          "paged" : {
-            "type" : "boolean"
-          },
           "pageNumber" : {
             "type" : "integer",
             "format" : "int32"
@@ -2724,6 +2760,9 @@
           "pageSize" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "paged" : {
+            "type" : "boolean"
           },
           "unpaged" : {
             "type" : "boolean"
@@ -2760,6 +2799,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "array",
             "items" : {
@@ -2782,6 +2824,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "object",
             "additionalProperties" : {
@@ -2802,6 +2847,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2829,6 +2877,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "array",
             "items" : {
@@ -2849,6 +2900,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2873,6 +2927,9 @@
           "message" : {
             "type" : "string"
           },
+          "errorCode" : {
+            "type" : "string"
+          },
           "data" : {
             "type" : "boolean"
           },
@@ -2890,6 +2947,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2912,17 +2972,7 @@
             "type" : "integer",
             "format" : "int64"
           },
-          "first" : {
-            "type" : "boolean"
-          },
-          "last" : {
-            "type" : "boolean"
-          },
           "number" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "numberOfElements" : {
             "type" : "integer",
             "format" : "int32"
           },
@@ -2948,6 +2998,16 @@
           "pageable" : {
             "$ref" : "#/components/schemas/PageableObject"
           },
+          "numberOfElements" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "first" : {
+            "type" : "boolean"
+          },
+          "last" : {
+            "type" : "boolean"
+          },
           "empty" : {
             "type" : "boolean"
           }
@@ -2961,6 +3021,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
@@ -2983,6 +3046,9 @@
             "type" : "boolean"
           },
           "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
             "type" : "string"
           },
           "data" : {
