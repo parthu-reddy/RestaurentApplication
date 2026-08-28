@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 @SpringBootTest(classes = GovIdContractConsumerTest.TestConfig.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @AutoConfigureStubRunner(
         stubsMode = StubRunnerProperties.StubsMode.LOCAL,
-        ids = {"com.fooddelivery:government-id-validation-service:+:stubs:8094"}
+        ids = {"com.fooddelivery:government-id-validation-service:+:stubs"}
 )
 @ActiveProfiles("contract-test")
 public class GovIdContractConsumerTest {

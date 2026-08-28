@@ -24,7 +24,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
     "stubrunner.idsToServiceIds.food-delivery-backend=customer-service",
     "stubrunner.idsToServiceIds.delivery-executive-application=delivery-service"
 })
-@AutoConfigureStubRunner(ids = { "com.fooddelivery:food-delivery-backend:+:stubs:8090", "com.fooddelivery:delivery-executive-application:+:stubs:8092" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
+@AutoConfigureStubRunner(ids = { "com.fooddelivery:food-delivery-backend:+:stubs", "com.fooddelivery:delivery-executive-application:+:stubs" }, stubsMode = StubRunnerProperties.StubsMode.LOCAL)
 public class RestaurantContractConsumerTest {
 
     @MockBean
