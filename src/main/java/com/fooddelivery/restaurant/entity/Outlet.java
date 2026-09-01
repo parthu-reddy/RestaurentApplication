@@ -38,6 +38,7 @@ public class Outlet {
     @Column(name = "banner_url")
     private String bannerUrl;
     @jakarta.persistence.OneToMany(mappedBy = "outlet", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
+    @lombok.Builder.Default
     private java.util.List<OutletTiming> timings = new java.util.ArrayList<>();
     @Column(name = "is_active")
     @Schema(requiredMode = RequiredMode.REQUIRED)

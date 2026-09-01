@@ -44,11 +44,13 @@ public class Brand {
     private String legalEntityName;
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     @jakarta.persistence.Column(name = "kyc_status")
+    @lombok.Builder.Default
     private VerificationStatus kycStatus = VerificationStatus.PENDING;
     @jakarta.persistence.Column(name = "bank_beneficiary_name")
     private String bankBeneficiaryName;
     @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
     @jakarta.persistence.Column(name = "penny_drop_status")
+    @lombok.Builder.Default
     private VerificationStatus pennyDropStatus = VerificationStatus.PENDING;
     @Column(name = "is_gstin_verified")
     private Boolean isGstinVerified;
