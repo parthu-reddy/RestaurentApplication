@@ -93,7 +93,8 @@ public abstract class ContractTestBase {
 
         RestAssuredMockMvc.standaloneSetup(
                 new InternalRestaurantController(outletRepository,
-                        Mockito.mock(com.fooddelivery.restaurant.repository.MasterMenuItemRepository.class)),
+                        Mockito.mock(com.fooddelivery.restaurant.repository.MasterMenuItemRepository.class),
+                        Mockito.mock(com.fooddelivery.restaurant.repository.BrandRepository.class)),
                 new RestaurantOutletController(onboardingService),
                 new CatalogController(catalogService, securityHelper),
                 new InternalOrderController(orderRepository));
