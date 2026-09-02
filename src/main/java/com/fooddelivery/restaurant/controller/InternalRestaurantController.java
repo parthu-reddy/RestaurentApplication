@@ -17,8 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @PreAuthorize("hasAnyRole('SERVICE', 'RESTAURANT', 'ADMIN')")
 @lombok.RequiredArgsConstructor
 public class InternalRestaurantController {
-private final OutletRepository outletRepository;
+    private final OutletRepository outletRepository;
     private final MasterMenuItemRepository masterMenuItemRepository;
+    private final com.fooddelivery.restaurant.repository.BrandRepository brandRepository;
 
     @GetMapping("/owner/{ownerId}/outlets")
     public ResponseEntity<List<String>> getOwnerOutlets(@PathVariable UUID ownerId) {
@@ -29,7 +30,8 @@ private final OutletRepository outletRepository;
     @GetMapping("/outlets/{outletId}/owner")
     public ResponseEntity<?> getOutletOwner(@PathVariable String outletId) {
         return outletRepository.findById(UUID.fromString(outletId))
-                .<ResponseEntity<?>>map(outlet -> ResponseEntity.ok(java.util.Map.of("ownerId", outlet.getOwnerId().toString())))
+                .flatMap(outlet -> brandRepository.findById(outlet.getBrandId()))
+                .<ResponseEntity<?>>map(brand -> ResponseEntity.ok(java.util.Map.of("ownerId", brand.getOwnerId().toString())))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
