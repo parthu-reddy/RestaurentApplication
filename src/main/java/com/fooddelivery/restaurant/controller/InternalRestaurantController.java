@@ -26,6 +26,13 @@ private final OutletRepository outletRepository;
         return ResponseEntity.ok(outletIds);
     }
 
+    @GetMapping("/outlets/{outletId}/owner")
+    public ResponseEntity<java.util.Map<String, String>> getOutletOwner(@PathVariable String outletId) {
+        return outletRepository.findById(UUID.fromString(outletId))
+                .map(outlet -> ResponseEntity.ok(java.util.Map.of("ownerId", outlet.getOwnerId().toString())))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/outlets/{outletId}/exists")
     public ResponseEntity<ApiResponse<Boolean>> outletExists(@PathVariable String outletId) {
         boolean exists = outletRepository.existsById(UUID.fromString(outletId));
