@@ -27,10 +27,10 @@ private final OutletRepository outletRepository;
     }
 
     @GetMapping("/outlets/{outletId}/owner")
-    public ResponseEntity<java.util.Map<String, String>> getOutletOwner(@PathVariable String outletId) {
+    public ResponseEntity<?> getOutletOwner(@PathVariable String outletId) {
         return outletRepository.findById(UUID.fromString(outletId))
-                .map(outlet -> ResponseEntity.ok(java.util.Map.of("ownerId", outlet.getOwnerId().toString())))
-                .orElse(ResponseEntity.notFound().build());
+                .<ResponseEntity<?>>map(outlet -> ResponseEntity.ok(java.util.Map.of("ownerId", outlet.getOwnerId().toString())))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/outlets/{outletId}/exists")
