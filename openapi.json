@@ -1566,6 +1566,32 @@
         }
       }
     },
+    "/api/v1/internal/restaurants/outlets/{outletId}/owner" : {
+      "get" : {
+        "tags" : [ "internal-restaurant-controller" ],
+        "operationId" : "getOutletOwner",
+        "parameters" : [ {
+          "name" : "outletId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/internal/restaurants/outlets/{outletId}/exists" : {
       "get" : {
         "tags" : [ "internal-restaurant-controller" ],
@@ -2769,6 +2795,9 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "unpaged" : {
+            "type" : "boolean"
+          },
           "sort" : {
             "$ref" : "#/components/schemas/SortObject"
           },
@@ -2782,9 +2811,6 @@
           "pageSize" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "unpaged" : {
-            "type" : "boolean"
           }
         }
       },
