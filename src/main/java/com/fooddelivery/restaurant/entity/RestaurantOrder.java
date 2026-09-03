@@ -77,6 +77,8 @@ public class RestaurantOrder {
     private String deliveryOtp;
     @Column(name = "delivery_executive_id")
     private UUID deliveryExecutiveId;
+    @Column(name = "customer_id")
+    private UUID customerId;
     @Column(name = "customer_name")
     private String customerName;
     @Column(name = "rider_name")

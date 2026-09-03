@@ -175,6 +175,8 @@ private final ObjectMapper objectMapper;
         String pickupOtp = root.path("pickupOtp").asText("");
         String deliveryOtp = root.path("deliveryOtp").asText("");
         log.info("Received ORDER_CREATED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", orderId, pickupOtp, deliveryOtp);
+        String customerIdStr = root.path("customerId").asText("");
+        UUID customerId = (customerIdStr != null && !customerIdStr.isEmpty()) ? UUID.fromString(customerIdStr) : null;
         String customerName = root.path("customerName").asText("");
         java.math.BigDecimal totalAmount = root.has("totalAmount") && !root.path("totalAmount").isNull() ? new java.math.BigDecimal(root.path("totalAmount").asText()) : null;
         java.math.BigDecimal foodCost = root.has("itemTotal") && !root.path("itemTotal").isNull() ? new java.math.BigDecimal(root.path("itemTotal").asText()) : null;
@@ -186,6 +188,7 @@ private final ObjectMapper objectMapper;
         RestaurantOrder order = RestaurantOrder.builder()
                 .orderId(orderId)
                 .restaurantId(UUID.fromString(restaurantId))
+                .customerId(customerId)
                 .customerName(customerName)
                 .status(OrderStatus.CREATED)
                 .prepTime(estimatedPrepTimeMinutes)
