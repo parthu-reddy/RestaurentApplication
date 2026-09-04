@@ -59,6 +59,7 @@ public abstract class ContractTestBase {
         outlet.setRating(4.5);
 
         Mockito.when(outletRepository.findByOwnerId(any(UUID.class))).thenReturn(List.of(outlet));
+        Mockito.when(outletRepository.findById(any())).thenReturn(Optional.of(outlet));
         Mockito.when(onboardingService.getNearbyOutlets(anyDouble(), anyDouble(), anyDouble()))
                .thenReturn(List.of(outlet));
         // getBrandOutlets.groovy asserts 'Test Outlet' while getNearbyRestaurants.groovy asserts
@@ -79,6 +80,10 @@ public abstract class ContractTestBase {
         brand.setLogoUrl("https://example.test/logo.png");
         Mockito.when(onboardingService.getBrandById(any())).thenReturn(brand);
 
+        com.fooddelivery.restaurant.repository.BrandRepository brandRepository = Mockito.mock(com.fooddelivery.restaurant.repository.BrandRepository.class);
+        brand.setOwnerId(UUID.fromString("321e4567-e89b-12d3-a456-426614174000"));
+        Mockito.when(brandRepository.findById(any())).thenReturn(Optional.of(brand));
+
         MenuItemDTO item = new MenuItemDTO();
         item.setId(MENU_ITEM_ID);
         item.setName("Pizza");
@@ -94,7 +99,7 @@ public abstract class ContractTestBase {
         RestAssuredMockMvc.standaloneSetup(
                 new InternalRestaurantController(outletRepository,
                         Mockito.mock(com.fooddelivery.restaurant.repository.MasterMenuItemRepository.class),
-                        Mockito.mock(com.fooddelivery.restaurant.repository.BrandRepository.class)),
+                        brandRepository),
                 new RestaurantOutletController(onboardingService),
                 new CatalogController(catalogService, securityHelper),
                 new InternalOrderController(orderRepository));
