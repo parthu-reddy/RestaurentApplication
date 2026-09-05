@@ -70,8 +70,8 @@ private final ObjectMapper objectMapper;
                         return null;
                     }
                     UUID orderId = UUID.fromString(orderIdStr);
-                    // Handle ORDER_PAID as a special case for creating the initial order entity
-                    if (EventType.ORDER_PAID.name().equals(eventType)) {
+                    // Handle ORDER_PAID and ORDER_PLACED_COD as a special case for creating the initial order entity
+                    if (EventType.ORDER_PAID.name().equals(eventType) || EventType.ORDER_PLACED_COD.name().equals(eventType)) {
                         handleOrderPaid(root, orderId);
                         return null;
                     }
@@ -163,7 +163,7 @@ private final ObjectMapper objectMapper;
 
     private void handleOrderPaid(JsonNode root, UUID orderId) {
         if (restaurantOrderRepository.existsById(orderId)) {
-            log.info("Duplicate ORDER_PAID event received for order {}. Ignoring.", orderId);
+            log.info("Duplicate ORDER_PAID or ORDER_PLACED_COD event received for order {}. Ignoring.", orderId);
             return;
         }
         String restaurantId = root.path("restaurantId").asText();

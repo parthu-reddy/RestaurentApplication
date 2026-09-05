@@ -70,14 +70,19 @@ private final FulfillmentService fulfillmentService;
     }
 
     @PostMapping("/orders/{orderId}/refund/partial")
-    public ResponseEntity<ApiResponse<Void>> partialRefund(@PathVariable UUID restaurantId, @PathVariable UUID orderId, @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, String> request) {
-        String amountStr = request.get("amount");
+    public ResponseEntity<ApiResponse<Void>> partialRefund(@PathVariable UUID restaurantId, @PathVariable UUID orderId, @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, Object> request) {
+        String amountStr = request.get("amount") != null ? request.get("amount").toString() : null;
+        String reason = request.get("reason") != null ? request.get("reason").toString() : "Restaurant initiated partial refund";
+        
+        @SuppressWarnings("unchecked")
+        java.util.List<String> items = request.get("items") != null ? (java.util.List<String>) request.get("items") : java.util.List.of();
+
         if (amountStr == null || amountStr.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("amount is required"));
         }
         try {
             java.math.BigDecimal amount = new java.math.BigDecimal(amountStr);
-            fulfillmentService.initiatePartialRefund(restaurantId, orderId, amount);
+            fulfillmentService.initiatePartialRefund(restaurantId, orderId, amount, items, reason);
             return ResponseEntity.ok(ApiResponse.success(null, "Partial refund requested successfully"));
         } catch (NumberFormatException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Invalid amount format"));
@@ -86,16 +91,6 @@ private final FulfillmentService fulfillmentService;
         }
     }
 
-    @GetMapping("/orders/{orderId}/invoice")
-    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> getOrderInvoice(@PathVariable UUID restaurantId, @PathVariable UUID orderId) {
-        try {
-            java.util.Map<String, Object> invoice = fulfillmentService.getOrderInvoice(restaurantId, orderId);
-            return ResponseEntity.ok(ApiResponse.success(invoice, "Invoice retrieved successfully"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(ApiResponse.error("Failed to retrieve invoice"));
-        }
-    }
+
 
 }

@@ -14,13 +14,15 @@ import java.util.Map;
 public interface OrderClient {
 
     @PostMapping("/api/v1/internal/orders/{orderId}/partial-refund")
-    ResponseEntity<Map<String, String>> initiatePartialRefund(
+    ResponseEntity<Map<String, Object>> initiatePartialRefund(
             @PathVariable("orderId") UUID orderId,
-            @RequestBody Map<String, String> payload
+            @RequestBody Map<String, Object> payload
     );
 
-    @GetMapping("/api/v1/internal/orders/{orderId}/invoice")
-    ResponseEntity<Map<String, Object>> getOrderInvoice(
+
+
+    @GetMapping("/api/v1/money/restaurant/orders/{orderId}/earnings")
+    ResponseEntity<com.fooddelivery.common.dto.order.RestaurantOrderEarnings> getOrderEarnings(
             @PathVariable("orderId") UUID orderId
     );
 }

@@ -172,7 +172,7 @@ private static final String DRIVER_FIELD_ID = "id";
         }
     }
 
-    public void initiatePartialRefund(UUID restaurantId, UUID orderId, java.math.BigDecimal amount) {
+    public void initiatePartialRefund(UUID restaurantId, UUID orderId, java.math.BigDecimal amount, java.util.List<String> items, String reason) {
         log.info("Restaurant {} initiating partial refund of {} for order {}", restaurantId, amount, orderId);
         RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
         
@@ -180,27 +180,21 @@ private static final String DRIVER_FIELD_ID = "id";
             throw new IllegalArgumentException("Order does not belong to this restaurant");
         }
         
-        java.util.Map<String, String> payload = new java.util.HashMap<>();
-        payload.put("amount", amount.toString());
+        java.util.Map<String, Object> payload = new java.util.HashMap<>();
+        payload.put("amount", amount);
+        payload.put("reason", reason);
+        if (items != null && !items.isEmpty()) {
+            payload.put("items", items);
+        }
+        payload.put("initiatorType", "RESTAURANT");
+        payload.put("initiatorId", restaurantId.toString());
         
-        org.springframework.http.ResponseEntity<java.util.Map<String, String>> response = orderClient.initiatePartialRefund(orderId, payload);
+        org.springframework.http.ResponseEntity<java.util.Map<String, Object>> response = orderClient.initiatePartialRefund(orderId, payload);
         if (!response.getStatusCode().is2xxSuccessful()) {
             throw new RuntimeException("Failed to initiate partial refund through CustomerApplication: " + response.getStatusCode());
         }
     }
 
-    public java.util.Map<String, Object> getOrderInvoice(UUID restaurantId, UUID orderId) {
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
-        if (!order.getRestaurantId().equals(restaurantId)) {
-            throw new IllegalArgumentException("Order does not belong to this restaurant");
-        }
-        
-        org.springframework.http.ResponseEntity<java.util.Map<String, Object>> response = orderClient.getOrderInvoice(orderId);
-        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-            throw new RuntimeException("Failed to fetch order invoice from CustomerApplication: " + response.getStatusCode());
-        }
-        return response.getBody();
-    }
+
 
 }

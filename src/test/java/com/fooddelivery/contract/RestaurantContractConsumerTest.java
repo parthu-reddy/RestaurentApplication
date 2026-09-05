@@ -51,33 +51,21 @@ public class RestaurantContractConsumerTest {
 
     @Test
     public void testInitiatePartialRefund() {
-        Map<String, String> payload = new java.util.HashMap<>();
+        Map<String, Object> payload = new java.util.HashMap<>();
         // Mirrors FulfillmentService.initiatePartialRefund, which sends {"amount": ...} and nothing else.
         payload.put("amount", "25.00");
 
-        org.springframework.http.ResponseEntity<Map<String, String>> response = orderClient.initiatePartialRefund(
+        org.springframework.http.ResponseEntity<Map<String, Object>> response = orderClient.initiatePartialRefund(
                 java.util.UUID.fromString("123e4567-e89b-12d3-a456-426614174000"), payload);
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         // partialRefund returns ApiResponse.success(...) -> {success, message, data}.
-        // the Feign client is typed Map<String, String>, so this arrives as the string "true"
-        assertEquals("true", response.getBody().get("success"));
+        assertEquals(Boolean.TRUE, Boolean.valueOf(String.valueOf(response.getBody().get("success"))));
     }
 
-    @Test
-    public void testGetOrderInvoice() {
-        org.springframework.http.ResponseEntity<Map<String, Object>> response = orderClient.getOrderInvoice(
-                java.util.UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
 
-        assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
-        assertNotNull(response.getBody());
-        // getOrderInvoice returns OrderResponse; there is no invoiceId field, and the money
-        // field is totalAmount.
-        assertEquals(100.0, response.getBody().get("totalAmount"));
-    }
 
     @Test
     public void testGetDriverById() {
@@ -109,4 +97,17 @@ public class RestaurantContractConsumerTest {
     }
 
 
+    @Test
+    public void testGetRestaurantOrderMoney() {
+        org.springframework.http.ResponseEntity<com.fooddelivery.common.dto.order.RestaurantOrderEarnings> response = orderClient.getOrderEarnings(
+                java.util.UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals(new java.math.BigDecimal("50.0"), response.getBody().getFoodCost());
+        assertEquals(new java.math.BigDecimal("40.0"), response.getBody().getNetPayout());
+        assertEquals(new java.math.BigDecimal("5.0"), response.getBody().getPlatformFee());
+        assertEquals(new java.math.BigDecimal("5.0"), response.getBody().getDeliveryContribution());
+    }
 }

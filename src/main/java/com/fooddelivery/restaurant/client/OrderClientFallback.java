@@ -8,12 +8,14 @@ import java.util.UUID;
 @Component("restaurantOrderClientFallback")
 public class OrderClientFallback implements OrderClient {
     @Override
-    public ResponseEntity<Map<String, String>> initiatePartialRefund(UUID orderId, Map<String, String> payload) {
+    public ResponseEntity<Map<String, Object>> initiatePartialRefund(UUID orderId, Map<String, Object> payload) {
         throw new IllegalStateException("Customer service is currently unavailable. Failing fast to ensure financial integrity.");
     }
 
     @Override
-    public ResponseEntity<java.util.Map<String, Object>> getOrderInvoice(UUID orderId) {
+    public ResponseEntity<com.fooddelivery.common.dto.order.RestaurantOrderEarnings> getOrderEarnings(UUID orderId) {
         throw new IllegalStateException("Customer service is currently unavailable. Failing fast to ensure financial integrity.");
     }
+
+
 }

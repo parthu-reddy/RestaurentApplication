@@ -27,40 +27,37 @@ private final AdvertisementClient advertisementClient;
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Object>> createCampaign(@RequestBody Map<String, Object> request, Principal principal) {
-        if (!request.containsKey("restaurantId")) {
+    public ResponseEntity<ApiResponse<com.fooddelivery.restaurant.dto.CampaignDto>> createCampaign(@RequestBody com.fooddelivery.restaurant.dto.CampaignRequestDto request, Principal principal) {
+        if (request.getRestaurantId() == null) {
             throw new IllegalArgumentException("restaurantId is required");
         }
-        UUID restaurantId = UUID.fromString(request.get("restaurantId").toString());
+        UUID restaurantId = request.getRestaurantId();
         verifyOwnership(restaurantId, principal);
         UUID advertiserId = getAdvertiserId(restaurantId);
-        Object response = advertisementClient.createCampaign(advertiserId, request);
-        return ResponseEntity.ok(ApiResponse.success(response, "Campaign created successfully"));
+        ApiResponse<com.fooddelivery.restaurant.dto.CampaignDto> response = advertisementClient.createCampaign(advertiserId, request);
+        return ResponseEntity.ok(ApiResponse.success(response.getData(), "Campaign created successfully"));
     }
 
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<ApiResponse<Object>> getCampaigns(@PathVariable UUID restaurantId, Principal principal) {
+    public ResponseEntity<ApiResponse<java.util.List<com.fooddelivery.restaurant.dto.CampaignDto>>> getCampaigns(@PathVariable UUID restaurantId, Principal principal) {
         verifyOwnership(restaurantId, principal);
         UUID advertiserId = getAdvertiserId(restaurantId);
-        Object response = advertisementClient.getCampaigns(advertiserId);
-        return ResponseEntity.ok(ApiResponse.success(response, "Campaigns fetched successfully"));
+        ApiResponse<java.util.List<com.fooddelivery.restaurant.dto.CampaignDto>> response = advertisementClient.getCampaigns(advertiserId);
+        return ResponseEntity.ok(ApiResponse.success(response.getData(), "Campaigns fetched successfully"));
     }
 
     @PutMapping("/{campaignId}/pause")
-    public ResponseEntity<ApiResponse<Object>> pauseCampaign(@PathVariable UUID campaignId, @RequestParam UUID restaurantId, Principal principal) {
+    public ResponseEntity<ApiResponse<com.fooddelivery.restaurant.dto.CampaignDto>> pauseCampaign(@PathVariable UUID campaignId, @RequestParam UUID restaurantId, Principal principal) {
         verifyOwnership(restaurantId, principal);
         UUID advertiserId = getAdvertiserId(restaurantId);
-        Object response = advertisementClient.pauseCampaign(advertiserId, campaignId);
-        return ResponseEntity.ok(ApiResponse.success(response, "Campaign paused successfully"));
+        ApiResponse<com.fooddelivery.restaurant.dto.CampaignDto> response = advertisementClient.pauseCampaign(advertiserId, campaignId);
+        return ResponseEntity.ok(ApiResponse.success(response.getData(), "Campaign paused successfully"));
     }
 
     private UUID getAdvertiserId(UUID restaurantId) {
-        Map<String, Object> apiResponse = advertisementClient.getAdvertiserByExternalRef(restaurantId.toString());
-        if (apiResponse != null && apiResponse.containsKey("data")) {
-            Map<String, Object> data = (Map<String, Object>) apiResponse.get("data");
-            if (data != null && data.containsKey("id")) {
-                return UUID.fromString(data.get("id").toString());
-            }
+        ApiResponse<com.fooddelivery.restaurant.dto.AdvertiserDto> apiResponse = advertisementClient.getAdvertiserByExternalRef(restaurantId.toString());
+        if (apiResponse != null && apiResponse.getData() != null) {
+            return apiResponse.getData().getId();
         }
         throw new IllegalStateException("Could not resolve advertiser for the given restaurant");
     }

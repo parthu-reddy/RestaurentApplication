@@ -10,18 +10,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fooddelivery.common.dto.ApiResponse;
+import com.fooddelivery.restaurant.dto.AdvertiserDto;
+import com.fooddelivery.restaurant.dto.CampaignDto;
+import com.fooddelivery.restaurant.dto.CampaignRequestDto;
+import java.util.List;
+
 @FeignClient(name = "campaign-service", fallback = AdvertisementClientFallback.class)
 public interface AdvertisementClient {
 
     @GetMapping("/api/v1/advertisers")
-    Map<String, Object> getAdvertiserByExternalRef(@RequestParam("externalRef") String externalRef);
+    ApiResponse<AdvertiserDto> getAdvertiserByExternalRef(@RequestParam("externalRef") String externalRef);
 
     @PostMapping("/api/v1/advertisers/{advertiserId}/campaigns")
-    Object createCampaign(@PathVariable("advertiserId") UUID advertiserId, @RequestBody Map<String, Object> request);
+    ApiResponse<CampaignDto> createCampaign(@PathVariable("advertiserId") UUID advertiserId, @RequestBody CampaignRequestDto request);
 
     @GetMapping("/api/v1/advertisers/{advertiserId}/campaigns")
-    Object getCampaigns(@PathVariable("advertiserId") UUID advertiserId);
+    ApiResponse<List<CampaignDto>> getCampaigns(@PathVariable("advertiserId") UUID advertiserId);
 
     @PostMapping("/api/v1/advertisers/{advertiserId}/campaigns/{campaignId}/pause")
-    Object pauseCampaign(@PathVariable("advertiserId") UUID advertiserId, @PathVariable("campaignId") UUID campaignId);
+    ApiResponse<CampaignDto> pauseCampaign(@PathVariable("advertiserId") UUID advertiserId, @PathVariable("campaignId") UUID campaignId);
 }

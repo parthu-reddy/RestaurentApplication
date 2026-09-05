@@ -4,26 +4,32 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.UUID;
 
+import com.fooddelivery.common.dto.ApiResponse;
+import com.fooddelivery.restaurant.dto.AdvertiserDto;
+import com.fooddelivery.restaurant.dto.CampaignDto;
+import com.fooddelivery.restaurant.dto.CampaignRequestDto;
+import java.util.List;
+
 @Component("restaurantAdvertisementClientFallback")
 public class AdvertisementClientFallback implements AdvertisementClient {
 
     @Override
-    public Map<String, Object> getAdvertiserByExternalRef(String externalRef) {
+    public ApiResponse<AdvertiserDto> getAdvertiserByExternalRef(String externalRef) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 
     @Override
-    public Object createCampaign(UUID advertiserId, Map<String, Object> request) {
+    public ApiResponse<CampaignDto> createCampaign(UUID advertiserId, CampaignRequestDto request) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 
     @Override
-    public Object getCampaigns(UUID advertiserId) {
+    public ApiResponse<List<CampaignDto>> getCampaigns(UUID advertiserId) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 
     @Override
-    public Object pauseCampaign(UUID advertiserId, UUID campaignId) {
+    public ApiResponse<CampaignDto> pauseCampaign(UUID advertiserId, UUID campaignId) {
         throw new IllegalStateException("Campaign service is currently unavailable.");
     }
 }
