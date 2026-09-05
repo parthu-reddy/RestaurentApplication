@@ -1,44 +1,50 @@
 {
-  "openapi" : "3.0.1",
-  "info" : {
-    "title" : "OpenAPI definition",
-    "version" : "v0"
+  "openapi": "3.0.1",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
   },
-  "servers" : [ {
-    "url" : "http://localhost",
-    "description" : "Generated server url"
-  } ],
-  "paths" : {
-    "/api/v1/outlets/{outletId}/timings" : {
-      "put" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "updateOutletTimings",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+  "servers": [
+    {
+      "url": "http://localhost",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/v1/outlets/{outletId}/timings": {
+      "put": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "updateOutletTimings",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/OutletTimingsUpdateRequest"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutletTimingsUpdateRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -46,36 +52,40 @@
         }
       }
     },
-    "/api/v1/outlets/{outletId}/status" : {
-      "put" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "updateOutletStatus",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/outlets/{outletId}/status": {
+      "put": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "updateOutletStatus",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/OutletStatusUpdateRequest"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutletStatusUpdateRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -83,36 +93,40 @@
         }
       }
     },
-    "/api/v1/outlets/{outletId}/settings" : {
-      "put" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "updateOutletSettings",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/outlets/{outletId}/settings": {
+      "put": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "updateOutletSettings",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/OutletSettingsUpdateRequest"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutletSettingsUpdateRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -120,36 +134,40 @@
         }
       }
     },
-    "/api/v1/categories/{categoryId}" : {
-      "put" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "updateCategory",
-        "parameters" : [ {
-          "name" : "categoryId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/categories/{categoryId}": {
+      "put": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CategoryDTO"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryDTO"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseCategoryDTO"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCategoryDTO"
                 }
               }
             }
@@ -157,34 +175,39 @@
         }
       }
     },
-    "/api/v1/campaigns/{campaignId}/pause" : {
-      "put" : {
-        "tags" : [ "campaign-controller" ],
-        "operationId" : "pauseCampaign",
-        "parameters" : [ {
-          "name" : "campaignId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/campaigns/{campaignId}/pause": {
+      "put": {
+        "tags": [
+          "campaign-controller"
+        ],
+        "operationId": "pauseCampaign",
+        "parameters": [
+          {
+            "name": "campaignId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "restaurantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        }, {
-          "name" : "restaurantId",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseObject"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
                 }
               }
             }
@@ -192,44 +215,49 @@
         }
       }
     },
-    "/api/v1/brands/{brandId}/master-menu/{itemId}" : {
-      "put" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "editMasterMenuItem",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/brands/{brandId}/master-menu/{itemId}": {
+      "put": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "editMasterMenuItem",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        }, {
-          "name" : "itemId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MasterMenuItem"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterMenuItem"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMasterMenuItem"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMasterMenuItem"
                 }
               }
             }
@@ -237,82 +265,39 @@
         }
       }
     },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/reject" : {
-      "post" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "rejectOrder",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/refund/partial" : {
-      "post" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "partialRefund",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "string"
-                }
-              }
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/reject": {
+      "post": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "rejectOrder",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -320,356 +305,52 @@
         }
       }
     },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/ready" : {
-      "post" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "readyOrder",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/prepare" : {
-      "post" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "prepareOrder",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/cancel" : {
-      "post" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "cancelOrder",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/accept" : {
-      "post" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "acceptOrder",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AcceptOrderRequest"
-              }
-            }
-          }
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/verification/brands/gstin" : {
-      "post" : {
-        "tags" : [ "restaurant-kyc-controller" ],
-        "operationId" : "verifyGstin",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/GstinRequest"
-              }
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/refund/partial": {
+      "post": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "partialRefund",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        }
-      }
-    },
-    "/api/v1/restaurants/verification/brands/bank-account" : {
-      "post" : {
-        "tags" : [ "restaurant-kyc-controller" ],
-        "operationId" : "verifyBankAccount",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BankAccountRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseVoid"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/outlets/{outletId}/menu-overrides/{masterMenuItemId}" : {
-      "post" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "overrideMenuItem",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "masterMenuItemId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/OutletMenuOverride"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseOutletMenuOverride"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/outlets/{outletId}/categories/timings" : {
-      "post" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "setOutletCategoryTimings",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetOutletCategoryTimingRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListTimingDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/internal/brands/{brandId}/verification-callback" : {
-      "post" : {
-        "tags" : [ "restaurant-kyc-controller" ],
-        "operationId" : "updateVerificationStatus",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/VerificationCallbackRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK"
-          }
-        }
-      }
-    },
-    "/api/v1/internal/admin/restaurants/{restaurantId}/catalog/batch" : {
-      "post" : {
-        "tags" : [ "catalog-admin-controller" ],
-        "operationId" : "batchSyncCatalog",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "type" : "array",
-                "items" : {
-                  "$ref" : "#/components/schemas/MasterMenuItem"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
                 }
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListMasterMenuItem"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
                 }
               }
             }
@@ -677,49 +358,454 @@
         }
       }
     },
-    "/api/v1/images/upload" : {
-      "post" : {
-        "tags" : [ "image-upload-controller" ],
-        "operationId" : "uploadImage",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/ready": {
+      "post": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "readyOrder",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        }, {
-          "name" : "imageType",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "default" : "default"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "required" : [ "file" ],
-                "type" : "object",
-                "properties" : {
-                  "file" : {
-                    "type" : "string",
-                    "format" : "binary"
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/prepare": {
+      "post": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "prepareOrder",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/cancel": {
+      "post": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "cancelOrder",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/accept": {
+      "post": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "acceptOrder",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcceptOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/verification/brands/gstin": {
+      "post": {
+        "tags": [
+          "restaurant-kyc-controller"
+        ],
+        "operationId": "verifyGstin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GstinRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/verification/brands/bank-account": {
+      "post": {
+        "tags": [
+          "restaurant-kyc-controller"
+        ],
+        "operationId": "verifyBankAccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outlets/{outletId}/menu-overrides/{masterMenuItemId}": {
+      "post": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "overrideMenuItem",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "masterMenuItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutletMenuOverride"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOutletMenuOverride"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outlets/{outletId}/categories/timings": {
+      "post": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "setOutletCategoryTimings",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetOutletCategoryTimingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTimingDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/internal/brands/{brandId}/verification-callback": {
+      "post": {
+        "tags": [
+          "restaurant-kyc-controller"
+        ],
+        "operationId": "updateVerificationStatus",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationCallbackRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/internal/admin/restaurants/{restaurantId}/catalog/batch": {
+      "post": {
+        "tags": [
+          "catalog-admin-controller"
+        ],
+        "operationId": "batchSyncCatalog",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MasterMenuItem"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMasterMenuItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/upload": {
+      "post": {
+        "tags": [
+          "image-upload-controller"
+        ],
+        "operationId": "uploadImage",
+        "parameters": [
+          {
+            "name": "folderId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "imageType",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "default"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
             }
           }
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseString"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
                 }
               }
             }
@@ -727,43 +813,47 @@
         }
       }
     },
-    "/api/v1/categories" : {
-      "get" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "getCategories",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListCategoryDTO"
+    "/api/v1/categories": {
+      "get": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "getCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListCategoryDTO"
                 }
               }
             }
           }
         }
       },
-      "post" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "createCategory",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CategoryDTO"
+      "post": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "createCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryDTO"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseCategoryDTO"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCategoryDTO"
                 }
               }
             }
@@ -771,30 +861,32 @@
         }
       }
     },
-    "/api/v1/campaigns" : {
-      "post" : {
-        "tags" : [ "campaign-controller" ],
-        "operationId" : "createCampaign",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "object"
+    "/api/v1/campaigns": {
+      "post": {
+        "tags": [
+          "campaign-controller"
+        ],
+        "operationId": "createCampaign",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
                 }
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseObject"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
                 }
               }
             }
@@ -802,43 +894,47 @@
         }
       }
     },
-    "/api/v1/brands" : {
-      "get" : {
-        "tags" : [ "restaurant-onboarding-controller" ],
-        "operationId" : "getBrands",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListBrand"
+    "/api/v1/brands": {
+      "get": {
+        "tags": [
+          "restaurant-onboarding-controller"
+        ],
+        "operationId": "getBrands",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListBrand"
                 }
               }
             }
           }
         }
       },
-      "post" : {
-        "tags" : [ "restaurant-onboarding-controller" ],
-        "operationId" : "onboardBrand",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BrandOnboardRequest"
+      "post": {
+        "tags": [
+          "restaurant-onboarding-controller"
+        ],
+        "operationId": "onboardBrand",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrandOnboardRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseBrand"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBrand"
                 }
               }
             }
@@ -846,61 +942,69 @@
         }
       }
     },
-    "/api/v1/brands/{brandId}/outlets" : {
-      "get" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "getOutletsByBrand",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/brands/{brandId}/outlets": {
+      "get": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "getOutletsByBrand",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListOutlet"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListOutlet"
                 }
               }
             }
           }
         }
       },
-      "post" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "onboardOutlet",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+      "post": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "onboardOutlet",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/OutletOnboardRequest"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OutletOnboardRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseOutlet"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOutlet"
                 }
               }
             }
@@ -908,61 +1012,69 @@
         }
       }
     },
-    "/api/v1/brands/{brandId}/master-menu" : {
-      "get" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "getMasterMenuItems",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/brands/{brandId}/master-menu": {
+      "get": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "getMasterMenuItems",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListMasterMenuItem"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMasterMenuItem"
                 }
               }
             }
           }
         }
       },
-      "post" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "addMasterMenuItem",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+      "post": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "addMasterMenuItem",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MasterMenuItem"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterMenuItem"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMasterMenuItem"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMasterMenuItem"
                 }
               }
             }
@@ -970,61 +1082,69 @@
         }
       }
     },
-    "/api/v1/brands/{brandId}/categories" : {
-      "get" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "getBrandCategories",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/brands/{brandId}/categories": {
+      "get": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "getBrandCategories",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListCategoryDTO"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListCategoryDTO"
                 }
               }
             }
           }
         }
       },
-      "post" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "createBrandCategory",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+      "post": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "createBrandCategory",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CategoryDTO"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryDTO"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseCategoryDTO"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseCategoryDTO"
                 }
               }
             }
@@ -1032,36 +1152,40 @@
         }
       }
     },
-    "/api/v1/brands/{brandId}/categories/timings" : {
-      "post" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "setBrandCategoryTimings",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/brands/{brandId}/categories/timings": {
+      "post": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "setBrandCategoryTimings",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetBrandCategoryTimingRequest"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetBrandCategoryTimingRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListTimingDTO"
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTimingDTO"
                 }
               }
             }
@@ -1069,495 +1193,40 @@
         }
       }
     },
-    "/api/v1/restaurants/{restaurantId}/menu/batch" : {
-      "get" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "getEffectiveMenuBatch",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "ids",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "$ref" : "#/components/schemas/MenuItemDTO"
-                  }
-                }
-              }
+    "/api/v1/restaurants/{restaurantId}/menu/batch": {
+      "get": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "getEffectiveMenuBatch",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders" : {
-      "get" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "getRestaurantOrders",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListRestaurantOrder"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/invoice" : {
-      "get" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "getOrderInvoice",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMapStringObject"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/history" : {
-      "get" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "getHistoricalRestaurantOrders",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "date",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "page",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 0
-          }
-        }, {
-          "name" : "size",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 10
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponsePageRestaurantOrder"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/active" : {
-      "get" : {
-        "tags" : [ "fulfillment-controller" ],
-        "operationId" : "getActiveRestaurantOrders",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListRestaurantOrder"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{restaurantId}/catalog/items" : {
-      "get" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "getEffectiveMenu",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListMenuItemDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/{id}" : {
-      "get" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "getRestaurant",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMapStringObject"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/verification/upload-url" : {
-      "get" : {
-        "tags" : [ "restaurant-kyc-controller" ],
-        "operationId" : "getPresignedUploadUrl",
-        "parameters" : [ {
-          "name" : "docType",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "contentType",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMapStringString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/nearby" : {
-      "get" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "getNearbyRestaurants",
-        "parameters" : [ {
-          "name" : "lat",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "number",
-            "format" : "double"
-          }
-        }, {
-          "name" : "lng",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "number",
-            "format" : "double"
-          }
-        }, {
-          "name" : "radius",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 5.0
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListMapStringObject"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/restaurants/brands/{brandId}/outlets" : {
-      "get" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "getBrandOutlets",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "lat",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "number",
-            "format" : "double"
-          }
-        }, {
-          "name" : "lng",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "number",
-            "format" : "double"
-          }
-        }, {
-          "name" : "radius",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 5.0
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListMapStringObject"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/outlets" : {
-      "get" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "getOutlets",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListOutlet"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/outlets/{outletId}/menu-overrides" : {
-      "get" : {
-        "tags" : [ "catalog-controller" ],
-        "operationId" : "getOverrides",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListOutletMenuOverride"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/outlets/{outletId}/categories/{categoryId}/timings" : {
-      "get" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "getOutletCategoryTimings",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "categoryId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListTimingDTO"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/internal/restaurants/products/{productId}/exists" : {
-      "get" : {
-        "tags" : [ "internal-restaurant-controller" ],
-        "operationId" : "productExists",
-        "parameters" : [ {
-          "name" : "productId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseBoolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/internal/restaurants/owner/{ownerId}/outlets" : {
-      "get" : {
-        "tags" : [ "internal-restaurant-controller" ],
-        "operationId" : "getOwnerOutlets",
-        "parameters" : [ {
-          "name" : "ownerId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MenuItemDTO"
                   }
                 }
               }
@@ -1566,25 +1235,30 @@
         }
       }
     },
-    "/api/v1/internal/restaurants/outlets/{outletId}/owner" : {
-      "get" : {
-        "tags" : [ "internal-restaurant-controller" ],
-        "operationId" : "getOutletOwner",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders": {
+      "get": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "getRestaurantOrders",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListRestaurantOrder"
                 }
               }
             }
@@ -1592,25 +1266,39 @@
         }
       }
     },
-    "/api/v1/internal/restaurants/outlets/{outletId}/exists" : {
-      "get" : {
-        "tags" : [ "internal-restaurant-controller" ],
-        "operationId" : "outletExists",
-        "parameters" : [ {
-          "name" : "outletId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/{orderId}/invoice": {
+      "get": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "getOrderInvoice",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseBoolean"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringObject"
                 }
               }
             }
@@ -1618,28 +1306,452 @@
         }
       }
     },
-    "/api/v1/internal/restaurants/orders/{orderId}/status" : {
-      "get" : {
-        "tags" : [ "internal-order-controller" ],
-        "operationId" : "getOrderStatus",
-        "parameters" : [ {
-          "name" : "orderId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/history": {
+      "get": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "getHistoricalRestaurantOrders",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "additionalProperties" : {
-                    "type" : "string"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageRestaurantOrder"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}/fulfillment/orders/active": {
+      "get": {
+        "tags": [
+          "fulfillment-controller"
+        ],
+        "operationId": "getActiveRestaurantOrders",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListRestaurantOrder"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/{restaurantId}/catalog/items": {
+      "get": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "getEffectiveMenu",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMenuItemDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/{id}": {
+      "get": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "getRestaurant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/verification/upload-url": {
+      "get": {
+        "tags": [
+          "restaurant-kyc-controller"
+        ],
+        "operationId": "getPresignedUploadUrl",
+        "parameters": [
+          {
+            "name": "docType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "contentType",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseMapStringString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/nearby": {
+      "get": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "getNearbyRestaurants",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "default": 5.0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMapStringObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/restaurants/brands/{brandId}/outlets": {
+      "get": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "getBrandOutlets",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "radius",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "default": 5.0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMapStringObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outlets": {
+      "get": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "getOutlets",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListOutlet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outlets/{outletId}/menu-overrides": {
+      "get": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "operationId": "getOverrides",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListOutletMenuOverride"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/outlets/{outletId}/categories/{categoryId}/timings": {
+      "get": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "getOutletCategoryTimings",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTimingDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/internal/restaurants/products/{productId}/exists": {
+      "get": {
+        "tags": [
+          "internal-restaurant-controller"
+        ],
+        "operationId": "productExists",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBoolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/internal/restaurants/owner/{ownerId}/outlets": {
+      "get": {
+        "tags": [
+          "internal-restaurant-controller"
+        ],
+        "operationId": "getOwnerOutlets",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
               }
@@ -1648,36 +1760,29 @@
         }
       }
     },
-    "/api/v1/internal/admin/restaurants/all-with-location" : {
-      "get" : {
-        "tags" : [ "restaurant-outlet-controller" ],
-        "operationId" : "getAllOutletsWithLocation",
-        "parameters" : [ {
-          "name" : "page",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 0
+    "/api/v1/internal/restaurants/outlets/{outletId}/owner": {
+      "get": {
+        "tags": [
+          "internal-restaurant-controller"
+        ],
+        "operationId": "getOutletOwner",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        }, {
-          "name" : "size",
-          "in" : "query",
-          "required" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 100
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponsePageMapStringObject"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
@@ -1685,26 +1790,29 @@
         }
       }
     },
-    "/api/v1/campaigns/restaurant/{restaurantId}" : {
-      "get" : {
-        "tags" : [ "campaign-controller" ],
-        "operationId" : "getCampaigns",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/internal/restaurants/outlets/{outletId}/exists": {
+      "get": {
+        "tags": [
+          "internal-restaurant-controller"
+        ],
+        "operationId": "outletExists",
+        "parameters": [
+          {
+            "name": "outletId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseObject"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseBoolean"
                 }
               }
             }
@@ -1712,34 +1820,33 @@
         }
       }
     },
-    "/api/v1/brands/{brandId}/categories/{categoryId}/timings" : {
-      "get" : {
-        "tags" : [ "category-controller" ],
-        "operationId" : "getBrandCategoryTimings",
-        "parameters" : [ {
-          "name" : "brandId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
+    "/api/v1/internal/restaurants/orders/{orderId}/status": {
+      "get": {
+        "tags": [
+          "internal-order-controller"
+        ],
+        "operationId": "getOrderStatus",
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
-        }, {
-          "name" : "categoryId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListTimingDTO"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -1747,17 +1854,132 @@
         }
       }
     },
-    "/api/v1/brands/stream" : {
-      "get" : {
-        "tags" : [ "restaurant-sse-controller" ],
-        "operationId" : "streamBrands",
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "text/event-stream" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SseEmitter"
+    "/api/v1/internal/admin/restaurants/all-with-location": {
+      "get": {
+        "tags": [
+          "restaurant-outlet-controller"
+        ],
+        "operationId": "getAllOutletsWithLocation",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePageMapStringObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/restaurant/{restaurantId}": {
+      "get": {
+        "tags": [
+          "campaign-controller"
+        ],
+        "operationId": "getCampaigns",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseObject"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/brands/{brandId}/categories/{categoryId}/timings": {
+      "get": {
+        "tags": [
+          "category-controller"
+        ],
+        "operationId": "getBrandCategoryTimings",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListTimingDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/brands/stream": {
+      "get": {
+        "tags": [
+          "restaurant-sse-controller"
+        ],
+        "operationId": "streamBrands",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/SseEmitter"
                 }
               }
             }
@@ -1766,1347 +1988,1584 @@
       }
     }
   },
-  "components" : {
-    "schemas" : {
-      "LocalTime" : {
-        "type" : "object",
-        "properties" : {
-          "hour" : {
-            "type" : "integer",
-            "format" : "int32"
+  "components": {
+    "schemas": {
+      "LocalTime": {
+        "type": "object",
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "format": "int32"
           },
-          "minute" : {
-            "type" : "integer",
-            "format" : "int32"
+          "minute": {
+            "type": "integer",
+            "format": "int32"
           },
-          "second" : {
-            "type" : "integer",
-            "format" : "int32"
+          "second": {
+            "type": "integer",
+            "format": "int32"
           },
-          "nano" : {
-            "type" : "integer",
-            "format" : "int32"
+          "nano": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "OutletTimingsUpdateRequest" : {
-        "required" : [ "timings" ],
-        "type" : "object",
-        "properties" : {
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TimingRequest"
+      "OutletTimingsUpdateRequest": {
+        "required": [
+          "timings"
+        ],
+        "type": "object",
+        "properties": {
+          "timings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimingRequest"
             }
           }
         }
       },
-      "TimingRequest" : {
-        "required" : [ "closingTime", "openingTime" ],
-        "type" : "object",
-        "properties" : {
-          "openingTime" : {
-            "$ref" : "#/components/schemas/LocalTime"
+      "TimingRequest": {
+        "required": [
+          "closingTime",
+          "openingTime"
+        ],
+        "type": "object",
+        "properties": {
+          "openingTime": {
+            "$ref": "#/components/schemas/LocalTime"
           },
-          "closingTime" : {
-            "$ref" : "#/components/schemas/LocalTime"
+          "closingTime": {
+            "$ref": "#/components/schemas/LocalTime"
           }
         }
       },
-      "ApiResponseVoid" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseVoid": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "object"
+          "data": {
+            "type": "object"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "OutletStatusUpdateRequest" : {
-        "required" : [ "isActive" ],
-        "type" : "object",
-        "properties" : {
-          "isActive" : {
-            "type" : "boolean"
+      "OutletStatusUpdateRequest": {
+        "required": [
+          "isActive"
+        ],
+        "type": "object",
+        "properties": {
+          "isActive": {
+            "type": "boolean"
           }
         }
       },
-      "OutletSettingsUpdateRequest" : {
-        "required" : [ "defaultPrepTimeSeconds" ],
-        "type" : "object",
-        "properties" : {
-          "defaultPrepTimeSeconds" : {
-            "type" : "integer",
-            "format" : "int32"
+      "OutletSettingsUpdateRequest": {
+        "required": [
+          "defaultPrepTimeSeconds"
+        ],
+        "type": "object",
+        "properties": {
+          "defaultPrepTimeSeconds": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "CategoryDTO" : {
-        "required" : [ "name" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "CategoryDTO": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "brandId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "name" : {
-            "maxLength" : 100,
-            "minLength" : 2,
-            "type" : "string"
+          "name": {
+            "maxLength": 100,
+            "minLength": 2,
+            "type": "string"
           },
-          "description" : {
-            "maxLength" : 255,
-            "minLength" : 0,
-            "type" : "string"
+          "description": {
+            "maxLength": 255,
+            "minLength": 0,
+            "type": "string"
           },
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CategoryTimingDTO"
+          "timings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryTimingDTO"
             }
           }
         }
       },
-      "CategoryTimingDTO" : {
-        "required" : [ "closingTime", "openingTime" ],
-        "type" : "object",
-        "properties" : {
-          "openingTime" : {
-            "$ref" : "#/components/schemas/LocalTime"
+      "CategoryTimingDTO": {
+        "required": [
+          "closingTime",
+          "openingTime"
+        ],
+        "type": "object",
+        "properties": {
+          "openingTime": {
+            "$ref": "#/components/schemas/LocalTime"
           },
-          "closingTime" : {
-            "$ref" : "#/components/schemas/LocalTime"
+          "closingTime": {
+            "$ref": "#/components/schemas/LocalTime"
           }
         }
       },
-      "ApiResponseCategoryDTO" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseCategoryDTO": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/CategoryDTO"
+          "data": {
+            "$ref": "#/components/schemas/CategoryDTO"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseObject" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseObject": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "object"
+          "data": {
+            "type": "object"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "MasterMenuItem" : {
-        "required" : [ "basePrice", "name", "packingCharge" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "MasterMenuItem": {
+        "required": [
+          "basePrice",
+          "name",
+          "packingCharge"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "brandId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "categoryId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "description" : {
-            "type" : "string"
+          "description": {
+            "type": "string"
           },
-          "imageUrl" : {
-            "type" : "string"
+          "imageUrl": {
+            "type": "string"
           },
-          "basePrice" : {
-            "type" : "number"
+          "basePrice": {
+            "type": "number"
           },
-          "packingCharge" : {
-            "maximum" : 10.0,
-            "exclusiveMaximum" : true,
-            "minimum" : 0.0,
-            "exclusiveMinimum" : false,
-            "type" : "number"
+          "packingCharge": {
+            "maximum": 10.0,
+            "exclusiveMaximum": true,
+            "minimum": 0.0,
+            "exclusiveMinimum": false,
+            "type": "number"
           },
-          "defaultPrepTimeMinutes" : {
-            "type" : "integer",
-            "format" : "int32"
+          "defaultPrepTimeMinutes": {
+            "type": "integer",
+            "format": "int32"
           },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "version": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "ApiResponseMasterMenuItem" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseMasterMenuItem": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/MasterMenuItem"
+          "data": {
+            "$ref": "#/components/schemas/MasterMenuItem"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "AcceptOrderRequest" : {
-        "type" : "object",
-        "properties" : {
-          "additionalPrepTime" : {
-            "type" : "integer",
-            "format" : "int32"
+      "AcceptOrderRequest": {
+        "type": "object",
+        "properties": {
+          "additionalPrepTime": {
+            "type": "integer",
+            "format": "int32"
           },
-          "delayReason" : {
-            "type" : "string"
+          "delayReason": {
+            "type": "string"
           }
         }
       },
-      "GstinRequest" : {
-        "required" : [ "brandName", "gstin" ],
-        "type" : "object",
-        "properties" : {
-          "brandId" : {
-            "type" : "string",
-            "format" : "uuid"
+      "GstinRequest": {
+        "required": [
+          "brandName",
+          "gstin"
+        ],
+        "type": "object",
+        "properties": {
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "gstin" : {
-            "type" : "string"
+          "gstin": {
+            "type": "string"
           },
-          "brandName" : {
-            "type" : "string"
+          "brandName": {
+            "type": "string"
           }
         }
       },
-      "BankAccountRequest" : {
-        "required" : [ "accountNumber", "brandName", "ifscCode" ],
-        "type" : "object",
-        "properties" : {
-          "brandId" : {
-            "type" : "string",
-            "format" : "uuid"
+      "BankAccountRequest": {
+        "required": [
+          "accountNumber",
+          "brandName",
+          "ifscCode"
+        ],
+        "type": "object",
+        "properties": {
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "accountNumber" : {
-            "type" : "string"
+          "accountNumber": {
+            "type": "string"
           },
-          "ifscCode" : {
-            "type" : "string"
+          "ifscCode": {
+            "type": "string"
           },
-          "brandName" : {
-            "type" : "string"
+          "brandName": {
+            "type": "string"
           }
         }
       },
-      "OutletMenuOverride" : {
-        "required" : [ "isAvailable" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "OutletMenuOverride": {
+        "required": [
+          "isAvailable"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "outletId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "outletId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "masterMenuItemId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "masterMenuItemId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "overriddenPrice" : {
-            "type" : "number"
+          "overriddenPrice": {
+            "type": "number"
           },
-          "isAvailable" : {
-            "type" : "boolean"
+          "isAvailable": {
+            "type": "boolean"
           },
-          "overriddenPrepTimeMinutes" : {
-            "type" : "integer",
-            "format" : "int32"
+          "overriddenPrepTimeMinutes": {
+            "type": "integer",
+            "format": "int32"
           },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "version": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "ApiResponseOutletMenuOverride" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseOutletMenuOverride": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/OutletMenuOverride"
+          "data": {
+            "$ref": "#/components/schemas/OutletMenuOverride"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "SetOutletCategoryTimingRequest" : {
-        "required" : [ "categoryId", "timings" ],
-        "type" : "object",
-        "properties" : {
-          "categoryId" : {
-            "type" : "string",
-            "format" : "uuid"
+      "SetOutletCategoryTimingRequest": {
+        "required": [
+          "categoryId",
+          "timings"
+        ],
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TimingDTO"
+          "timings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimingDTO"
             }
           }
         }
       },
-      "TimingDTO" : {
-        "required" : [ "closingTime", "openingTime" ],
-        "type" : "object",
-        "properties" : {
-          "openingTime" : {
-            "type" : "string",
-            "example" : "10:00:00"
+      "TimingDTO": {
+        "required": [
+          "closingTime",
+          "openingTime"
+        ],
+        "type": "object",
+        "properties": {
+          "openingTime": {
+            "type": "string",
+            "example": "10:00:00"
           },
-          "closingTime" : {
-            "type" : "string",
-            "example" : "22:00:00"
+          "closingTime": {
+            "type": "string",
+            "example": "22:00:00"
           }
         }
       },
-      "ApiResponseListTimingDTO" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListTimingDTO": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TimingDTO"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimingDTO"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "VerificationCallbackRequest" : {
-        "required" : [ "status", "verificationType" ],
-        "type" : "object",
-        "properties" : {
-          "verificationType" : {
-            "type" : "string"
+      "VerificationCallbackRequest": {
+        "required": [
+          "status",
+          "verificationType"
+        ],
+        "type": "object",
+        "properties": {
+          "verificationType": {
+            "type": "string"
           },
-          "status" : {
-            "type" : "string"
+          "status": {
+            "type": "string"
           },
-          "legalEntityName" : {
-            "type" : "string"
+          "legalEntityName": {
+            "type": "string"
           },
-          "bankBeneficiaryName" : {
-            "type" : "string"
+          "bankBeneficiaryName": {
+            "type": "string"
           },
-          "matchScore" : {
-            "type" : "number",
-            "format" : "double"
+          "matchScore": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
-      "ApiResponseListMasterMenuItem" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListMasterMenuItem": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MasterMenuItem"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MasterMenuItem"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseString" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseString": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "string"
+          "data": {
+            "type": "string"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "BrandOnboardRequest" : {
-        "required" : [ "bankAccountNumber", "gstin", "ifscCode", "name", "pan" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
+      "BrandOnboardRequest": {
+        "required": [
+          "bankAccountNumber",
+          "gstin",
+          "ifscCode",
+          "name",
+          "pan"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
           },
-          "gstin" : {
-            "type" : "string"
+          "gstin": {
+            "type": "string"
           },
-          "pan" : {
-            "type" : "string"
+          "pan": {
+            "type": "string"
           },
-          "cin" : {
-            "type" : "string"
+          "cin": {
+            "type": "string"
           },
-          "bankAccountNumber" : {
-            "type" : "string"
+          "bankAccountNumber": {
+            "type": "string"
           },
-          "ifscCode" : {
-            "type" : "string"
+          "ifscCode": {
+            "type": "string"
           },
-          "logoUrl" : {
-            "type" : "string"
+          "logoUrl": {
+            "type": "string"
           }
         }
       },
-      "ApiResponseBrand" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseBrand": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/Brand"
+          "data": {
+            "$ref": "#/components/schemas/Brand"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "Brand" : {
-        "required" : [ "id", "name", "ownerId" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "Brand": {
+        "required": [
+          "id",
+          "name",
+          "ownerId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "ownerId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "gstin" : {
-            "type" : "string"
+          "gstin": {
+            "type": "string"
           },
-          "pan" : {
-            "type" : "string"
+          "pan": {
+            "type": "string"
           },
-          "cin" : {
-            "type" : "string"
+          "cin": {
+            "type": "string"
           },
-          "bankAccountNumber" : {
-            "type" : "string"
+          "bankAccountNumber": {
+            "type": "string"
           },
-          "bankIfsc" : {
-            "type" : "string"
+          "bankIfsc": {
+            "type": "string"
           },
-          "logoUrl" : {
-            "type" : "string"
+          "logoUrl": {
+            "type": "string"
           },
-          "legalEntityName" : {
-            "type" : "string"
+          "legalEntityName": {
+            "type": "string"
           },
-          "kycStatus" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "APPROVED", "VERIFIED", "REJECTED", "MANUAL_REVIEW", "FAILED" ]
+          "kycStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "VERIFIED",
+              "REJECTED",
+              "MANUAL_REVIEW",
+              "FAILED"
+            ]
           },
-          "bankBeneficiaryName" : {
-            "type" : "string"
+          "bankBeneficiaryName": {
+            "type": "string"
           },
-          "pennyDropStatus" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "APPROVED", "VERIFIED", "REJECTED", "MANUAL_REVIEW", "FAILED" ]
+          "pennyDropStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "APPROVED",
+              "VERIFIED",
+              "REJECTED",
+              "MANUAL_REVIEW",
+              "FAILED"
+            ]
           },
-          "isGstinVerified" : {
-            "type" : "boolean"
+          "isGstinVerified": {
+            "type": "boolean"
           },
-          "isBankVerified" : {
-            "type" : "boolean"
+          "isBankVerified": {
+            "type": "boolean"
           },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "version": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "OutletOnboardRequest" : {
-        "required" : [ "fssaiLicenseNumber", "lat", "lng", "name", "timings" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
+      "OutletOnboardRequest": {
+        "required": [
+          "fssaiLicenseNumber",
+          "lat",
+          "lng",
+          "name",
+          "timings"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
           },
-          "fssaiLicenseNumber" : {
-            "type" : "string"
+          "fssaiLicenseNumber": {
+            "type": "string"
           },
-          "lat" : {
-            "type" : "number",
-            "format" : "double"
+          "lat": {
+            "type": "number",
+            "format": "double"
           },
-          "lng" : {
-            "type" : "number",
-            "format" : "double"
+          "lng": {
+            "type": "number",
+            "format": "double"
           },
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TimingRequest"
+          "timings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimingRequest"
             }
           },
-          "bannerUrl" : {
-            "type" : "string"
+          "bannerUrl": {
+            "type": "string"
           },
-          "cuisine" : {
-            "type" : "string"
+          "cuisine": {
+            "type": "string"
           },
-          "rating" : {
-            "type" : "number",
-            "format" : "double"
+          "rating": {
+            "type": "number",
+            "format": "double"
           },
-          "reviewsCount" : {
-            "type" : "integer",
-            "format" : "int32"
+          "reviewsCount": {
+            "type": "integer",
+            "format": "int32"
           },
-          "deliveryTime" : {
-            "type" : "integer",
-            "format" : "int32"
+          "deliveryTime": {
+            "type": "integer",
+            "format": "int32"
           },
-          "deliveryFee" : {
-            "type" : "number"
+          "deliveryFee": {
+            "type": "number"
           },
-          "tags" : {
-            "type" : "string"
+          "tags": {
+            "type": "string"
           }
         }
       },
-      "ApiResponseOutlet" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseOutlet": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/Outlet"
+          "data": {
+            "$ref": "#/components/schemas/Outlet"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "Outlet" : {
-        "required" : [ "brandId", "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "Outlet": {
+        "required": [
+          "brandId",
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "brandId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "brandId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "fssaiLicenseNumber" : {
-            "type" : "string"
+          "fssaiLicenseNumber": {
+            "type": "string"
           },
-          "bannerUrl" : {
-            "type" : "string"
+          "bannerUrl": {
+            "type": "string"
           },
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/OutletTiming"
+          "timings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutletTiming"
             }
           },
-          "defaultPrepTimeSeconds" : {
-            "type" : "integer",
-            "format" : "int32"
+          "defaultPrepTimeSeconds": {
+            "type": "integer",
+            "format": "int32"
           },
-          "cuisine" : {
-            "type" : "string"
+          "cuisine": {
+            "type": "string"
           },
-          "rating" : {
-            "type" : "number",
-            "format" : "double"
+          "rating": {
+            "type": "number",
+            "format": "double"
           },
-          "reviewsCount" : {
-            "type" : "integer",
-            "format" : "int32"
+          "reviewsCount": {
+            "type": "integer",
+            "format": "int32"
           },
-          "deliveryTime" : {
-            "type" : "integer",
-            "format" : "int32"
+          "deliveryTime": {
+            "type": "integer",
+            "format": "int32"
           },
-          "deliveryFee" : {
-            "type" : "number"
+          "deliveryFee": {
+            "type": "number"
           },
-          "tags" : {
-            "type" : "string"
+          "tags": {
+            "type": "string"
           },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "version": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "OutletTiming" : {
-        "required" : [ "closingTime", "createdAt", "id", "openingTime", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "OutletTiming": {
+        "required": [
+          "closingTime",
+          "createdAt",
+          "id",
+          "openingTime",
+          "updatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "openingTime" : {
-            "$ref" : "#/components/schemas/LocalTime"
+          "openingTime": {
+            "$ref": "#/components/schemas/LocalTime"
           },
-          "closingTime" : {
-            "$ref" : "#/components/schemas/LocalTime"
+          "closingTime": {
+            "$ref": "#/components/schemas/LocalTime"
           },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "version": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "SetBrandCategoryTimingRequest" : {
-        "required" : [ "categoryId" ],
-        "type" : "object",
-        "properties" : {
-          "categoryId" : {
-            "type" : "string",
-            "format" : "uuid"
+      "SetBrandCategoryTimingRequest": {
+        "required": [
+          "categoryId"
+        ],
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TimingDTO"
+          "timings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimingDTO"
             }
           }
         }
       },
-      "MenuItemDTO" : {
-        "required" : [ "id", "isAvailable", "name", "price", "restaurantId" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
+      "MenuItemDTO": {
+        "required": [
+          "id",
+          "isAvailable",
+          "name",
+          "price",
+          "restaurantId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "restaurantId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "restaurantId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "name" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "description" : {
-            "type" : "string"
+          "description": {
+            "type": "string"
           },
-          "price" : {
-            "type" : "number"
+          "price": {
+            "type": "number"
           },
-          "isAvailable" : {
-            "type" : "boolean"
+          "isAvailable": {
+            "type": "boolean"
           },
-          "prepTimeMinutes" : {
-            "type" : "integer",
-            "format" : "int32"
+          "prepTimeMinutes": {
+            "type": "integer",
+            "format": "int32"
           },
-          "imageUrl" : {
-            "type" : "string"
+          "imageUrl": {
+            "type": "string"
           },
-          "categoryId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "categoryId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "categoryName" : {
-            "type" : "string"
+          "categoryName": {
+            "type": "string"
           }
         }
       },
-      "ApiResponseListRestaurantOrder" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListRestaurantOrder": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/RestaurantOrder"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestaurantOrder"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "RestaurantOrder" : {
-        "required" : [ "createdAt", "deliveryStatus", "orderId", "restaurantId", "status" ],
-        "type" : "object",
-        "properties" : {
-          "orderId" : {
-            "type" : "string",
-            "format" : "uuid"
+      "RestaurantOrder": {
+        "required": [
+          "createdAt",
+          "deliveryStatus",
+          "id",
+          "restaurantId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
           },
-          "restaurantId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "restaurantId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "CREATED", "PENDING_ACCEPTANCE", "AWAITING_DELAY_APPROVAL", "ACCEPTED", "PREPARING", "READY_FOR_PICKUP", "HANDED_OVER", "CANCELLED", "CANCELLED_BY_RESTAURANT" ]
+          "status": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "PENDING_ACCEPTANCE",
+              "AWAITING_DELAY_APPROVAL",
+              "ACCEPTED",
+              "PREPARING",
+              "READY_FOR_PICKUP",
+              "HANDED_OVER",
+              "CANCELLED",
+              "CANCELLED_BY_RESTAURANT"
+            ]
           },
-          "deliveryStatus" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "SEARCHING_FOR_DRIVER", "MANUAL_INTERVENTION_REQUIRED", "ASSIGNED", "AT_RESTAURANT", "OUT_FOR_DELIVERY", "DELIVERED", "CANCELLED", "FAILED" ]
+          "deliveryStatus": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "SEARCHING_FOR_DRIVER",
+              "MANUAL_INTERVENTION_REQUIRED",
+              "ASSIGNED",
+              "AT_RESTAURANT",
+              "OUT_FOR_DELIVERY",
+              "DELIVERED",
+              "CANCELLED",
+              "FAILED"
+            ]
           },
-          "paymentStatus" : {
-            "type" : "string",
-            "enum" : [ "CREATED", "INITIATED", "PENDING", "SUCCESS", "FAILED", "CAPTURED", "PAID", "PARTIALLY_REFUNDED", "REFUNDED", "REFUND_PENDING", "REFUND_FAILED" ]
+          "paymentStatus": {
+            "type": "string",
+            "enum": [
+              "CREATED",
+              "INITIATED",
+              "PENDING",
+              "SUCCESS",
+              "FAILED",
+              "CAPTURED",
+              "PAID",
+              "PARTIALLY_REFUNDED",
+              "REFUNDED",
+              "REFUND_PENDING",
+              "REFUND_FAILED"
+            ]
           },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "version": {
+            "type": "integer",
+            "format": "int32"
           },
-          "prepTime" : {
-            "type" : "integer",
-            "format" : "int32"
+          "prepTime": {
+            "type": "integer",
+            "format": "int32"
           },
-          "additionalPrepTime" : {
-            "type" : "integer",
-            "format" : "int32"
+          "additionalPrepTime": {
+            "type": "integer",
+            "format": "int32"
           },
-          "estimatedCompletionTime" : {
-            "type" : "integer",
-            "format" : "int64"
+          "estimatedCompletionTime": {
+            "type": "integer",
+            "format": "int64"
           },
-          "deliveryLat" : {
-            "type" : "number",
-            "format" : "double"
+          "deliveryLat": {
+            "type": "number",
+            "format": "double"
           },
-          "deliveryLng" : {
-            "type" : "number",
-            "format" : "double"
+          "deliveryLng": {
+            "type": "number",
+            "format": "double"
           },
-          "deliveryAddress" : {
-            "type" : "string"
+          "deliveryAddress": {
+            "type": "string"
           },
-          "pickupOtp" : {
-            "type" : "string"
+          "pickupOtp": {
+            "type": "string"
           },
-          "deliveryOtp" : {
-            "type" : "string"
+          "deliveryOtp": {
+            "type": "string"
           },
-          "deliveryExecutiveId" : {
-            "type" : "string",
-            "format" : "uuid"
+          "deliveryExecutiveId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "customerName" : {
-            "type" : "string"
+          "customerName": {
+            "type": "string"
           },
-          "riderName" : {
-            "type" : "string"
+          "deliveryExecutiveName": {
+            "type": "string"
           },
-          "itemsJson" : {
-            "type" : "string"
+          "total": {
+            "type": "number"
           },
-          "totalAmount" : {
-            "type" : "number"
+          "foodCost": {
+            "type": "number"
           },
-          "foodCost" : {
-            "type" : "number"
+          "restaurantPlatformFee": {
+            "type": "number"
           },
-          "restaurantPlatformFee" : {
-            "type" : "number"
+          "restaurantDeliveryContribution": {
+            "type": "number"
           },
-          "restaurantDeliveryContribution" : {
-            "type" : "number"
+          "platformBonus": {
+            "type": "number"
           },
-          "platformBonus" : {
-            "type" : "number"
+          "restaurantPayout": {
+            "type": "number"
           },
-          "restaurantPayout" : {
-            "type" : "number"
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
           },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseMapStringObject" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseMapStringObject": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object"
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponsePageRestaurantOrder" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponsePageRestaurantOrder": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/PageRestaurantOrder"
+          "data": {
+            "$ref": "#/components/schemas/PageRestaurantOrder"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "PageRestaurantOrder" : {
-        "required" : [ "content", "empty", "first", "last", "number", "numberOfElements", "size", "totalElements", "totalPages" ],
-        "type" : "object",
-        "properties" : {
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
+      "PageRestaurantOrder": {
+        "required": [
+          "content",
+          "empty",
+          "first",
+          "last",
+          "number",
+          "numberOfElements",
+          "size",
+          "totalElements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
           },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
+          "size": {
+            "type": "integer",
+            "format": "int32"
           },
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/RestaurantOrder"
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RestaurantOrder"
             }
           },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
+          "number": {
+            "type": "integer",
+            "format": "int32"
           },
-          "first" : {
-            "type" : "boolean"
+          "first": {
+            "type": "boolean"
           },
-          "last" : {
-            "type" : "boolean"
+          "last": {
+            "type": "boolean"
           },
-          "sort" : {
-            "$ref" : "#/components/schemas/SortObject"
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
-          "empty" : {
-            "type" : "boolean"
+          "empty": {
+            "type": "boolean"
           }
         }
       },
-      "PageableObject" : {
-        "required" : [ "offset", "pageNumber", "pageSize", "paged", "unpaged" ],
-        "type" : "object",
-        "properties" : {
-          "offset" : {
-            "type" : "integer",
-            "format" : "int64"
+      "PageableObject": {
+        "required": [
+          "offset",
+          "pageNumber",
+          "pageSize",
+          "paged",
+          "unpaged"
+        ],
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
           },
-          "unpaged" : {
-            "type" : "boolean"
+          "unpaged": {
+            "type": "boolean"
           },
-          "sort" : {
-            "$ref" : "#/components/schemas/SortObject"
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
-          "paged" : {
-            "type" : "boolean"
+          "paged": {
+            "type": "boolean"
           },
-          "pageNumber" : {
-            "type" : "integer",
-            "format" : "int32"
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
           },
-          "pageSize" : {
-            "type" : "integer",
-            "format" : "int32"
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
-      "SortObject" : {
-        "required" : [ "empty", "sorted", "unsorted" ],
-        "type" : "object",
-        "properties" : {
-          "empty" : {
-            "type" : "boolean"
+      "SortObject": {
+        "required": [
+          "empty",
+          "sorted",
+          "unsorted"
+        ],
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
           },
-          "sorted" : {
-            "type" : "boolean"
+          "sorted": {
+            "type": "boolean"
           },
-          "unsorted" : {
-            "type" : "boolean"
+          "unsorted": {
+            "type": "boolean"
           }
         }
       },
-      "ApiResponseListMenuItemDTO" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListMenuItemDTO": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MenuItemDTO"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MenuItemDTO"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseMapStringString" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseMapStringString": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
+          "data": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseListMapStringObject" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListMapStringObject": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "object"
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
               }
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseListOutlet" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListOutlet": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Outlet"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Outlet"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseListOutletMenuOverride" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListOutletMenuOverride": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/OutletMenuOverride"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutletMenuOverride"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseBoolean" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseBoolean": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "boolean"
+          "data": {
+            "type": "boolean"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponsePageMapStringObject" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponsePageMapStringObject": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "$ref" : "#/components/schemas/PageMapStringObject"
+          "data": {
+            "$ref": "#/components/schemas/PageMapStringObject"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "PageMapStringObject" : {
-        "required" : [ "content", "empty", "first", "last", "number", "numberOfElements", "size", "totalElements", "totalPages" ],
-        "type" : "object",
-        "properties" : {
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
+      "PageMapStringObject": {
+        "required": [
+          "content",
+          "empty",
+          "first",
+          "last",
+          "number",
+          "numberOfElements",
+          "size",
+          "totalElements",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
           },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
           },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
+          "size": {
+            "type": "integer",
+            "format": "int32"
           },
-          "content" : {
-            "type" : "array",
-            "items" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "object"
+          "content": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object"
               }
             }
           },
-          "numberOfElements" : {
-            "type" : "integer",
-            "format" : "int32"
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
           },
-          "number" : {
-            "type" : "integer",
-            "format" : "int32"
+          "number": {
+            "type": "integer",
+            "format": "int32"
           },
-          "first" : {
-            "type" : "boolean"
+          "first": {
+            "type": "boolean"
           },
-          "last" : {
-            "type" : "boolean"
+          "last": {
+            "type": "boolean"
           },
-          "sort" : {
-            "$ref" : "#/components/schemas/SortObject"
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
           },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
           },
-          "empty" : {
-            "type" : "boolean"
+          "empty": {
+            "type": "boolean"
           }
         }
       },
-      "ApiResponseListCategoryDTO" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListCategoryDTO": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CategoryDTO"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryDTO"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "ApiResponseListBrand" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
+      "ApiResponseListBrand": {
+        "required": [
+          "message",
+          "success",
+          "timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
           },
-          "message" : {
-            "type" : "string"
+          "message": {
+            "type": "string"
           },
-          "errorCode" : {
-            "type" : "string"
+          "errorCode": {
+            "type": "string"
           },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Brand"
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Brand"
             }
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
-      "SseEmitter" : {
-        "type" : "object",
-        "properties" : {
-          "timeout" : {
-            "type" : "integer",
-            "format" : "int64"
+      "SseEmitter": {
+        "type": "object",
+        "properties": {
+          "timeout": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       }

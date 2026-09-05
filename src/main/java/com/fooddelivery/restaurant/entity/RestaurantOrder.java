@@ -27,6 +27,7 @@ public class RestaurantOrder {
 @Id
     @Column(name = "order_id")
     @Schema(requiredMode = RequiredMode.REQUIRED)
+    @com.fasterxml.jackson.annotation.JsonProperty("id")
     private UUID orderId;
     @Column(name = "restaurant_id")
     @Schema(requiredMode = RequiredMode.REQUIRED)
@@ -82,10 +83,26 @@ public class RestaurantOrder {
     @Column(name = "customer_name")
     private String customerName;
     @Column(name = "rider_name")
+    @com.fasterxml.jackson.annotation.JsonProperty("deliveryExecutiveName")
     private String riderName;
     @Column(name = "items_json", columnDefinition = "TEXT")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private String itemsJson;
+    
+    @com.fasterxml.jackson.annotation.JsonProperty("items")
+    public Object getItems() {
+        if (itemsJson == null || itemsJson.isEmpty() || "[]".equals(itemsJson)) {
+            return java.util.Collections.emptyList();
+        }
+        try {
+            return new com.fasterxml.jackson.databind.ObjectMapper().readValue(itemsJson, Object.class);
+        } catch (Exception e) {
+            return java.util.Collections.emptyList();
+        }
+    }
+
     @Column(name = "total_amount")
+    @com.fasterxml.jackson.annotation.JsonProperty("total")
     private java.math.BigDecimal totalAmount;
     @Column(name = "food_cost")
     private java.math.BigDecimal foodCost;
