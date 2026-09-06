@@ -31,8 +31,9 @@ private final FulfillmentService fulfillmentService;
     }
 
     @org.springframework.web.bind.annotation.GetMapping("/orders/history")
-    public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getHistoricalRestaurantOrders(@PathVariable UUID restaurantId, @org.springframework.web.bind.annotation.RequestParam(required = false) String date, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(ApiResponse.success(fulfillmentService.getHistoricalOrdersByRestaurant(restaurantId, date, page, size), "Historical orders retrieved"));
+    public ResponseEntity<ApiResponse<com.fooddelivery.common.dto.PageResponseDto<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getHistoricalRestaurantOrders(@PathVariable UUID restaurantId, @org.springframework.web.bind.annotation.RequestParam(required = false) String date, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
+        org.springframework.data.domain.Page<com.fooddelivery.restaurant.entity.RestaurantOrder> historicalOrders = fulfillmentService.getHistoricalOrdersByRestaurant(restaurantId, date, page, size);
+        return ResponseEntity.ok(ApiResponse.success(com.fooddelivery.common.dto.PageResponseDto.of(historicalOrders), "Historical orders retrieved"));
     }
 
     @PostMapping("/orders/{orderId}/accept")
@@ -70,22 +71,11 @@ private final FulfillmentService fulfillmentService;
     }
 
     @PostMapping("/orders/{orderId}/refund/partial")
-    public ResponseEntity<ApiResponse<Void>> partialRefund(@PathVariable UUID restaurantId, @PathVariable UUID orderId, @org.springframework.web.bind.annotation.RequestBody java.util.Map<String, Object> request) {
-        String amountStr = request.get("amount") != null ? request.get("amount").toString() : null;
-        String reason = request.get("reason") != null ? request.get("reason").toString() : "Restaurant initiated partial refund";
-        
-        @SuppressWarnings("unchecked")
-        java.util.List<String> items = request.get("items") != null ? (java.util.List<String>) request.get("items") : java.util.List.of();
-
-        if (amountStr == null || amountStr.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("amount is required"));
-        }
+    public ResponseEntity<ApiResponse<Void>> partialRefund(@PathVariable UUID restaurantId, @PathVariable UUID orderId, @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.fooddelivery.restaurant.dto.PartialRefundRequestDto request) {
         try {
-            java.math.BigDecimal amount = new java.math.BigDecimal(amountStr);
-            fulfillmentService.initiatePartialRefund(restaurantId, orderId, amount, items, reason);
+            java.util.List<String> items = request.getItems() != null ? request.getItems() : java.util.List.of();
+            fulfillmentService.initiatePartialRefund(restaurantId, orderId, request.getAmount(), items, request.getReason());
             return ResponseEntity.ok(ApiResponse.success(null, "Partial refund requested successfully"));
-        } catch (NumberFormatException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Invalid amount format"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }

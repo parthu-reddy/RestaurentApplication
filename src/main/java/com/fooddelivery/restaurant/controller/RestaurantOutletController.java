@@ -25,19 +25,48 @@ public class RestaurantOutletController {
         this.onboardingService = onboardingService;
     }
 
+    private OutletTimingDto toOutletTimingDto(com.fooddelivery.restaurant.entity.OutletTiming timing) {
+        return OutletTimingDto.builder().id(timing.getId()).openingTime(timing.getOpeningTime()).closingTime(timing.getClosingTime()).build();
+    }
+
+    private OutletDto toOutletDto(Outlet outlet) {
+        List<OutletTimingDto> timingsDto = new java.util.ArrayList<>();
+        if (outlet.getTimings() != null) {
+            timingsDto = outlet.getTimings().stream().map(this::toOutletTimingDto).collect(java.util.stream.Collectors.toList());
+        }
+        return OutletDto.builder()
+                .id(outlet.getId())
+                .brandId(outlet.getBrandId())
+                .name(outlet.getName())
+                .fssaiLicenseNumber(outlet.getFssaiLicenseNumber())
+                .lat(outlet.getLocation() != null ? outlet.getLocation().getY() : null)
+                .lng(outlet.getLocation() != null ? outlet.getLocation().getX() : null)
+                .bannerUrl(outlet.getBannerUrl())
+                .isActive(outlet.getIsActive())
+                .defaultPrepTimeSeconds(outlet.getDefaultPrepTimeSeconds())
+                .cuisine(outlet.getCuisine())
+                .rating(outlet.getRating())
+                .reviewsCount(outlet.getReviewsCount())
+                .deliveryTime(outlet.getDeliveryTime())
+                .deliveryFee(outlet.getDeliveryFee())
+                .tags(outlet.getTags())
+                .timings(timingsDto)
+                .build();
+    }
+
     @GetMapping("/api/v1/outlets")
     @PreAuthorize("hasRole('RESTAURANT')")
-    public ResponseEntity<ApiResponse<List<Outlet>>> getOutlets(java.security.Principal principal) {
-        List<Outlet> outlets = onboardingService.getOutletsByOwner(UUID.fromString(principal.getName()));
+    public ResponseEntity<ApiResponse<List<OutletDto>>> getOutlets(java.security.Principal principal) {
+        List<OutletDto> outlets = onboardingService.getOutletsByOwner(UUID.fromString(principal.getName())).stream().map(this::toOutletDto).collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(ApiResponse.success(outlets, "Outlets retrieved successfully"));
     }
 
     // Phase 2: Outlet Onboarding
     @PostMapping("/api/v1/brands/{brandId}/outlets")
     @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
-    public ResponseEntity<ApiResponse<Outlet>> onboardOutlet(@PathVariable UUID brandId, @Valid @RequestBody OutletOnboardRequest request) {
+    public ResponseEntity<ApiResponse<OutletDto>> onboardOutlet(@PathVariable UUID brandId, @Valid @RequestBody OutletOnboardRequest request) {
         Outlet outlet = onboardingService.onboardOutlet(brandId, request.getName(), request.getFssaiLicenseNumber(), request.getLat(), request.getLng(), request.getTimings(), request.getBannerUrl(), request.getCuisine(), request.getRating(), request.getReviewsCount(), request.getDeliveryTime(), request.getDeliveryFee(), request.getTags());
-        return ResponseEntity.ok(ApiResponse.success(outlet, "Outlet onboarded successfully"));
+        return ResponseEntity.ok(ApiResponse.success(toOutletDto(outlet), "Outlet onboarded successfully"));
     }
 
     @PutMapping("/api/v1/outlets/{outletId}/timings")
@@ -49,8 +78,9 @@ public class RestaurantOutletController {
 
     @GetMapping("/api/v1/brands/{brandId}/outlets")
     @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal)")
-    public ResponseEntity<ApiResponse<List<Outlet>>> getOutletsByBrand(@PathVariable UUID brandId) {
-        return ResponseEntity.ok(ApiResponse.success(onboardingService.getOutletsByBrand(brandId), "Fetched outlets"));
+    public ResponseEntity<ApiResponse<List<OutletDto>>> getOutletsByBrand(@PathVariable UUID brandId) {
+        List<OutletDto> dtos = onboardingService.getOutletsByBrand(brandId).stream().map(this::toOutletDto).collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(ApiResponse.success(dtos, "Fetched outlets"));
     }
 
     @PutMapping("/api/v1/outlets/{outletId}/status")
@@ -223,7 +253,7 @@ public class RestaurantOutletController {
 
     @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<NearbyRestaurantDTO>>> getAllOutletsWithLocation(
+    public ResponseEntity<ApiResponse<com.fooddelivery.common.dto.PageResponseDto<NearbyRestaurantDTO>>> getAllOutletsWithLocation(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "100") int size) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
@@ -244,7 +274,7 @@ public class RestaurantOutletController {
             }
             return dto;
         });
-        return ResponseEntity.ok(ApiResponse.success(responsePage, "All restaurants with locations fetched"));
+        return ResponseEntity.ok(ApiResponse.success(com.fooddelivery.common.dto.PageResponseDto.of(responsePage), "All restaurants with locations fetched"));
     }
 }
 // @Getter

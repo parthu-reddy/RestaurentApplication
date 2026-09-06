@@ -25,6 +25,7 @@ public class MenuItemDTO implements Serializable {
     private String imageUrl;
     private UUID categoryId;
     private String categoryName;
+    private Boolean isVeg;
 
 
 

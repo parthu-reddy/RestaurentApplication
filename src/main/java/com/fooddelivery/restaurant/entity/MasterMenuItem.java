@@ -36,6 +36,9 @@ public class MasterMenuItem {
     private String description;
     @Column(name = "image_url")
     private String imageUrl;
+    
+    @Column(name = "is_veg")
+    private Boolean isVeg;
     @NotNull
     @Positive
     @Column(name = "base_price")
