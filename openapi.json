@@ -1528,7 +1528,7 @@
             "schema": {
               "type": "number",
               "format": "double",
-              "default": 5.0
+              "default": 5
             }
           }
         ],
@@ -1538,7 +1538,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponseListMapStringObject"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NearbyRestaurantDTO"
+                  }
                 }
               }
             }
@@ -1587,7 +1590,7 @@
             "schema": {
               "type": "number",
               "format": "double",
-              "default": 5.0
+              "default": 5
             }
           }
         ],
@@ -1888,7 +1891,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ApiResponsePageMapStringObject"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NearbyRestaurantDTO"
+                  }
                 }
               }
             }
@@ -2221,9 +2227,9 @@
             "type": "number"
           },
           "packingCharge": {
-            "maximum": 10.0,
+            "maximum": 10,
             "exclusiveMaximum": true,
-            "minimum": 0.0,
+            "minimum": 0,
             "exclusiveMinimum": false,
             "type": "number"
           },
@@ -3566,6 +3572,63 @@
           "timeout": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "NearbyRestaurantDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          },
+          "logoUrl": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number",
+            "format": "double"
+          },
+          "reviewCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deliveryFee": {
+            "type": "number",
+            "format": "double"
+          },
+          "minDeliveryTime": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeliveryTime": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "distance": {
+            "type": "number",
+            "format": "double"
+          },
+          "isPromoted": {
+            "type": "boolean"
+          },
+          "isClosed": {
+            "type": "boolean"
+          },
+          "outlets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Outlet"
+            }
           }
         }
       }
