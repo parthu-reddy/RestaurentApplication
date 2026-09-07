@@ -63,7 +63,8 @@ CREATE TABLE master_menu_items (
     version INTEGER DEFAULT 0,
     image_url VARCHAR(1024),
     category_id UUID REFERENCES categories(id),
-    packing_charge DECIMAL(10,2) DEFAULT 0.00 NOT NULL
+    packing_charge DECIMAL(10,2) DEFAULT 0.00 NOT NULL,
+    is_veg BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE outlet_menu_overrides (

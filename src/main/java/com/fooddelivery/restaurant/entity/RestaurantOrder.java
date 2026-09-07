@@ -27,7 +27,7 @@ public class RestaurantOrder {
 @Id
     @Column(name = "order_id")
     @Schema(requiredMode = RequiredMode.REQUIRED)
-    @com.fasterxml.jackson.annotation.JsonProperty("id")
+    @jakarta.validation.constraints.NotNull
     private UUID orderId;
     @Column(name = "restaurant_id")
     @Schema(requiredMode = RequiredMode.REQUIRED)

@@ -229,7 +229,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMasterMenuItem"
+                  "$ref" : "#/components/schemas/ApiResponseMasterMenuItemDto"
                 }
               }
             }
@@ -297,10 +297,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "type" : "object",
-                "additionalProperties" : {
-                  "type" : "object"
-                }
+                "$ref" : "#/components/schemas/PartialRefundRequestDto"
               }
             }
           },
@@ -562,7 +559,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseOutletMenuOverride"
+                  "$ref" : "#/components/schemas/ApiResponseOverrideItemDto"
                 }
               }
             }
@@ -862,7 +859,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListOutlet"
+                  "$ref" : "#/components/schemas/ApiResponseListOutletDto"
                 }
               }
             }
@@ -897,7 +894,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseOutlet"
+                  "$ref" : "#/components/schemas/ApiResponseOutletDto"
                 }
               }
             }
@@ -924,7 +921,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListMasterMenuItem"
+                  "$ref" : "#/components/schemas/ApiResponseListMasterMenuItemDto"
                 }
               }
             }
@@ -959,7 +956,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseMasterMenuItem"
+                  "$ref" : "#/components/schemas/ApiResponseMasterMenuItemDto"
                 }
               }
             }
@@ -1174,7 +1171,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponsePageRestaurantOrder"
+                  "$ref" : "#/components/schemas/ApiResponsePageResponseDtoRestaurantOrder"
                 }
               }
             }
@@ -1402,7 +1399,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListOutlet"
+                  "$ref" : "#/components/schemas/ApiResponseListOutletDto"
                 }
               }
             }
@@ -1429,7 +1426,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListOutletMenuOverride"
+                  "$ref" : "#/components/schemas/ApiResponseListOverrideItemDto"
                 }
               }
             }
@@ -2010,7 +2007,7 @@
           }
         }
       },
-      "ApiResponseMasterMenuItem" : {
+      "ApiResponseMasterMenuItemDto" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -2024,11 +2021,74 @@
             "type" : "string"
           },
           "data" : {
-            "$ref" : "#/components/schemas/MasterMenuItem"
+            "$ref" : "#/components/schemas/MasterMenuItemDto"
           },
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "MasterMenuItemDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "brandId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "categoryId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "imageUrl" : {
+            "type" : "string"
+          },
+          "isVeg" : {
+            "type" : "boolean"
+          },
+          "basePrice" : {
+            "type" : "number"
+          },
+          "packingCharge" : {
+            "type" : "number"
+          },
+          "defaultPrepTimeMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "version" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PartialRefundRequestDto" : {
+        "required" : [ "amount" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "minimum" : 0.01,
+            "exclusiveMinimum" : false,
+            "type" : "number"
+          },
+          "reason" : {
+            "type" : "string"
+          },
+          "items" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -2111,7 +2171,7 @@
           }
         }
       },
-      "ApiResponseOutletMenuOverride" : {
+      "ApiResponseOverrideItemDto" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -2125,11 +2185,42 @@
             "type" : "string"
           },
           "data" : {
-            "$ref" : "#/components/schemas/OutletMenuOverride"
+            "$ref" : "#/components/schemas/OverrideItemDto"
           },
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "OverrideItemDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "outletId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "masterMenuItemId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "overriddenPrice" : {
+            "type" : "number"
+          },
+          "isAvailable" : {
+            "type" : "boolean"
+          },
+          "overriddenPrepTimeMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "version" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -2442,7 +2533,7 @@
           }
         }
       },
-      "ApiResponseOutlet" : {
+      "ApiResponseOutletDto" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -2456,7 +2547,7 @@
             "type" : "string"
           },
           "data" : {
-            "$ref" : "#/components/schemas/Outlet"
+            "$ref" : "#/components/schemas/OutletDto"
           },
           "timestamp" : {
             "type" : "string",
@@ -2464,8 +2555,7 @@
           }
         }
       },
-      "Outlet" : {
-        "required" : [ "brandId", "id", "name" ],
+      "OutletDto" : {
         "type" : "object",
         "properties" : {
           "id" : {
@@ -2482,14 +2572,19 @@
           "fssaiLicenseNumber" : {
             "type" : "string"
           },
+          "lat" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "lng" : {
+            "type" : "number",
+            "format" : "double"
+          },
           "bannerUrl" : {
             "type" : "string"
           },
-          "timings" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/OutletTiming"
-            }
+          "isActive" : {
+            "type" : "boolean"
           },
           "defaultPrepTimeSeconds" : {
             "type" : "integer",
@@ -2516,45 +2611,30 @@
           "tags" : {
             "type" : "string"
           },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
+          "timings" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/OutletTimingDto"
+            }
           }
         }
       },
-      "OutletTiming" : {
-        "required" : [ "closingTime", "createdAt", "id", "openingTime", "updatedAt" ],
+      "OutletTimingDto" : {
         "type" : "object",
         "properties" : {
           "id" : {
             "type" : "string",
             "format" : "uuid"
           },
+          "dayOfWeek" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "openingTime" : {
             "$ref" : "#/components/schemas/LocalTime"
           },
           "closingTime" : {
             "$ref" : "#/components/schemas/LocalTime"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         }
       },
@@ -2643,9 +2723,13 @@
         }
       },
       "RestaurantOrder" : {
-        "required" : [ "createdAt", "deliveryStatus", "id", "restaurantId", "status" ],
+        "required" : [ "createdAt", "deliveryStatus", "orderId", "restaurantId", "status" ],
         "type" : "object",
         "properties" : {
+          "orderId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
           "restaurantId" : {
             "type" : "string",
             "format" : "uuid"
@@ -2729,10 +2813,6 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
           "deliveryExecutiveName" : {
             "type" : "string"
           },
@@ -2744,7 +2824,7 @@
           }
         }
       },
-      "ApiResponsePageRestaurantOrder" : {
+      "ApiResponsePageResponseDtoRestaurantOrder" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -2758,7 +2838,7 @@
             "type" : "string"
           },
           "data" : {
-            "$ref" : "#/components/schemas/PageRestaurantOrder"
+            "$ref" : "#/components/schemas/PageResponseDtoRestaurantOrder"
           },
           "timestamp" : {
             "type" : "string",
@@ -2766,29 +2846,28 @@
           }
         }
       },
-      "PageRestaurantOrder" : {
+      "PageResponseDtoRestaurantOrder" : {
         "required" : [ "content", "empty", "first", "last", "number", "numberOfElements", "size", "totalElements", "totalPages" ],
         "type" : "object",
         "properties" : {
-          "totalPages" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "totalElements" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "size" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
           "content" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/RestaurantOrder"
             }
           },
-          "numberOfElements" : {
+          "totalElements" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "totalPages" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "last" : {
+            "type" : "boolean"
+          },
+          "size" : {
             "type" : "integer",
             "format" : "int32"
           },
@@ -2799,58 +2878,11 @@
           "first" : {
             "type" : "boolean"
           },
-          "last" : {
-            "type" : "boolean"
-          },
-          "sort" : {
-            "$ref" : "#/components/schemas/SortObject"
-          },
-          "pageable" : {
-            "$ref" : "#/components/schemas/PageableObject"
-          },
-          "empty" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "PageableObject" : {
-        "required" : [ "offset", "pageNumber", "pageSize", "paged", "unpaged" ],
-        "type" : "object",
-        "properties" : {
-          "offset" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "sort" : {
-            "$ref" : "#/components/schemas/SortObject"
-          },
-          "paged" : {
-            "type" : "boolean"
-          },
-          "pageNumber" : {
+          "numberOfElements" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "pageSize" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "unpaged" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "SortObject" : {
-        "required" : [ "empty", "sorted", "unsorted" ],
-        "type" : "object",
-        "properties" : {
           "empty" : {
-            "type" : "boolean"
-          },
-          "sorted" : {
-            "type" : "boolean"
-          },
-          "unsorted" : {
             "type" : "boolean"
           }
         }
@@ -3027,7 +3059,7 @@
           }
         }
       },
-      "ApiResponseListOutlet" : {
+      "ApiResponseListOutletDto" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -3043,7 +3075,7 @@
           "data" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/Outlet"
+              "$ref" : "#/components/schemas/OutletDto"
             }
           },
           "timestamp" : {
@@ -3052,7 +3084,7 @@
           }
         }
       },
-      "ApiResponseListOutletMenuOverride" : {
+      "ApiResponseListOverrideItemDto" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -3068,7 +3100,7 @@
           "data" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/OutletMenuOverride"
+              "$ref" : "#/components/schemas/OverrideItemDto"
             }
           },
           "timestamp" : {
@@ -3249,6 +3281,31 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/Brand"
+            }
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ApiResponseListMasterMenuItemDto" : {
+        "required" : [ "message", "success", "timestamp" ],
+        "type" : "object",
+        "properties" : {
+          "success" : {
+            "type" : "boolean"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "string"
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MasterMenuItemDto"
             }
           },
           "timestamp" : {
