@@ -604,6 +604,44 @@
         }
       }
     },
+    "/api/v1/internal/restaurants/outlets/summaries" : {
+      "post" : {
+        "tags" : [ "internal-restaurant-controller" ],
+        "operationId" : "getOutletSummaries",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string",
+                  "format" : "uuid"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "additionalProperties" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/internal/brands/{brandId}/verification-callback" : {
       "post" : {
         "tags" : [ "restaurant-kyc-controller" ],
@@ -1543,6 +1581,36 @@
                 "schema" : {
                   "type" : "array",
                   "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/internal/restaurants/outlets/{outletId}/summary" : {
+      "get" : {
+        "tags" : [ "internal-restaurant-controller" ],
+        "operationId" : "getOutletSummary",
+        "parameters" : [ {
+          "name" : "outletId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
                     "type" : "string"
                   }
                 }

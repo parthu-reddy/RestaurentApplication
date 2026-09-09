@@ -7,6 +7,7 @@ import com.fooddelivery.restaurant.repository.OutletRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +46,39 @@ public class InternalRestaurantController {
     public ResponseEntity<ApiResponse<Boolean>> productExists(@PathVariable String productId) {
         boolean exists = masterMenuItemRepository.existsById(UUID.fromString(productId));
         return ResponseEntity.ok(ApiResponse.success(exists, "Product existence check completed"));
+    }
+
+    @GetMapping("/outlets/{outletId}/summary")
+    public ResponseEntity<Map<String, String>> getOutletSummary(@PathVariable UUID outletId) {
+        return outletRepository.findById(outletId)
+                .map(outlet -> {
+                    String brandName = brandRepository.findById(outlet.getBrandId())
+                            .map(com.fooddelivery.restaurant.entity.Brand::getName)
+                            .orElse("Unknown Brand");
+                    return ResponseEntity.ok(Map.of(
+                            "id", outlet.getId().toString(),
+                            "name", outlet.getName(),
+                            "brandName", brandName
+                    ));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/outlets/summaries")
+    public ResponseEntity<List<Map<String, String>>> getOutletSummaries(@RequestBody List<UUID> outletIds) {
+        List<Map<String, String>> summaries = outletRepository.findAllById(outletIds).stream()
+                .map(outlet -> {
+                    String brandName = brandRepository.findById(outlet.getBrandId())
+                            .map(com.fooddelivery.restaurant.entity.Brand::getName)
+                            .orElse("Unknown Brand");
+                    return Map.of(
+                            "id", outlet.getId().toString(),
+                            "name", outlet.getName(),
+                            "brandName", brandName
+                    );
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(summaries);
     }
 
 }
