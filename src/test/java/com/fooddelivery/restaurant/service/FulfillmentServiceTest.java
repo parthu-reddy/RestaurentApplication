@@ -54,7 +54,10 @@ class FulfillmentServiceTest {
         order.setRestaurantId(restaurantId);
         order.setStatus(OrderStatus.PREPARING);
 
-        when(restaurantOrderRepository.findById(orderId)).thenReturn(Optional.of(order));
+        // Tenant-scoped: FulfillmentService no longer has findById available to it, because
+        // loading an order without its restaurant is what let one outlet drive another's orders.
+        when(restaurantOrderRepository.findByOrderIdAndRestaurantId(orderId, restaurantId))
+                .thenReturn(Optional.of(order));
         when(actionService.createPayloadNode()).thenReturn(new ObjectMapper().createObjectNode());
 
         assertDoesNotThrow(() -> fulfillmentService.readyOrder(restaurantId, orderId));

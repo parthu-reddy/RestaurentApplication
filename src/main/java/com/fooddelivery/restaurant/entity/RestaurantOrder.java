@@ -80,6 +80,10 @@ public class RestaurantOrder {
     private UUID deliveryExecutiveId;
     @Column(name = "customer_id")
     private UUID customerId;
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(name = "payment_method")
+    private com.fooddelivery.common.enums.PaymentMethod paymentMethod;
+
     @Column(name = "customer_name")
     private String customerName;
     @Column(name = "rider_name")
@@ -130,51 +134,4 @@ public class RestaurantOrder {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

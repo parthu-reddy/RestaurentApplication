@@ -15,17 +15,4 @@ public class VerificationCallbackRequest {
         private String bankBeneficiaryName;
         private Double matchScore;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     }

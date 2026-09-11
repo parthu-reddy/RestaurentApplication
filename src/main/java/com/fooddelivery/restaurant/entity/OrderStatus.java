@@ -12,7 +12,11 @@ public enum OrderStatus {
     READY_FOR_PICKUP(60),
     HANDED_OVER(70),
     CANCELLED(100),
-    CANCELLED_BY_RESTAURANT(100);
+    CANCELLED_BY_RESTAURANT(100),
+    /** Mirrors com.fooddelivery.common.enums.OrderStatus: the platform could not deliver it. */
+    CANCELLED_BY_PLATFORM(100),
+    /** Mirrors the common enum: the rider had the food and it did not arrive. */
+    DELIVERY_FAILED(100);
 
     private final int sequence;
 
@@ -23,7 +27,13 @@ public enum OrderStatus {
 
 
 
+    /**
+     * Terminal <em>for the restaurant</em>, which is not the same question the common enum answers.
+     *
+     * <p>HANDED_OVER is included here and not there: once the food is with the rider the restaurant
+     * has nothing further to do, while the order itself is still in flight.
+     */
     public boolean isTerminal() {
-        return this == CANCELLED || this == CANCELLED_BY_RESTAURANT || this == HANDED_OVER;
+        return sequence == 100 || this == HANDED_OVER;
     }
 }

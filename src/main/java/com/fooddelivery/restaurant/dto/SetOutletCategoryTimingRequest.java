@@ -12,16 +12,4 @@ public class SetOutletCategoryTimingRequest {
     private UUID categoryId;
     @jakarta.validation.constraints.NotNull
     private List<TimingDTO> timings;
-
-
-
-
-
-
-
-
-
-
-
-
 }

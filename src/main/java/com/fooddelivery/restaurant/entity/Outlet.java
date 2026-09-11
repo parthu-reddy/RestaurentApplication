@@ -65,51 +65,9 @@ public class Outlet {
     @Column(name = "version")
     private Integer version;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @JsonIgnore
-
-
 
 public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

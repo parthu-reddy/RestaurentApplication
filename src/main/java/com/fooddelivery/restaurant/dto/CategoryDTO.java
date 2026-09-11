@@ -31,37 +31,9 @@ public class CategoryDTO implements Serializable {
         @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
         private java.time.LocalTime closingTime;
 
-
-
-
-
-
-
-
-
-
-
         public CategoryTimingDTO(final java.time.LocalTime openingTime, final java.time.LocalTime closingTime) {
             this.openingTime = openingTime;
             this.closingTime = closingTime;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

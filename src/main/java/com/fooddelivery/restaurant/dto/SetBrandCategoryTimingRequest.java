@@ -12,16 +12,4 @@ public class SetBrandCategoryTimingRequest {
     @NotNull(message = "Category ID is required")
     private UUID categoryId;
     private List<TimingDTO> timings;
-
-
-
-
-
-
-
-
-
-
-
-
 }

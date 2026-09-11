@@ -25,31 +25,4 @@ public class OutletOnboardRequest {
         private java.math.BigDecimal deliveryFee;
         private String tags;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }

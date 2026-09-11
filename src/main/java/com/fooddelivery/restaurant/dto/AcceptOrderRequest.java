@@ -4,12 +4,4 @@ package com.fooddelivery.restaurant.dto;
 public class AcceptOrderRequest {
     private Integer additionalPrepTime;
     private String delayReason;
-
-
-
-
-
-
-
-
 }

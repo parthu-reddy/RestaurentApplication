@@ -27,34 +27,7 @@ public class MenuItemDTO implements Serializable {
     private String categoryName;
     private Boolean isVeg;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public void setIsAvailable(final Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
-
-
-
-
-
-
-
-
-
 }

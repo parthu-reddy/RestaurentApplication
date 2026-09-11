@@ -13,6 +13,17 @@ import java.util.UUID;
 public interface RestaurantOrderRepository extends JpaRepository<RestaurantOrder, UUID> {
     List<RestaurantOrder> findByStatusAndCreatedAtBefore(OrderStatus status, LocalDateTime time);
     List<RestaurantOrder> findByRestaurantId(UUID restaurantId);
+
+    /**
+     * The only way FulfillmentService is allowed to load an order.
+     *
+     * <p>Every fulfillment endpoint takes a {restaurantId} the caller is proven to own and an
+     * {orderId} that was proven to be nothing. Loading by id alone and checking ownership afterwards
+     * is a check somebody forgets to write on the next method -- and five of the six mutators had
+     * forgotten it, so any outlet owner could accept, reject, prepare, ready or cancel another
+     * restaurant's order. Binding the tenant into the load makes the unsafe query unavailable.
+     */
+    java.util.Optional<RestaurantOrder> findByOrderIdAndRestaurantId(UUID orderId, UUID restaurantId);
     @org.springframework.data.jpa.repository.Query(
         "SELECT o FROM RestaurantOrder o WHERE o.restaurantId = :restaurantId " +
         "AND o.status NOT IN :cancelledStatuses " +

@@ -55,34 +55,4 @@ public class MasterMenuItem {
     @jakarta.persistence.Version
     @Column(name = "version")
     private Integer version;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

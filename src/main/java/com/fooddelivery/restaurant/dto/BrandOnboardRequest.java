@@ -20,21 +20,4 @@ public class BrandOnboardRequest {
         private String ifscCode;
         private String logoUrl;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }

@@ -66,4 +66,68 @@ class EndpointAuthorizationCoverageTest {
                         + "today but will silently exempt the next method that takes that name.")
                 .isEmpty();
     }
+
+    /**
+     * Multi-resource endpoints whose authorization rule does not itself name every id.
+     *
+     * <p>Each entry was read this session and the binding confirmed to exist somewhere the
+     * reflective scan cannot see -- in the method body, in the repository query, or in a Redis
+     * claim. The value of the list is not the exemptions: it is that a NEW endpoint taking an owned
+     * tenant id and an unowned resource id arrives red, which is exactly how
+     * {@code FulfillmentController} shipped a cross-tenant write past a green build.
+     */
+    private static final Set<String> RESOURCE_BINDING_VERIFIED_ELSEWHERE = Set.of(
+            // CatalogService.editMasterMenuItem rejects an item whose brandId differs from the path brandId.
+            "CatalogController#editMasterMenuItem",
+            // The override row is keyed (outletId, masterMenuItemId) and always written with the caller's
+            // outletId, so it can only ever affect the caller's own outlet menu.
+            "CatalogController#overrideMenuItem",
+            // permitAll(): published opening hours, deliberately public.
+            "CategoryController#getBrandCategoryTimings",
+            // permitAll(): published opening hours, deliberately public.
+            "CategoryController#getOutletCategoryTimings",
+            // The six below are the defect this scan was written for. They are bound now --
+            // FulfillmentService loads every order through
+            // RestaurantOrderRepository.findByOrderIdAndRestaurantId, and findById is no longer
+            // reachable from that class at all, so the binding cannot be forgotten on the next
+            // method the way it was forgotten on five of these six. Pinned by
+            // CrossTenantFulfillmentTest.
+            "FulfillmentController#acceptOrder",
+            "FulfillmentController#rejectOrder",
+            "FulfillmentController#prepareOrder",
+            "FulfillmentController#readyOrder",
+            "FulfillmentController#cancelOrder",
+            "FulfillmentController#partialRefund"
+);
+
+    @Test
+    void everyMultiResourceEndpointBindsItsResource() {
+        List<EndpointAuthorizationCoverage.UnboundResource> unbound =
+                EndpointAuthorizationCoverage.unboundResourceParameters(
+                        BASE_PACKAGE, RESOURCE_BINDING_VERIFIED_ELSEWHERE);
+
+        assertThat(unbound)
+                .describedAs("Endpoints taking two or more resource ids whose authorization rule "
+                        + "constrains only some of them. Bind the resource -- preferably in the "
+                        + "query, so it cannot be forgotten on the next method -- or add it to "
+                        + "RESOURCE_BINDING_VERIFIED_ELSEWHERE with the place the binding lives.")
+                .isEmpty();
+    }
+
+    @Test
+    void theBindingScanActuallyFindsMultiResourceEndpoints() {
+        // Without this the exemption list could grow to cover everything and the scan above would
+        // pass while guarding nothing -- the vacuous-test failure recorded as I-17.
+        assertThat(EndpointAuthorizationCoverage.countMultiResourceEndpoints(BASE_PACKAGE))
+                .describedAs("multi-resource endpoints discovered under " + BASE_PACKAGE)
+                .isGreaterThanOrEqualTo(10);
+    }
+
+    @Test
+    void theBindingAllowlistHasNoStaleEntries() {
+        assertThat(EndpointAuthorizationCoverage.staleBindingAllowlistEntries(
+                        BASE_PACKAGE, RESOURCE_BINDING_VERIFIED_ELSEWHERE))
+                .describedAs("Binding-allowlist entries matching no multi-resource endpoint.")
+                .isEmpty();
+    }
 }

@@ -178,6 +178,16 @@ private final ObjectMapper objectMapper;
         String customerIdStr = root.path("customerId").asText("");
         UUID customerId = (customerIdStr != null && !customerIdStr.isEmpty()) ? UUID.fromString(customerIdStr) : null;
         String customerName = root.path("customerName").asText("");
+        // Absent before 2026-09-10, so this column was NULL on every order ever taken.
+        String paymentMethodStr = root.path("paymentMethod").asText(null);
+        com.fooddelivery.common.enums.PaymentMethod paymentMethod = null;
+        if (paymentMethodStr != null && !paymentMethodStr.isBlank()) {
+            try {
+                paymentMethod = com.fooddelivery.common.enums.PaymentMethod.valueOf(paymentMethodStr);
+            } catch (IllegalArgumentException e) {
+                log.error("Unknown payment method '{}' on order {}", paymentMethodStr, orderId);
+            }
+        }
         java.math.BigDecimal totalAmount = root.has("totalAmount") && !root.path("totalAmount").isNull() ? new java.math.BigDecimal(root.path("totalAmount").asText()) : null;
         java.math.BigDecimal foodCost = root.has("itemTotal") && !root.path("itemTotal").isNull() ? new java.math.BigDecimal(root.path("itemTotal").asText()) : null;
         java.math.BigDecimal restaurantPlatformFee = root.has("restaurantPlatformFee") && !root.path("restaurantPlatformFee").isNull() ? new java.math.BigDecimal(root.path("restaurantPlatformFee").asText()) : null;
@@ -190,6 +200,7 @@ private final ObjectMapper objectMapper;
                 .restaurantId(UUID.fromString(restaurantId))
                 .customerId(customerId)
                 .customerName(customerName)
+                .paymentMethod(paymentMethod)
                 .status(OrderStatus.CREATED)
                 .prepTime(estimatedPrepTimeMinutes)
                 .additionalPrepTime(0)

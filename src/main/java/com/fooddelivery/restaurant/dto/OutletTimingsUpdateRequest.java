@@ -10,9 +10,4 @@ public class OutletTimingsUpdateRequest {
         @NotNull
         private List<TimingRequest> timings;
 
-
-
-
-
-
     }

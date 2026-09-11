@@ -10,9 +10,4 @@ public class OutletSettingsUpdateRequest {
         @NotNull
         private Integer defaultPrepTimeSeconds;
 
-
-
-
-
-
     }

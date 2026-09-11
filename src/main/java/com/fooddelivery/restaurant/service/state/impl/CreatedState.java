@@ -57,6 +57,10 @@ public class CreatedState implements RestaurantOrderState {
         payloadNode.put("pickupOtp", order.getPickupOtp() != null ? order.getPickupOtp() : "");
         payloadNode.put("deliveryOtp", order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "");
         payloadNode.put("customerName", order.getCustomerName() != null ? order.getCustomerName() : "");
+        // The delivery service needs this to require a declared cash amount at handover.
+        if (order.getPaymentMethod() != null) {
+            payloadNode.put("paymentMethod", order.getPaymentMethod().name());
+        }
         
         log.info("Dispatching ORDER_ACCEPTED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", order.getOrderId(), payloadNode.get("pickupOtp").asText(), payloadNode.get("deliveryOtp").asText());
 

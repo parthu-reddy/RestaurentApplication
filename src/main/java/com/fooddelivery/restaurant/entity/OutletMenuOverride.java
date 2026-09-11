@@ -39,28 +39,7 @@ public class OutletMenuOverride {
     @Column(name = "version")
     private Integer version;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public void setIsAvailable(final Boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
-
-
-
-
-
-
-
 }

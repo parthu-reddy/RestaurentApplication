@@ -38,24 +38,4 @@ public class Category {
     private Boolean active;
     @OneToMany(mappedBy = "category", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)
     private java.util.List<CategoryTiming> timings;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

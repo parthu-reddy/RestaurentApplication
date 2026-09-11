@@ -64,40 +64,6 @@ public class Brand {
     @Column(name = "version")
     private Integer version;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 public void setIsGstinVerified(final Boolean isGstinVerified) {
         this.isGstinVerified = isGstinVerified;
     }
@@ -105,12 +71,4 @@ public void setIsGstinVerified(final Boolean isGstinVerified) {
 public void setIsBankVerified(final Boolean isBankVerified) {
         this.isBankVerified = isBankVerified;
     }
-
-
-
-
-
-
-
-
 }

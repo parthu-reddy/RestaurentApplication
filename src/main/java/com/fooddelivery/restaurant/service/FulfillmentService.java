@@ -3,6 +3,7 @@ package com.fooddelivery.restaurant.service;
 import com.fooddelivery.restaurant.entity.Outlet;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.OutletRepository;
+import com.fooddelivery.common.exception.ResourceNotFoundException;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
 import com.fooddelivery.restaurant.service.state.RestaurantActionService;
 import com.fooddelivery.restaurant.service.state.RestaurantOrderContext;
@@ -25,6 +26,18 @@ private static final String DRIVER_FIELD_ID = "id";
     private final RestaurantActionService actionService;
     private final com.fooddelivery.restaurant.client.DeliveryClient deliveryClient;
     private final com.fooddelivery.restaurant.client.OrderClient orderClient;
+
+    /**
+     * A missing order and another restaurant's order are reported identically and as 404.
+     *
+     * <p>Distinguishing them would turn these endpoints into an oracle for which order ids exist.
+     * It also replaces four silent no-ops: the mutators used to return 200 "Order rejected by
+     * restaurant" when the order did not exist at all.
+     */
+    private ResourceNotFoundException notFound(UUID orderId, UUID restaurantId) {
+        log.warn("Order {} not found for restaurant {}", orderId, restaurantId);
+        return new ResourceNotFoundException("Order not found: " + orderId);
+    }
 
     public java.util.List<RestaurantOrder> getOrdersByRestaurant(UUID restaurantId) {
         return restaurantOrderRepository.findByRestaurantId(restaurantId);
@@ -89,11 +102,16 @@ private static final String DRIVER_FIELD_ID = "id";
     @Transactional
     public void acceptOrder(UUID restaurantId, UUID orderId, Integer additionalPrepTime, String delayReason) {
         log.info("Restaurant {} accepting order {} with additional prep time {} and reason {}", restaurantId, orderId, additionalPrepTime, delayReason);
-        Outlet restaurant = outletRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
+        // Authorise first. Looking up the outlet and its coordinates before deciding whether the
+        // caller may touch this order at all is work done on behalf of a request that is refused.
+        RestaurantOrder order = restaurantOrderRepository
+                .findByOrderIdAndRestaurantId(orderId, restaurantId)
+                .orElseThrow(() -> notFound(orderId, restaurantId));
+        outletRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
         double[] coords = actionService.getRestaurantCoordinates(restaurantId);
         double lat = coords[0];
         double lng = coords[1];
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
         RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).additionalPrepTime(additionalPrepTime).delayReason(delayReason).restaurantLat(lat).restaurantLng(lng).build();
         RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
         try {
@@ -111,74 +129,72 @@ private static final String DRIVER_FIELD_ID = "id";
     @Transactional
     public void prepareOrder(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} preparing order {}", restaurantId, orderId);
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).build();
-            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
-            try {
-                state.prepare(ctx);
-            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
-                log.error("Illegal state transition for order {}", orderId, e);
-                throw e;
-            }
+        RestaurantOrder order = restaurantOrderRepository
+            .findByOrderIdAndRestaurantId(orderId, restaurantId)
+            .orElseThrow(() -> notFound(orderId, restaurantId));
+        RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).build();
+        RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
+        try {
+            state.prepare(ctx);
+        } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
+            log.error("Illegal state transition for order {}", orderId, e);
+            throw e;
         }
     }
 
     @Transactional
     public void rejectOrder(UUID restaurantId, UUID orderId, String reason) {
         log.info("Restaurant {} rejecting order {}", restaurantId, orderId);
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).rejectReason(reason).build();
-            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
-            try {
-                state.reject(ctx);
-            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
-                log.error("Illegal state transition for order {}", orderId, e);
-                throw e;
-            }
+        RestaurantOrder order = restaurantOrderRepository
+            .findByOrderIdAndRestaurantId(orderId, restaurantId)
+            .orElseThrow(() -> notFound(orderId, restaurantId));
+        RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).rejectReason(reason).build();
+        RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
+        try {
+            state.reject(ctx);
+        } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
+            log.error("Illegal state transition for order {}", orderId, e);
+            throw e;
         }
     }
 
     @Transactional
     public void readyOrder(UUID restaurantId, UUID orderId) {
         log.info("Restaurant {} marked order {} as ready", restaurantId, orderId);
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).build();
-            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
-            try {
-                state.ready(ctx);
-            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
-                log.error("Illegal state transition for order {}", orderId, e);
-                throw e;
-            }
+        RestaurantOrder order = restaurantOrderRepository
+            .findByOrderIdAndRestaurantId(orderId, restaurantId)
+            .orElseThrow(() -> notFound(orderId, restaurantId));
+        RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).build();
+        RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
+        try {
+            state.ready(ctx);
+        } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
+            log.error("Illegal state transition for order {}", orderId, e);
+            throw e;
         }
     }
 
     @Transactional
     public void cancelOrderAfterAccept(UUID restaurantId, UUID orderId, String reason) {
         log.info("Restaurant {} cancelling order {} after acceptance", restaurantId, orderId);
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
-        if (order != null) {
-            RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).cancelReason(reason).build();
-            RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
-            try {
-                state.cancel(ctx);
-            } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
-                log.error("Illegal state transition for order {}", orderId, e);
-                throw e;
-            }
+        RestaurantOrder order = restaurantOrderRepository
+            .findByOrderIdAndRestaurantId(orderId, restaurantId)
+            .orElseThrow(() -> notFound(orderId, restaurantId));
+        RestaurantOrderContext ctx = RestaurantOrderContext.builder().order(order).actionService(actionService).restaurantId(restaurantId).cancelReason(reason).build();
+        RestaurantOrderState state = RestaurantOrderStateFactory.getState(order.getStatus());
+        try {
+            state.cancel(ctx);
+        } catch (com.fooddelivery.common.exception.IllegalStateTransitionException e) {
+            log.error("Illegal state transition for order {}", orderId, e);
+            throw e;
         }
     }
 
     public void initiatePartialRefund(UUID restaurantId, UUID orderId, java.math.BigDecimal amount, java.util.List<String> items, String reason) {
         log.info("Restaurant {} initiating partial refund of {} for order {}", restaurantId, amount, orderId);
-        RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
-        
-        if (!order.getRestaurantId().equals(restaurantId)) {
-            throw new IllegalArgumentException("Order does not belong to this restaurant");
-        }
+        RestaurantOrder order = restaurantOrderRepository
+                .findByOrderIdAndRestaurantId(orderId, restaurantId)
+                .orElseThrow(() -> notFound(orderId, restaurantId));
         
         java.util.Map<String, Object> payload = new java.util.HashMap<>();
         payload.put("amount", amount);
