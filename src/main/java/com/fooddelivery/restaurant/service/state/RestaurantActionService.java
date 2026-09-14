@@ -29,9 +29,9 @@ public class RestaurantActionService {
         orderRepository.save(order);
     }
 
-    public void publishEvent(String aggregateId, com.fooddelivery.common.constants.EventType eventType, ObjectNode payloadNode) {
+    public void publishEvent(String aggregateId, com.fooddelivery.common.constants.EventType eventType, Object eventPayload) {
         try {
-            String payload = objectMapper.writeValueAsString(payloadNode);
+            String payload = objectMapper.writeValueAsString(eventPayload);
             OutboxEventEntity outboxEvent = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER).aggregateId(aggregateId).eventType(eventType).payload(payload).createdAt(LocalDateTime.now()).status(OutboxStatus.UNPROCESSED).build();
             log.info("Triggering event: {} for aggregate: {}", eventType, aggregateId);
             outboxEventRepository.save(outboxEvent);

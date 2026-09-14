@@ -58,7 +58,7 @@ class FulfillmentServiceTest {
         // loading an order without its restaurant is what let one outlet drive another's orders.
         when(restaurantOrderRepository.findByOrderIdAndRestaurantId(orderId, restaurantId))
                 .thenReturn(Optional.of(order));
-        when(actionService.createPayloadNode()).thenReturn(new ObjectMapper().createObjectNode());
+
 
         assertDoesNotThrow(() -> fulfillmentService.readyOrder(restaurantId, orderId));
     }

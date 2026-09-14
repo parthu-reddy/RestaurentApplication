@@ -14,11 +14,11 @@ public class AcceptedState implements RestaurantOrderState {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.PREPARING);
         ctx.getActionService().saveOrder(order);
-        ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_PREPARING.name());
-        payloadNode.put("orderId", order.getOrderId().toString());
-        payloadNode.put("restaurantId", order.getRestaurantId().toString());
-        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_PREPARING, payloadNode);
+        com.fooddelivery.common.event.OrderPreparingEvent event = com.fooddelivery.common.event.OrderPreparingEvent.builder()
+                .orderId(order.getOrderId().toString())
+                .restaurantId(order.getRestaurantId().toString())
+                .build();
+        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_PREPARING, event);
     }
 
     @Override
@@ -26,12 +26,11 @@ public class AcceptedState implements RestaurantOrderState {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.CANCELLED);
         ctx.getActionService().saveOrder(order);
-        ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_CANCELLED_BY_RESTAURANT.name());
-        payloadNode.put("orderId", order.getOrderId().toString());
-        payloadNode.put("restaurantId", order.getRestaurantId().toString());
-        payloadNode.put("reason", ctx.getCancelReason() != null ? ctx.getCancelReason() : "");
-        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_CANCELLED_BY_RESTAURANT, payloadNode);
+        com.fooddelivery.common.event.OrderCancelledByRestaurantEvent event = com.fooddelivery.common.event.OrderCancelledByRestaurantEvent.builder()
+                .orderId(order.getOrderId().toString())
+                .reason(ctx.getCancelReason() != null ? ctx.getCancelReason() : "")
+                .build();
+        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_CANCELLED_BY_RESTAURANT, event);
     }
 
     @Override

@@ -16,14 +16,13 @@ public class CreatedState implements RestaurantOrderState {
         if (additionalPrepTime != null && additionalPrepTime > 10) {
             order.setAdditionalPrepTime(additionalPrepTime);
             order.setStatus(OrderStatus.AWAITING_DELAY_APPROVAL);
-            ctx.getActionService().saveOrder(order);
-            ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-            payloadNode.put("eventType", EventType.ORDER_DELAY_APPROVAL_REQUESTED.name());
-            payloadNode.put("orderId", order.getOrderId().toString());
-            payloadNode.put("restaurantId", order.getRestaurantId().toString());
-            payloadNode.put("additionalPrepTimeMinutes", additionalPrepTime);
-            payloadNode.put("delayReason", ctx.getDelayReason() != null ? ctx.getDelayReason() : "");
-            ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_DELAY_APPROVAL_REQUESTED, payloadNode);
+            com.fooddelivery.common.event.OrderDelayApprovalRequestedEvent event = com.fooddelivery.common.event.OrderDelayApprovalRequestedEvent.builder()
+                    .orderId(order.getOrderId().toString())
+                    .restaurantId(order.getRestaurantId().toString())
+                    .additionalPrepTimeMinutes(additionalPrepTime)
+                    .delayReason(ctx.getDelayReason() != null ? ctx.getDelayReason() : "")
+                    .build();
+            ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_DELAY_APPROVAL_REQUESTED, event);
         } else {
             // Treat as accepted automatically
             accept(ctx);
@@ -43,26 +42,23 @@ public class CreatedState implements RestaurantOrderState {
         order.setEstimatedCompletionTime(estimatedCompletionTime);
         order.setStatus(OrderStatus.ACCEPTED);
         ctx.getActionService().saveOrder(order);
-        ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_ACCEPTED.name());
-        payloadNode.put("orderId", order.getOrderId().toString());
-        payloadNode.put("restaurantId", order.getRestaurantId().toString());
-        payloadNode.put("restaurantLat", ctx.getRestaurantLat());
-        payloadNode.put("restaurantLng", ctx.getRestaurantLng());
-        payloadNode.put("estimatedCompletionTime", estimatedCompletionTime);
-        payloadNode.put("estimatedPrepTimeMinutes", finalPrepTime);
-        payloadNode.put("deliveryLat", order.getDeliveryLat() != null ? order.getDeliveryLat() : 0.0);
-        payloadNode.put("deliveryLng", order.getDeliveryLng() != null ? order.getDeliveryLng() : 0.0);
-        payloadNode.put("deliveryAddress", order.getDeliveryAddress() != null ? order.getDeliveryAddress() : "");
-        payloadNode.put("pickupOtp", order.getPickupOtp() != null ? order.getPickupOtp() : "");
-        payloadNode.put("deliveryOtp", order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "");
-        payloadNode.put("customerName", order.getCustomerName() != null ? order.getCustomerName() : "");
-        // The delivery service needs this to require a declared cash amount at handover.
-        if (order.getPaymentMethod() != null) {
-            payloadNode.put("paymentMethod", order.getPaymentMethod().name());
-        }
+        com.fooddelivery.common.event.OrderAcceptedEvent event = com.fooddelivery.common.event.OrderAcceptedEvent.builder()
+                .orderId(order.getOrderId().toString())
+                .restaurantId(order.getRestaurantId().toString())
+                .restaurantLat(ctx.getRestaurantLat())
+                .restaurantLng(ctx.getRestaurantLng())
+                .estimatedCompletionTime(estimatedCompletionTime)
+                .estimatedPrepTimeMinutes(finalPrepTime)
+                .deliveryLat(order.getDeliveryLat() != null ? order.getDeliveryLat() : 0.0)
+                .deliveryLng(order.getDeliveryLng() != null ? order.getDeliveryLng() : 0.0)
+                .deliveryAddress(order.getDeliveryAddress() != null ? order.getDeliveryAddress() : "")
+                .pickupOtp(order.getPickupOtp() != null ? order.getPickupOtp() : "")
+                .deliveryOtp(order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "")
+                .customerName(order.getCustomerName() != null ? order.getCustomerName() : "")
+                .paymentMethod(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : null)
+                .build();
         log.info("Dispatching ORDER_ACCEPTED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", order.getOrderId(), order.getPickupOtp() != null ? order.getPickupOtp() : "", order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "");
-        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_ACCEPTED, payloadNode);
+        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_ACCEPTED, event);
     }
 
     @Override
@@ -70,12 +66,12 @@ public class CreatedState implements RestaurantOrderState {
         RestaurantOrder order = ctx.getOrder();
         order.setStatus(OrderStatus.CANCELLED_BY_RESTAURANT);
         ctx.getActionService().saveOrder(order);
-        ObjectNode payloadNode = ctx.getActionService().createPayloadNode();
-        payloadNode.put("eventType", EventType.ORDER_REJECTED.name());
-        payloadNode.put("orderId", order.getOrderId().toString());
-        payloadNode.put("restaurantId", order.getRestaurantId().toString());
-        payloadNode.put("reason", ctx.getRejectReason() != null ? ctx.getRejectReason() : "");
-        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_REJECTED, payloadNode);
+        com.fooddelivery.common.event.OrderRejectedEvent event = com.fooddelivery.common.event.OrderRejectedEvent.builder()
+                .orderId(order.getOrderId().toString())
+                .restaurantId(order.getRestaurantId().toString())
+                .reason(ctx.getRejectReason() != null ? ctx.getRejectReason() : "")
+                .build();
+        ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_REJECTED, event);
     }
 
     @Override
