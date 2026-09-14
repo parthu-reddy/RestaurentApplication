@@ -26,6 +26,35 @@ import java.util.UUID;
 @lombok.RequiredArgsConstructor
 public class OrderEventConsumer {
 private final ObjectMapper objectMapper;
+
+    private final com.fooddelivery.common.event.EventBinder eventBinder;
+    
+    /**
+     * The event types this service binds, and the class each binds to.
+     *
+     * <p>Typed as {@code OrderScopedEvent} so the listener can take the order id off a bound event
+     * without reflection, and so adding an entry whose class is not order-scoped does not compile.
+     */
+    private static final java.util.Map<EventType, Class<? extends com.fooddelivery.common.event.OrderScopedEvent>>
+            EVENT_CLASSES = new java.util.EnumMap<>(EventType.class);
+    static {
+        EVENT_CLASSES.put(EventType.ORDER_PAID, com.fooddelivery.common.event.OrderPaidEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_PLACED_COD, com.fooddelivery.common.event.OrderPaidEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_CANCELLED, com.fooddelivery.common.event.OrderCancelledEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_CANCELLED_BY_ADMIN, com.fooddelivery.common.event.OrderCancelledByAdminEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_CANCELLED_BY_RESTAURANT, com.fooddelivery.common.event.OrderCancelledByRestaurantEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_CANCELLED_BY_CUSTOMER, com.fooddelivery.common.event.OrderCancelledByCustomerEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_DELAY_APPROVED, com.fooddelivery.common.event.OrderDelayApprovedEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_DELAY_REJECTED, com.fooddelivery.common.event.OrderDelayRejectedEvent.class);
+        EVENT_CLASSES.put(EventType.DRIVER_ASSIGNED, com.fooddelivery.common.event.DriverAssignedEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_AT_RESTAURANT, com.fooddelivery.common.event.DriverAtRestaurantEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_STATUS_UPDATED, com.fooddelivery.common.event.OrderStatusUpdatedEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_STATUS_SYNC, com.fooddelivery.common.event.OrderStatusSyncEvent.class);
+        EVENT_CLASSES.put(EventType.MANUAL_INTERVENTION_REQUIRED, com.fooddelivery.common.event.ManualInterventionRequiredEvent.class);
+        EVENT_CLASSES.put(EventType.DELIVERY_FAILED, com.fooddelivery.common.event.DeliveryFailedEvent.class);
+        EVENT_CLASSES.put(EventType.ORDER_DELIVERED, com.fooddelivery.common.event.DeliveredEvent.class);
+    }
+
     private final RestaurantOrderRepository restaurantOrderRepository;
     private final IIdempotencyKeyRepository idempotencyKeyRepository;
     private final RestaurantActionService actionService;
@@ -33,7 +62,12 @@ private final ObjectMapper objectMapper;
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
     private final MeterRegistry meterRegistry;
 
-    @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 100, multiplier = 2.0, maxDelay = 2000), include = {org.springframework.orm.ObjectOptimisticLockingFailureException.class, RuntimeException.class})
+    // No `include` list. It used to say {ObjectOptimisticLockingFailureException, RuntimeException},
+    // which was redundant -- the default already retries every exception -- and actively harmful:
+    // a class listed in `include` is CLASSIFIED, so traversingCauses stops at it and never reaches
+    // the excluded EventBindingException underneath. A binding failure wrapped by the catch below
+    // was therefore still retried five times. Proven in BindingFailureIsNotRetryableTest.
+    @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 100, multiplier = 2.0, maxDelay = 2000), exclude = {com.fooddelivery.common.event.EventBindingException.class}, traversingCauses = "true")
     @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE + "-ordereventconsumer")
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
         log.info("Consumed event from {}: {}", com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, message);
@@ -57,22 +91,49 @@ private final ObjectMapper objectMapper;
                 }
 
                 try {
-                    JsonNode rootNode = objectMapper.readTree(message);
+                    com.fasterxml.jackson.databind.JsonNode rootNode = objectMapper.readTree(message);
                     String eventType = com.fooddelivery.common.util.KafkaHeaderUtils.extractEventType(headers, rootNode);
-                    JsonNode root = rootNode;
                     if (eventType == null) {
                         log.warn("Event type is missing in order event: {}", message);
                         return null;
                     }
-                    String orderIdStr = root.path("orderId").asText(null);
-                    if (orderIdStr == null) {
+                    
+                    final EventType type;
+                    try {
+                        type = EventType.valueOf(eventType);
+                    } catch (IllegalArgumentException e) {
+                        // order-events carries every order event the platform emits. A type this
+                        // service's enum does not know is not addressed to it; retrying it five
+                        // times and then DLTing it would poison the partition over an event we
+                        // never wanted.
+                        log.info("Unknown event type {} on order-events. Ignoring.", eventType);
+                        return null;
+                    }
+
+                    Class<? extends com.fooddelivery.common.event.OrderScopedEvent> clazz =
+                            EVENT_CLASSES.get(type);
+                    if (clazz == null) {
+                        log.info("Event {} not handled by RestaurantApplication. Ignoring.", eventType);
+                        return null;
+                    }
+                    // bindIf can only be empty when the type does not match, and it matches by
+                    // construction here. A malformed body or a violated @NotNull throws out of
+                    // bindIf, which is what feeds the retry/DLT path.
+                    com.fooddelivery.common.event.OrderScopedEvent typedEvent =
+                            eventBinder.bindIf(type, eventType, message, clazz)
+                                    .orElseThrow(() -> new IllegalStateException(
+                                            "bindIf returned empty for " + eventType
+                                                    + " despite an exact event-type match"));
+
+                    UUID orderId = typedEvent.orderUuid();
+                    if (orderId == null) {
                         log.warn("Order ID is missing in order event: {}", message);
                         return null;
                     }
-                    UUID orderId = UUID.fromString(orderIdStr);
+
                     // Handle ORDER_PAID and ORDER_PLACED_COD as a special case for creating the initial order entity
                     if (EventType.ORDER_PAID.name().equals(eventType) || EventType.ORDER_PLACED_COD.name().equals(eventType)) {
-                        handleOrderPaid(root, orderId);
+                        handleOrderPaid((com.fooddelivery.common.event.OrderPaidEvent) typedEvent);
                         return null;
                     }
                     RestaurantOrder order = restaurantOrderRepository.findById(orderId).orElse(null);
@@ -92,7 +153,7 @@ private final ObjectMapper objectMapper;
                     }
                     RestaurantOrderContext ctx = RestaurantOrderContext.builder()
                         .order(order)
-                        .eventPayload(root)
+                        .eventPayload(typedEvent)
                         .actionService(actionService)
                         .restaurantId(order.getRestaurantId())
                         .restaurantLat(lat)
@@ -161,43 +222,34 @@ private final ObjectMapper objectMapper;
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 
-    private void handleOrderPaid(JsonNode root, UUID orderId) {
+    private void handleOrderPaid(com.fooddelivery.common.event.OrderPaidEvent event) {
+        UUID orderId = event.getOrderId();
         if (restaurantOrderRepository.existsById(orderId)) {
             log.info("Duplicate ORDER_PAID or ORDER_PLACED_COD event received for order {}. Ignoring.", orderId);
             return;
         }
-        String restaurantId = root.path("restaurantId").asText();
-        int estimatedPrepTimeMinutes = root.path("estimatedPrepTimeMinutes").asInt(15);
-        double deliveryLat = root.path("deliveryLat").asDouble(0.0);
-        double deliveryLng = root.path("deliveryLng").asDouble(0.0);
-        String deliveryAddress = root.path("deliveryAddress").asText("");
-        String itemsJson = root.path("itemsJson").asText("[]");
-        String pickupOtp = root.path("pickupOtp").asText("");
-        String deliveryOtp = root.path("deliveryOtp").asText("");
+        UUID restaurantId = event.getRestaurantId();
+        int estimatedPrepTimeMinutes = event.getEstimatedPrepTimeMinutes() != null ? event.getEstimatedPrepTimeMinutes() : 15;
+        double deliveryLat = event.getDeliveryLat() != null ? event.getDeliveryLat() : 0.0;
+        double deliveryLng = event.getDeliveryLng() != null ? event.getDeliveryLng() : 0.0;
+        String deliveryAddress = event.getDeliveryAddress() != null ? event.getDeliveryAddress() : "";
+        String itemsJson = event.getItemsJson() != null ? event.getItemsJson() : "[]";
+        String pickupOtp = event.getPickupOtp() != null ? event.getPickupOtp() : "";
+        String deliveryOtp = event.getDeliveryOtp() != null ? event.getDeliveryOtp() : "";
         log.info("Received ORDER_CREATED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", orderId, pickupOtp, deliveryOtp);
-        String customerIdStr = root.path("customerId").asText("");
-        UUID customerId = (customerIdStr != null && !customerIdStr.isEmpty()) ? UUID.fromString(customerIdStr) : null;
-        String customerName = root.path("customerName").asText("");
-        // Absent before 2026-09-10, so this column was NULL on every order ever taken.
-        String paymentMethodStr = root.path("paymentMethod").asText(null);
-        com.fooddelivery.common.enums.PaymentMethod paymentMethod = null;
-        if (paymentMethodStr != null && !paymentMethodStr.isBlank()) {
-            try {
-                paymentMethod = com.fooddelivery.common.enums.PaymentMethod.valueOf(paymentMethodStr);
-            } catch (IllegalArgumentException e) {
-                log.error("Unknown payment method '{}' on order {}", paymentMethodStr, orderId);
-            }
-        }
-        java.math.BigDecimal totalAmount = root.has("totalAmount") && !root.path("totalAmount").isNull() ? new java.math.BigDecimal(root.path("totalAmount").asText()) : null;
-        java.math.BigDecimal foodCost = root.has("itemTotal") && !root.path("itemTotal").isNull() ? new java.math.BigDecimal(root.path("itemTotal").asText()) : null;
-        java.math.BigDecimal restaurantPlatformFee = root.has("restaurantPlatformFee") && !root.path("restaurantPlatformFee").isNull() ? new java.math.BigDecimal(root.path("restaurantPlatformFee").asText()) : null;
-        java.math.BigDecimal restaurantDeliveryContribution = root.has("restaurantDeliveryContribution") && !root.path("restaurantDeliveryContribution").isNull() ? new java.math.BigDecimal(root.path("restaurantDeliveryContribution").asText()) : null;
-        java.math.BigDecimal platformBonus = root.has("platformBonus") && !root.path("platformBonus").isNull() ? new java.math.BigDecimal(root.path("platformBonus").asText()) : null;
-        java.math.BigDecimal restaurantPayout = root.has("restaurantPayout") && !root.path("restaurantPayout").isNull() ? new java.math.BigDecimal(root.path("restaurantPayout").asText()) : null;
+        UUID customerId = event.getCustomerId();
+        String customerName = event.getCustomerName() != null ? event.getCustomerName() : "";
+        com.fooddelivery.common.enums.PaymentMethod paymentMethod = event.getPaymentMethod();
+        java.math.BigDecimal totalAmount = event.getTotalAmount();
+        java.math.BigDecimal foodCost = event.getItemTotal();
+        java.math.BigDecimal restaurantPlatformFee = event.getRestaurantPlatformFee();
+        java.math.BigDecimal restaurantDeliveryContribution = event.getRestaurantDeliveryContribution();
+        java.math.BigDecimal platformBonus = event.getPlatformBonus();
+        java.math.BigDecimal restaurantPayout = event.getRestaurantPayout();
 
         RestaurantOrder order = RestaurantOrder.builder()
                 .orderId(orderId)
-                .restaurantId(UUID.fromString(restaurantId))
+                .restaurantId(restaurantId)
                 .customerId(customerId)
                 .customerName(customerName)
                 .paymentMethod(paymentMethod)

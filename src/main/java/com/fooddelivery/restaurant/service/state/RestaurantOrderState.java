@@ -71,11 +71,13 @@ public interface RestaurantOrderState {
             return;
         }
         
-        com.fasterxml.jackson.databind.JsonNode payload = ctx.getEventPayload();
-        if (payload != null && payload.has(PAYLOAD_FIELD_DRIVER_ID)) {
-            order.setDeliveryExecutiveId(java.util.UUID.fromString(payload.path(PAYLOAD_FIELD_DRIVER_ID).asText()));
-            if (payload.has("driverName")) {
-                order.setRiderName(payload.path("driverName").asText());
+        if (ctx.getEventPayload() instanceof com.fooddelivery.common.event.DriverAssignedEvent) {
+            com.fooddelivery.common.event.DriverAssignedEvent payload = (com.fooddelivery.common.event.DriverAssignedEvent) ctx.getEventPayload();
+            if (payload.getDriverId() != null) {
+                order.setDeliveryExecutiveId(java.util.UUID.fromString(payload.getDriverId()));
+            }
+            if (payload.getDriverName() != null) {
+                order.setRiderName(payload.getDriverName());
             }
             ctx.getActionService().saveOrder(order);
         }
@@ -91,7 +93,12 @@ public interface RestaurantOrderState {
     }
 
     default void handleOrderStatusUpdated(RestaurantOrderContext ctx) {
-        String newStatusStr = ctx.getEventPayload().path(PAYLOAD_FIELD_STATUS).asText("");
+        String newStatusStr = "";
+        if (ctx.getEventPayload() instanceof com.fooddelivery.common.event.OrderStatusUpdatedEvent) {
+            newStatusStr = ((com.fooddelivery.common.event.OrderStatusUpdatedEvent) ctx.getEventPayload()).getStatus();
+        } else if (ctx.getEventPayload() instanceof com.fooddelivery.common.event.OrderStatusSyncEvent) {
+            newStatusStr = ((com.fooddelivery.common.event.OrderStatusSyncEvent) ctx.getEventPayload()).getStatus();
+        }
         if (com.fooddelivery.restaurant.entity.OrderStatus.HANDED_OVER.name().equals(newStatusStr) || 
             com.fooddelivery.common.enums.OrderStatus.HANDED_OVER.name().equals(newStatusStr) || 
             "OUT_FOR_DELIVERY".equals(newStatusStr) ||
@@ -106,7 +113,19 @@ public interface RestaurantOrderState {
     }
 
     default void handleOrderStatusSync(RestaurantOrderContext ctx) {
-        String targetStatusStr = ctx.getEventPayload().path(PAYLOAD_FIELD_STATUS).asText(null);
+        String reason = null;
+        if (ctx.getEventPayload() instanceof com.fooddelivery.common.event.OrderCancelledByCustomerEvent) {
+            reason = ((com.fooddelivery.common.event.OrderCancelledByCustomerEvent) ctx.getEventPayload()).getReason();
+        } else if (ctx.getEventPayload() instanceof com.fooddelivery.common.event.OrderCancelledEvent) {
+            reason = ((com.fooddelivery.common.event.OrderCancelledEvent) ctx.getEventPayload()).getReason();
+        }
+        if (reason == null) {
+            reason = "";
+        }
+        String targetStatusStr = null;
+        if (ctx.getEventPayload() instanceof com.fooddelivery.common.event.OrderStatusSyncEvent) {
+            targetStatusStr = ((com.fooddelivery.common.event.OrderStatusSyncEvent) ctx.getEventPayload()).getStatus();
+        }
         if (targetStatusStr != null) {
             try {
                 if (OrderStatus.PENDING_ACCEPTANCE.name().equals(targetStatusStr)) {

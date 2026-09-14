@@ -6,7 +6,16 @@ import java.util.UUID;
 
 public class RestaurantOrderContext {
     private RestaurantOrder order;
-    private JsonNode eventPayload;
+    /**
+     * The bound event this transition is reacting to.
+     *
+     * <p>Was {@code Object}, which is the untyped read wearing a hat: a state could be handed
+     * anything, and a mismatch surfaced as an {@code instanceof} that quietly matched nothing.
+     * {@code OrderScopedEvent} makes a non-order event a compile error and gives every state
+     * {@code orderUuid()} without a cast; the casts that remain read genuinely type-specific
+     * fields (reason, driverId, status) and fail loudly if the mapping is ever wrong.
+     */
+    private com.fooddelivery.common.event.OrderScopedEvent eventPayload;
     private RestaurantActionService actionService;
     private UUID restaurantId;
     // Additional parameters for API requests
@@ -18,7 +27,7 @@ public class RestaurantOrderContext {
     private double restaurantLat;
     private double restaurantLng;
 
-RestaurantOrderContext(final RestaurantOrder order, final JsonNode eventPayload, final RestaurantActionService actionService, final UUID restaurantId, final Integer additionalPrepTime, final String delayReason, final String cancelReason, final String rejectReason, final double restaurantLat, final double restaurantLng) {
+RestaurantOrderContext(final RestaurantOrder order, final com.fooddelivery.common.event.OrderScopedEvent eventPayload, final RestaurantActionService actionService, final UUID restaurantId, final Integer additionalPrepTime, final String delayReason, final String cancelReason, final String rejectReason, final double restaurantLat, final double restaurantLng) {
         this.order = order;
         this.eventPayload = eventPayload;
         this.actionService = actionService;
@@ -34,7 +43,7 @@ RestaurantOrderContext(final RestaurantOrder order, final JsonNode eventPayload,
 
 public static class RestaurantOrderContextBuilder {
 private RestaurantOrder order;
-private JsonNode eventPayload;
+private com.fooddelivery.common.event.OrderScopedEvent eventPayload;
 private RestaurantActionService actionService;
 private UUID restaurantId;
 private Integer additionalPrepTime;
@@ -58,7 +67,7 @@ public RestaurantOrderContext.RestaurantOrderContextBuilder order(final Restaura
         /**
          * @return {@code this}.
          */
-public RestaurantOrderContext.RestaurantOrderContextBuilder eventPayload(final JsonNode eventPayload) {
+public RestaurantOrderContext.RestaurantOrderContextBuilder eventPayload(final com.fooddelivery.common.event.OrderScopedEvent eventPayload) {
             this.eventPayload = eventPayload;
             return this;
         }
@@ -145,7 +154,7 @@ public RestaurantOrder getOrder() {
         return this.order;
     }
 
-public JsonNode getEventPayload() {
+public Object getEventPayload() {
         return this.eventPayload;
     }
 
@@ -185,7 +194,7 @@ public void setOrder(final RestaurantOrder order) {
         this.order = order;
     }
 
-public void setEventPayload(final JsonNode eventPayload) {
+public void setEventPayload(final com.fooddelivery.common.event.OrderScopedEvent eventPayload) {
         this.eventPayload = eventPayload;
     }
 

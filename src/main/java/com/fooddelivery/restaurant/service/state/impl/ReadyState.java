@@ -32,7 +32,7 @@ public class ReadyState implements RestaurantOrderState {
 
     @Override
     public void handleOrderStatusUpdated(RestaurantOrderContext ctx) {
-        String newStatusStr = ctx.getEventPayload().path("status").asText("");
+        String newStatusStr = ((com.fooddelivery.common.event.OrderStatusUpdatedEvent) ctx.getEventPayload()).getStatus();
         if (OrderStatus.HANDED_OVER.name().equals(newStatusStr) || com.fooddelivery.common.enums.OrderStatus.HANDED_OVER.name().equals(newStatusStr) || "OUT_FOR_DELIVERY".equals(newStatusStr)) {
             RestaurantOrder order = ctx.getOrder();
             order.setStatus(OrderStatus.HANDED_OVER);

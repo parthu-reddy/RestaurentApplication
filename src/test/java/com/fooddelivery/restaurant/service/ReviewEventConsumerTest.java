@@ -58,7 +58,10 @@ class ReviewEventConsumerTest {
     @BeforeEach
     void setUp() {
         meterRegistry = new SimpleMeterRegistry();
-        consumer = new ReviewEventConsumer(new ObjectMapper(), outletRepository,
+        ObjectMapper objectMapper = new ObjectMapper().configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        jakarta.validation.Validator validator = jakarta.validation.Validation.buildDefaultValidatorFactory().getValidator();
+        com.fooddelivery.common.event.EventBinder eventBinder = new com.fooddelivery.common.event.EventBinder(objectMapper, validator);
+        consumer = new ReviewEventConsumer(objectMapper, eventBinder, outletRepository,
                 idempotencyKeyRepository, transactionTemplate, meterRegistry);
         lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation ->
                 invocation.getArgument(0, TransactionCallback.class).doInTransaction(null));

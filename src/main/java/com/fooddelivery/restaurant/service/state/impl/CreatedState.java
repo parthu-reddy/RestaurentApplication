@@ -61,9 +61,7 @@ public class CreatedState implements RestaurantOrderState {
         if (order.getPaymentMethod() != null) {
             payloadNode.put("paymentMethod", order.getPaymentMethod().name());
         }
-        
-        log.info("Dispatching ORDER_ACCEPTED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", order.getOrderId(), payloadNode.get("pickupOtp").asText(), payloadNode.get("deliveryOtp").asText());
-
+        log.info("Dispatching ORDER_ACCEPTED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", order.getOrderId(), order.getPickupOtp() != null ? order.getPickupOtp() : "", order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "");
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_ACCEPTED, payloadNode);
     }
 

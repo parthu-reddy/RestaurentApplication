@@ -64,6 +64,12 @@ class OrderEventConsumerContractTest {
         public MeterRegistry meterRegistry() {
             return new SimpleMeterRegistry();
         }
+
+        @Bean
+        public com.fooddelivery.common.event.EventBinder eventBinder(com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
+            jakarta.validation.Validator validator = jakarta.validation.Validation.buildDefaultValidatorFactory().getValidator();
+            return new com.fooddelivery.common.event.EventBinder(objectMapper, validator);
+        }
     }
 
     @MockBean
@@ -88,8 +94,20 @@ class OrderEventConsumerContractTest {
         await().atMost(15, TimeUnit.SECONDS).untilAsserted(() -> {
             // idempotency is claimed with INSERT .. ON CONFLICT DO NOTHING, not save().
             // Assert the call, not the key format -- the format is deliberately not part of the contract.
+            // This is what proves the message was actually consumed.
             verify(idempotencyKeyRepository).tryClaim(anyString());
-            verify(restaurantOrderRepository).findById(any(java.util.UUID.class));
+
+            // ...and this is what proves it was ignored gracefully: nothing was written.
+            //
+            // It used to assert findById() instead. That passed only because the untyped consumer
+            // looked EVERY order event up before deciding whether it handled it -- ORDER_CREATED
+            // is not a RestaurantApplication concern at all (the restaurant-side order is created
+            // on ORDER_PAID / ORDER_PLACED_COD), so the lookup was a wasted query per event and
+            // the "graceful ignore" happened after it. Typed binding rejects an unmapped event
+            // type before touching the database, which is the better behaviour, so the assertion
+            // now pins the outcome the contract actually cares about rather than the mechanism.
+            verify(actionService, org.mockito.Mockito.never()).saveOrder(org.mockito.ArgumentMatchers.any());
+            org.mockito.Mockito.verifyNoInteractions(restaurantOrderRepository);
         });
     }
 

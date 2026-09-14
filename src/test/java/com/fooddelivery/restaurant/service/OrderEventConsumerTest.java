@@ -55,8 +55,19 @@ class OrderEventConsumerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        orderEventConsumer = new OrderEventConsumer(objectMapper, restaurantOrderRepository, idempotencyKeyRepository, actionService, transactionTemplate, redisTemplate, meterRegistry);
+        objectMapper = new ObjectMapper().configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        jakarta.validation.Validator validator = jakarta.validation.Validation.buildDefaultValidatorFactory().getValidator();
+        com.fooddelivery.common.event.EventBinder eventBinder = new com.fooddelivery.common.event.EventBinder(objectMapper, validator);
+        orderEventConsumer = new OrderEventConsumer(
+                objectMapper,
+                eventBinder,
+                restaurantOrderRepository,
+                idempotencyKeyRepository,
+                actionService,
+                transactionTemplate,
+                redisTemplate,
+                meterRegistry
+        );
         lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
             TransactionCallback<?> callback = invocation.getArgument(0);
             return callback.doInTransaction(null);

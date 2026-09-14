@@ -51,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewEventConsumer {
 
     private final ObjectMapper objectMapper;
+    private final com.fooddelivery.common.event.EventBinder eventBinder;
     private final OutletRepository outletRepository;
     private final IIdempotencyKeyRepository idempotencyKeyRepository;
     private final TransactionTemplate transactionTemplate;
@@ -59,11 +60,15 @@ public class ReviewEventConsumer {
     /** Entity type this service has a home for. PRODUCT and DRIVER are read live instead. */
     private static final String ENTITY_TYPE_RESTAURANT = "RESTAURANT";
 
+    // No `include` list: the default already retries every exception, so naming
+    // ObjectOptimisticLockingFailureException and RuntimeException added nothing -- and a class in
+    // `include` is CLASSIFIED, which stops traversingCauses before it reaches the excluded
+    // EventBindingException underneath a wrapping catch. See BindingFailureIsNotRetryableTest.
     @RetryableTopic(
             attempts = "5",
             backoff = @Backoff(delay = 100, multiplier = 2.0, maxDelay = 2000),
-            include = {org.springframework.orm.ObjectOptimisticLockingFailureException.class,
-                       RuntimeException.class})
+            exclude = {com.fooddelivery.common.event.EventBindingException.class},
+            traversingCauses = "true")
     @KafkaListener(
             topics = KafkaConstants.TOPIC_REVIEW_EVENTS,
             groupId = KafkaConstants.GROUP_RESTAURANT_SERVICE + "-revieweventconsumer")
@@ -93,8 +98,12 @@ public class ReviewEventConsumer {
                     log.debug("Review event type {} is not handled here. Ignoring.", eventType);
                     return null;
                 }
+                
+                com.fooddelivery.common.event.ReviewCreatedEvent event = eventBinder.bindIf(
+                        EventType.REVIEW_CREATED, eventType, message, com.fooddelivery.common.event.ReviewCreatedEvent.class).orElse(null);
+                if (event == null) return null;
 
-                String entityType = root.path(EventPayloadConstants.ENTITY_TYPE).asText(null);
+                String entityType = event.getEntityType();
                 if (!ENTITY_TYPE_RESTAURANT.equals(entityType)) {
                     // PRODUCT and DRIVER aggregates have no denormalised home here, and giving the
                     // driver one would put performance data about a person in the catalogue service.
@@ -102,17 +111,9 @@ public class ReviewEventConsumer {
                     return null;
                 }
 
-                String entityId = root.path(EventPayloadConstants.ENTITY_ID).asText(null);
-                if (entityId == null || entityId.isBlank()) {
+                UUID outletId = event.getEntityId();
+                if (outletId == null) {
                     log.warn("REVIEW_CREATED carried no entityId: {}", message);
-                    return null;
-                }
-
-                UUID outletId;
-                try {
-                    outletId = UUID.fromString(entityId);
-                } catch (IllegalArgumentException e) {
-                    log.warn("REVIEW_CREATED carried a non-UUID entityId '{}'; ignoring.", entityId);
                     return null;
                 }
 
@@ -124,8 +125,8 @@ public class ReviewEventConsumer {
                     return null;
                 }
 
-                long totalReviews = root.path(EventPayloadConstants.TOTAL_REVIEWS).asLong(0L);
-                String averageRating = root.path(EventPayloadConstants.AVERAGE_RATING).asText(null);
+                long totalReviews = event.getTotalReviews() != null ? event.getTotalReviews() : 0L;
+                String averageRating = event.getAverageRating();
                 if (averageRating == null) {
                     log.warn("REVIEW_CREATED for outlet {} carried no averageRating; ignoring.", outletId);
                     return null;
