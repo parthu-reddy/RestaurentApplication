@@ -79,7 +79,7 @@ class OrderEventConsumerTest {
         UUID orderId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
         
-        String message = String.format("{\"eventType\":\"ORDER_PAID\", \"orderId\":\"%s\", \"restaurantId\":\"%s\"}", 
+        String message = String.format("{\"eventType\":\"ORDER_PAID\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"deliveryLat\":12.93, \"deliveryLng\":77.62, \"pickupOtp\":\"123456\", \"deliveryOtp\":\"654321\", \"dispatchCityId\":\"BLR\", \"fleetSearchRadiusKm\":5.0}",
                 orderId, restaurantId);
 
         when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
@@ -96,6 +96,27 @@ class OrderEventConsumerTest {
         assertEquals(orderId, capturedOrder.getOrderId());
         assertEquals(restaurantId, capturedOrder.getRestaurantId());
         assertEquals(OrderStatus.CREATED, capturedOrder.getStatus());
+        assertEquals("123456", capturedOrder.getPickupOtp());
+        assertEquals("654321", capturedOrder.getDeliveryOtp());
+        assertEquals("BLR", capturedOrder.getDispatchCityId());
+        assertEquals(5.0, capturedOrder.getFleetSearchRadiusKm());
+    }
+
+    @Test
+    void consumeOrderEvent_RejectsMissingOtpsInsteadOfPersistingEmptyStrings() {
+        UUID orderId = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        String message = String.format("{\"eventType\":\"ORDER_PAID\",\"orderId\":\"%s\",\"restaurantId\":\"%s\",\"deliveryLat\":12.93,\"deliveryLng\":77.62,\"dispatchCityId\":\"BLR\",\"fleetSearchRadiusKm\":5.0}", orderId, restaurantId);
+        when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
+
+        java.util.Map<String, Object> headers = java.util.Map.of("eventId", UUID.randomUUID().toString());
+        RuntimeException exception = org.junit.jupiter.api.Assertions.assertThrows(
+                RuntimeException.class,
+                () -> orderEventConsumer.consumeOrderEvent(message, headers));
+        org.junit.jupiter.api.Assertions.assertInstanceOf(
+                com.fooddelivery.common.event.EventBindingException.class,
+                exception.getCause());
+        verify(actionService, never()).saveOrder(any());
     }
 
     @Test

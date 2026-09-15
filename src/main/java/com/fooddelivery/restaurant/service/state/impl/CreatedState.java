@@ -49,15 +49,17 @@ public class CreatedState implements RestaurantOrderState {
                 .restaurantLng(ctx.getRestaurantLng())
                 .estimatedCompletionTime(estimatedCompletionTime)
                 .estimatedPrepTimeMinutes(finalPrepTime)
-                .deliveryLat(order.getDeliveryLat() != null ? order.getDeliveryLat() : 0.0)
-                .deliveryLng(order.getDeliveryLng() != null ? order.getDeliveryLng() : 0.0)
+                .deliveryLat(order.getDeliveryLat())
+                .deliveryLng(order.getDeliveryLng())
                 .deliveryAddress(order.getDeliveryAddress() != null ? order.getDeliveryAddress() : "")
-                .pickupOtp(order.getPickupOtp() != null ? order.getPickupOtp() : "")
-                .deliveryOtp(order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "")
+                .pickupOtp(order.getPickupOtp())
+                .deliveryOtp(order.getDeliveryOtp())
+                .dispatchCityId(order.getDispatchCityId())
+                .fleetSearchRadiusKm(order.getFleetSearchRadiusKm())
                 .customerName(order.getCustomerName() != null ? order.getCustomerName() : "")
                 .paymentMethod(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : null)
                 .build();
-        log.info("Dispatching ORDER_ACCEPTED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", order.getOrderId(), order.getPickupOtp() != null ? order.getPickupOtp() : "", order.getDeliveryOtp() != null ? order.getDeliveryOtp() : "");
+        log.info("Dispatching ORDER_ACCEPTED for order {} with validated OTPs", order.getOrderId());
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_ACCEPTED, event);
     }
 

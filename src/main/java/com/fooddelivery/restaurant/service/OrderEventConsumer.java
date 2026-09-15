@@ -70,14 +70,13 @@ private final ObjectMapper objectMapper;
     @RetryableTopic(attempts = "5", backoff = @Backoff(delay = 100, multiplier = 2.0, maxDelay = 2000), exclude = {com.fooddelivery.common.event.EventBindingException.class}, traversingCauses = "true")
     @KafkaListener(topics = com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, groupId = com.fooddelivery.common.constants.KafkaConstants.GROUP_RESTAURANT_SERVICE + "-ordereventconsumer")
     public void consumeOrderEvent(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
-        log.info("Consumed event from {}: {}", com.fooddelivery.common.constants.KafkaConstants.TOPIC_ORDER_EVENTS, message);
-        
         // Idempotency check
         String eventId = com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId");
         if (eventId == null) {
             log.error("Missing eventId header in OrderEventConsumer, sending to DLT.");
             throw new IllegalArgumentException("Missing eventId header");
         }
+        log.info("Consumed order event with eventId={}", eventId);
         
         String idempotencyKeyStr = "processed_event:restaurant:" + eventId;
         
@@ -218,7 +217,8 @@ private final ObjectMapper objectMapper;
 
     @DltHandler
     public void handleDlt(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
-        log.error("DLT processing: Message exhausted all retries in RestaurantApplication. Message: {}, Headers: {}", message, headers);
+        log.error("DLT processing: order event exhausted retries in RestaurantApplication (eventId={})",
+                com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"));
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 
@@ -230,13 +230,13 @@ private final ObjectMapper objectMapper;
         }
         UUID restaurantId = event.getRestaurantId();
         int estimatedPrepTimeMinutes = event.getEstimatedPrepTimeMinutes() != null ? event.getEstimatedPrepTimeMinutes() : 15;
-        double deliveryLat = event.getDeliveryLat() != null ? event.getDeliveryLat() : 0.0;
-        double deliveryLng = event.getDeliveryLng() != null ? event.getDeliveryLng() : 0.0;
+        double deliveryLat = event.getDeliveryLat();
+        double deliveryLng = event.getDeliveryLng();
         String deliveryAddress = event.getDeliveryAddress() != null ? event.getDeliveryAddress() : "";
         String itemsJson = event.getItemsJson() != null ? event.getItemsJson() : "[]";
-        String pickupOtp = event.getPickupOtp() != null ? event.getPickupOtp() : "";
-        String deliveryOtp = event.getDeliveryOtp() != null ? event.getDeliveryOtp() : "";
-        log.info("Received ORDER_CREATED for orderId: {} with pickupOtp: '{}', deliveryOtp: '{}'", orderId, pickupOtp, deliveryOtp);
+        String pickupOtp = event.getPickupOtp();
+        String deliveryOtp = event.getDeliveryOtp();
+        log.info("Received paid/COD order {} with validated pickup and delivery OTPs", orderId);
         UUID customerId = event.getCustomerId();
         String customerName = event.getCustomerName() != null ? event.getCustomerName() : "";
         com.fooddelivery.common.enums.PaymentMethod paymentMethod = event.getPaymentMethod();
@@ -259,6 +259,8 @@ private final ObjectMapper objectMapper;
                 .deliveryLat(deliveryLat)
                 .deliveryLng(deliveryLng)
                 .deliveryAddress(deliveryAddress)
+                .dispatchCityId(event.getDispatchCityId())
+                .fleetSearchRadiusKm(event.getFleetSearchRadiusKm())
                 .pickupOtp(pickupOtp)
                 .deliveryOtp(deliveryOtp)
                 .itemsJson(itemsJson)
