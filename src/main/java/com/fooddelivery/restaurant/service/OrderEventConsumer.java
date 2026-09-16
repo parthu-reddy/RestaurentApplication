@@ -3,8 +3,6 @@ package com.fooddelivery.restaurant.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fooddelivery.common.constants.EventType;
-import com.fooddelivery.common.entity.IdempotencyKey;
-import com.fooddelivery.restaurant.config.DeliveryZoneConfig;
 import com.fooddelivery.restaurant.entity.OrderStatus;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.common.repository.IIdempotencyKeyRepository;
@@ -62,7 +60,6 @@ private final ObjectMapper objectMapper;
     private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
     private final org.springframework.data.redis.core.StringRedisTemplate redisTemplate;
     private final MeterRegistry meterRegistry;
-    private final DeliveryZoneConfig deliveryZoneConfig;
 
     // No `include` list. It used to say {ObjectOptimisticLockingFailureException, RuntimeException},
     // which was redundant -- the default already retries every exception -- and actively harmful:
@@ -117,13 +114,11 @@ private final ObjectMapper objectMapper;
                         log.info("Event {} not handled by RestaurantApplication. Ignoring.", eventType);
                         return null;
                     }
-                    String payloadToBind = normalizeLegacyDispatchScope(type, rootNode, message);
-
                     // bindIf can only be empty when the type does not match, and it matches by
                     // construction here. A malformed body or a violated @NotNull throws out of
                     // bindIf, which is what feeds the retry/DLT path.
                     com.fooddelivery.common.event.OrderScopedEvent typedEvent =
-                            eventBinder.bindIf(type, eventType, payloadToBind, clazz)
+                            eventBinder.bindIf(type, eventType, message, clazz)
                                     .orElseThrow(() -> new IllegalStateException(
                                             "bindIf returned empty for " + eventType
                                                     + " despite an exact event-type match"));
@@ -224,40 +219,6 @@ private final ObjectMapper objectMapper;
         log.error("DLT processing: order event exhausted retries in RestaurantApplication (eventId={})",
                 com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"));
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
-    }
-
-    @lombok.Data
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
-    private static class LegacyDispatchCheck {
-        private String dispatchCityId;
-        private Double fleetSearchRadiusKm;
-        private java.util.UUID orderId;
-    }
-
-    private String normalizeLegacyDispatchScope(EventType type, JsonNode rootNode, String originalPayload)
-            throws com.fasterxml.jackson.core.JsonProcessingException {
-        if ((type != EventType.ORDER_PAID && type != EventType.ORDER_PLACED_COD)
-                || !rootNode.isObject()) {
-            return originalPayload;
-        }
-
-        LegacyDispatchCheck check = objectMapper.readValue(originalPayload, LegacyDispatchCheck.class);
-        boolean cityMissing = check.getDispatchCityId() == null || check.getDispatchCityId().isBlank();
-        boolean radiusMissing = check.getFleetSearchRadiusKm() == null || check.getFleetSearchRadiusKm() <= 0;
-        if (!cityMissing && !radiusMissing) {
-            return originalPayload;
-        }
-
-        com.fasterxml.jackson.databind.node.ObjectNode normalized = rootNode.deepCopy();
-        if (cityMissing) {
-            normalized.put("dispatchCityId", deliveryZoneConfig.getDefaultCity());
-        }
-        if (radiusMissing) {
-            normalized.put("fleetSearchRadiusKm", deliveryZoneConfig.getFleetSearchRadiusKm());
-        }
-        log.warn("Order {} predates dispatch-scope fields; supplied configured legacy defaults for cityMissing={} radiusMissing={}",
-                check.getOrderId(), cityMissing, radiusMissing);
-        return objectMapper.writeValueAsString(normalized);
     }
 
     private void handleOrderPaid(com.fooddelivery.common.event.OrderPaidEvent event) {
