@@ -21,7 +21,7 @@ public interface OrderClient {
 
 
 
-    @GetMapping("/api/v1/money/restaurant/orders/{orderId}/earnings")
+    @GetMapping("/api/v1/internal/money/restaurant/orders/{orderId}/earnings")
     ResponseEntity<com.fooddelivery.common.dto.order.RestaurantOrderEarnings> getOrderEarnings(
             @PathVariable("orderId") UUID orderId
     );
