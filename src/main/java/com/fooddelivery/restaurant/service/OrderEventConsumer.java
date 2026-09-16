@@ -38,7 +38,6 @@ private final ObjectMapper objectMapper;
             EVENT_CLASSES = new java.util.EnumMap<>(EventType.class);
     static {
         EVENT_CLASSES.put(EventType.ORDER_PAID, com.fooddelivery.common.event.OrderPaidEvent.class);
-        EVENT_CLASSES.put(EventType.ORDER_PLACED_COD, com.fooddelivery.common.event.OrderPaidEvent.class);
         EVENT_CLASSES.put(EventType.ORDER_CANCELLED, com.fooddelivery.common.event.OrderCancelledEvent.class);
         EVENT_CLASSES.put(EventType.ORDER_CANCELLED_BY_ADMIN, com.fooddelivery.common.event.OrderCancelledByAdminEvent.class);
         EVENT_CLASSES.put(EventType.ORDER_CANCELLED_BY_RESTAURANT, com.fooddelivery.common.event.OrderCancelledByRestaurantEvent.class);
@@ -75,7 +74,8 @@ private final ObjectMapper objectMapper;
             log.error("Missing eventId header in OrderEventConsumer, sending to DLT.");
             throw new IllegalArgumentException("Missing eventId header");
         }
-        log.info("Consumed order event with eventId={}", eventId);
+        log.info("RESTAURANT_EVENT_RECEIVED eventId={} payloadBytes={}", eventId,
+                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
         
         String idempotencyKeyStr = "processed_event:restaurant:" + eventId;
         
@@ -84,7 +84,7 @@ private final ObjectMapper objectMapper;
                 // Atomic claim: INSERT .. ON CONFLICT DO NOTHING. existsById-then-save was a
                 // check-then-act race -- two consumers could both observe "absent" and both process.
                 if (idempotencyKeyRepository.tryClaim(idempotencyKeyStr) == 0) {
-                    log.info("Duplicate event detected (key={}), ignoring.", idempotencyKeyStr);
+                    log.info("RESTAURANT_EVENT_DUPLICATE eventId={}", eventId);
                     return null;
                 }
 
@@ -92,9 +92,10 @@ private final ObjectMapper objectMapper;
                     com.fasterxml.jackson.databind.JsonNode rootNode = objectMapper.readTree(message);
                     String eventType = com.fooddelivery.common.util.KafkaHeaderUtils.extractEventType(headers, rootNode);
                     if (eventType == null) {
-                        log.warn("Event type is missing in order event; ignoring payload without logging sensitive fields");
+                        log.warn("RESTAURANT_EVENT_IGNORED eventId={} reason=missing-event-type", eventId);
                         return null;
                     }
+                    log.info("RESTAURANT_EVENT_CLASSIFIED eventId={} eventType={}", eventId, eventType);
                     
                     final EventType type;
                     try {
@@ -128,9 +129,10 @@ private final ObjectMapper objectMapper;
                         log.warn("Order ID is missing in {} event; ignoring payload without logging sensitive fields", eventType);
                         return null;
                     }
+                    log.info("RESTAURANT_EVENT_HANDLING eventId={} eventType={} orderId={}",
+                            eventId, eventType, orderId);
 
-                    // Handle ORDER_PAID and ORDER_PLACED_COD as a special case for creating the initial order entity
-                    if (EventType.ORDER_PAID.name().equals(eventType) || EventType.ORDER_PLACED_COD.name().equals(eventType)) {
+                    if (EventType.ORDER_PAID.name().equals(eventType)) {
                         handleOrderPaid((com.fooddelivery.common.event.OrderPaidEvent) typedEvent);
                         return null;
                     }
@@ -216,15 +218,17 @@ private final ObjectMapper objectMapper;
 
     @DltHandler
     public void handleDlt(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
-        log.error("DLT processing: order event exhausted retries in RestaurantApplication (eventId={})",
-                com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"));
+        log.error("RESTAURANT_EVENT_DLT eventId={} eventType={} payloadBytes={}",
+                com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"),
+                com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventType"),
+                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 
     private void handleOrderPaid(com.fooddelivery.common.event.OrderPaidEvent event) {
         UUID orderId = event.getOrderId();
         if (restaurantOrderRepository.existsById(orderId)) {
-            log.info("Duplicate ORDER_PAID or ORDER_PLACED_COD event received for order {}. Ignoring.", orderId);
+            log.info("RESTAURANT_ORDER_EVENT_DUPLICATE eventType=ORDER_PAID orderId={}", orderId);
             return;
         }
         UUID restaurantId = event.getRestaurantId();
@@ -235,7 +239,9 @@ private final ObjectMapper objectMapper;
         String itemsJson = event.getItemsJson() != null ? event.getItemsJson() : "[]";
         String pickupOtp = event.getPickupOtp();
         String deliveryOtp = event.getDeliveryOtp();
-        log.info("Received paid/COD order {} with validated pickup and delivery OTPs", orderId);
+        log.info("RESTAURANT_ORDER_PAID_VALIDATED orderId={} restaurantId={} customerId={} paymentMethod={} dispatchCityId={} fleetSearchRadiusKm={}",
+                orderId, event.getRestaurantId(), event.getCustomerId(), event.getPaymentMethod(),
+                event.getDispatchCityId(), event.getFleetSearchRadiusKm());
         UUID customerId = event.getCustomerId();
         String customerName = event.getCustomerName() != null ? event.getCustomerName() : "";
         com.fooddelivery.common.enums.PaymentMethod paymentMethod = event.getPaymentMethod();

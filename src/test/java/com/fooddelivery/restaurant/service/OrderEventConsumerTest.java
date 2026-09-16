@@ -78,7 +78,7 @@ class OrderEventConsumerTest {
     void consumeOrderEvent_RejectsMissingDispatchScope() {
         UUID orderId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
-        String message = String.format("{\"eventType\":\"ORDER_PLACED_COD\",\"orderId\":\"%s\",\"restaurantId\":\"%s\",\"deliveryLat\":12.93,\"deliveryLng\":77.62,\"pickupOtp\":\"123456\",\"deliveryOtp\":\"654321\"}", orderId, restaurantId);
+        String message = String.format("{\"eventType\":\"ORDER_PAID\",\"orderId\":\"%s\",\"restaurantId\":\"%s\",\"deliveryLat\":12.93,\"deliveryLng\":77.62,\"pickupOtp\":\"123456\",\"deliveryOtp\":\"654321\"}", orderId, restaurantId);
         when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
 
         RuntimeException exception = org.junit.jupiter.api.Assertions.assertThrows(
@@ -96,8 +96,8 @@ class OrderEventConsumerTest {
         UUID orderId = UUID.randomUUID();
         UUID restaurantId = UUID.randomUUID();
         
-        String message = String.format("{\"eventType\":\"ORDER_PAID\", \"orderId\":\"%s\", \"restaurantId\":\"%s\", \"deliveryLat\":12.93, \"deliveryLng\":77.62, \"pickupOtp\":\"123456\", \"deliveryOtp\":\"654321\", \"dispatchCityId\":\"BLR\", \"fleetSearchRadiusKm\":5.0}",
-                orderId, restaurantId);
+        String message = String.format("{\"eventType\":\"ORDER_PAID\",\"orderId\":\"%s\",\"restaurantId\":\"%s\",\"customerId\":\"%s\",\"paymentMethod\":\"CARD\",\"deliveryLat\":12.93,\"deliveryLng\":77.62,\"pickupOtp\":\"123456\",\"deliveryOtp\":\"654321\",\"dispatchCityId\":\"BLR\",\"fleetSearchRadiusKm\":5.0,\"totalAmount\":100.00,\"itemTotal\":80.00,\"restaurantPlatformFee\":8.00,\"restaurantDeliveryContribution\":2.00,\"platformBonus\":0.00,\"restaurantPayout\":70.00}",
+                orderId, restaurantId, UUID.randomUUID());
 
         when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
         when(restaurantOrderRepository.existsById(orderId)).thenReturn(false);

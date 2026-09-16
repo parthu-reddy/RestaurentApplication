@@ -102,7 +102,7 @@ class OrderEventConsumerContractTest {
             // It used to assert findById() instead. That passed only because the untyped consumer
             // looked EVERY order event up before deciding whether it handled it -- ORDER_CREATED
             // is not a RestaurantApplication concern at all (the restaurant-side order is created
-            // on ORDER_PAID / ORDER_PLACED_COD), so the lookup was a wasted query per event and
+            // on ORDER_PAID), so the lookup was a wasted query per event and
             // the "graceful ignore" happened after it. Typed binding rejects an unmapped event
             // type before touching the database, which is the better behaviour, so the assertion
             // now pins the outcome the contract actually cares about rather than the mechanism.

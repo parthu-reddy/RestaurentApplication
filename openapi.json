@@ -2812,7 +2812,7 @@
           },
           "paymentStatus" : {
             "type" : "string",
-            "enum" : [ "INITIATED", "SUCCESS", "FAILED", "PENDING_COLLECTION", "COLLECTED", "PARTIALLY_REFUNDED", "REFUNDED", "REFUND_PENDING", "REFUND_FAILED" ]
+            "enum" : [ "INITIATED", "SUCCESS", "FAILED", "PARTIALLY_REFUNDED", "REFUNDED", "REFUND_PENDING", "REFUND_FAILED" ]
           },
           "version" : {
             "type" : "integer",
@@ -2841,6 +2841,13 @@
           "deliveryAddress" : {
             "type" : "string"
           },
+          "dispatchCityId" : {
+            "type" : "string"
+          },
+          "fleetSearchRadiusKm" : {
+            "type" : "number",
+            "format" : "double"
+          },
           "pickupOtp" : {
             "type" : "string"
           },
@@ -2857,7 +2864,7 @@
           },
           "paymentMethod" : {
             "type" : "string",
-            "enum" : [ "CARD", "UPI", "WALLET", "COD" ]
+            "enum" : [ "CARD", "UPI", "WALLET" ]
           },
           "customerName" : {
             "type" : "string"

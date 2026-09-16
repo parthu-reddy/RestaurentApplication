@@ -57,9 +57,11 @@ public class CreatedState implements RestaurantOrderState {
                 .dispatchCityId(order.getDispatchCityId())
                 .fleetSearchRadiusKm(order.getFleetSearchRadiusKm())
                 .customerName(order.getCustomerName() != null ? order.getCustomerName() : "")
-                .paymentMethod(order.getPaymentMethod() != null ? order.getPaymentMethod().name() : null)
+                .paymentMethod(order.getPaymentMethod())
                 .build();
-        log.info("Dispatching ORDER_ACCEPTED for order {} with validated OTPs", order.getOrderId());
+        log.info("RESTAURANT_ORDER_ACCEPTED_ENQUEUING orderId={} restaurantId={} paymentMethod={} dispatchCityId={} fleetSearchRadiusKm={} estimatedCompletionTime={}",
+                order.getOrderId(), order.getRestaurantId(), order.getPaymentMethod(),
+                order.getDispatchCityId(), order.getFleetSearchRadiusKm(), estimatedCompletionTime);
         ctx.getActionService().publishEvent(order.getOrderId().toString(), EventType.ORDER_ACCEPTED, event);
     }
 

@@ -33,11 +33,12 @@ public class RestaurantActionService {
         try {
             String payload = objectMapper.writeValueAsString(eventPayload);
             OutboxEventEntity outboxEvent = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER).aggregateId(aggregateId).eventType(eventType).payload(payload).createdAt(LocalDateTime.now()).status(OutboxStatus.UNPROCESSED).build();
-            log.info("Triggering event: {} for aggregate: {}", eventType, aggregateId);
             outboxEventRepository.save(outboxEvent);
-            log.info("Saved {} outbox event for order {}", eventType, aggregateId);
+            log.info("RESTAURANT_OUTBOX_EVENT_ENQUEUED eventId={} eventType={} aggregateId={}",
+                    outboxEvent.getId(), eventType, aggregateId);
         } catch (Exception e) {
-            log.error("Failed to serialize or save outbox event for type {}", eventType, e);
+            log.error("RESTAURANT_OUTBOX_EVENT_FAILED eventType={} aggregateId={} errorType={} error={}",
+                    eventType, aggregateId, e.getClass().getSimpleName(), e.getMessage(), e);
             throw new RuntimeException("Failed to publish event to Kafka", e);
         }
     }

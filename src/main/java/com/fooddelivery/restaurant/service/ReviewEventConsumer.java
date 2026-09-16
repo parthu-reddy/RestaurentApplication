@@ -113,7 +113,8 @@ public class ReviewEventConsumer {
 
                 UUID outletId = event.getEntityId();
                 if (outletId == null) {
-                    log.warn("REVIEW_CREATED carried no entityId: {}", message);
+                    log.warn("REVIEW_EVENT_INVALID eventId={} reason=missing-entity-id",
+                            com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"));
                     return null;
                 }
 
@@ -143,7 +144,9 @@ public class ReviewEventConsumer {
 
             } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
                 // Malformed payload. No retry will repair it; let it dead-letter and be looked at.
-                log.error("Unparseable review event: {}", message, e);
+                log.error("REVIEW_EVENT_INVALID eventId={} payloadBytes={} reason=unparseable",
+                        com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"),
+                        message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length, e);
                 throw new IllegalArgumentException("Unparseable review event payload", e);
             }
         });
@@ -151,8 +154,10 @@ public class ReviewEventConsumer {
 
     @DltHandler
     public void handleDlt(String message, @Headers java.util.Map<String, Object> headers) {
-        log.error("DLT processing: review event exhausted all retries. Message: {}, Headers: {}",
-                message, headers);
+        log.error("REVIEW_EVENT_DLT eventId={} eventType={} payloadBytes={}",
+                com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"),
+                com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventType"),
+                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 
