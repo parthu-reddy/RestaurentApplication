@@ -58,6 +58,8 @@ class OrderEventConsumerTest {
         objectMapper = new ObjectMapper().configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         jakarta.validation.Validator validator = jakarta.validation.Validation.buildDefaultValidatorFactory().getValidator();
         com.fooddelivery.common.event.EventBinder eventBinder = new com.fooddelivery.common.event.EventBinder(objectMapper, validator);
+        com.fooddelivery.restaurant.config.DeliveryZoneConfig deliveryZoneConfig =
+                new com.fooddelivery.restaurant.config.DeliveryZoneConfig();
         orderEventConsumer = new OrderEventConsumer(
                 objectMapper,
                 eventBinder,
@@ -66,12 +68,32 @@ class OrderEventConsumerTest {
                 actionService,
                 transactionTemplate,
                 redisTemplate,
-                meterRegistry
+                meterRegistry,
+                deliveryZoneConfig
         );
         lenient().when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
             TransactionCallback<?> callback = invocation.getArgument(0);
             return callback.doInTransaction(null);
         });
+    }
+
+    @Test
+    void consumeOrderEvent_AcceptsLegacyEventWithoutDispatchScope() {
+        UUID orderId = UUID.randomUUID();
+        UUID restaurantId = UUID.randomUUID();
+        String message = String.format("{\"eventType\":\"ORDER_PLACED_COD\",\"orderId\":\"%s\",\"restaurantId\":\"%s\",\"deliveryLat\":12.93,\"deliveryLng\":77.62,\"pickupOtp\":\"123456\",\"deliveryOtp\":\"654321\"}", orderId, restaurantId);
+        when(idempotencyKeyRepository.tryClaim(anyString())).thenReturn(1);
+        when(restaurantOrderRepository.existsById(orderId)).thenReturn(false);
+
+        assertDoesNotThrow(() -> orderEventConsumer.consumeOrderEvent(
+                message, java.util.Map.of("eventId", UUID.randomUUID().toString())));
+
+        ArgumentCaptor<RestaurantOrder> captor = ArgumentCaptor.forClass(RestaurantOrder.class);
+        verify(actionService).saveOrder(captor.capture());
+        assertEquals("BLR", captor.getValue().getDispatchCityId());
+        assertEquals(5.0, captor.getValue().getFleetSearchRadiusKm());
+        assertEquals("123456", captor.getValue().getPickupOtp());
+        assertEquals("654321", captor.getValue().getDeliveryOtp());
     }
 
     @Test

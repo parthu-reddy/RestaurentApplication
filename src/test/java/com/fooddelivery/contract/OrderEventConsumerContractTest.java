@@ -1,6 +1,7 @@
 package com.fooddelivery.contract;
 
 import com.fooddelivery.common.contract.KafkaStubMessageSender;
+import com.fooddelivery.restaurant.config.DeliveryZoneConfig;
 import com.fooddelivery.restaurant.service.OrderEventConsumer;
 import com.fooddelivery.common.repository.IIdempotencyKeyRepository;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
@@ -46,7 +47,7 @@ class OrderEventConsumerContractTest {
     @org.springframework.boot.SpringBootConfiguration
     @org.springframework.boot.autoconfigure.EnableAutoConfiguration
     
-    @Import(OrderEventConsumer.class)
+    @Import({OrderEventConsumer.class, DeliveryZoneConfig.class})
     static class TestConfig {
         @Bean
         public MessageVerifierSender<Message<?>> kafkaStubMessageSender(KafkaTemplate<String, String> t) {
