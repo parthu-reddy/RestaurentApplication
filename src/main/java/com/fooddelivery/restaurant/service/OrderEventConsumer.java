@@ -226,6 +226,14 @@ private final ObjectMapper objectMapper;
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 
+    @lombok.Data
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties(ignoreUnknown = true)
+    private static class LegacyDispatchCheck {
+        private String dispatchCityId;
+        private Double fleetSearchRadiusKm;
+        private java.util.UUID orderId;
+    }
+
     private String normalizeLegacyDispatchScope(EventType type, JsonNode rootNode, String originalPayload)
             throws com.fasterxml.jackson.core.JsonProcessingException {
         if ((type != EventType.ORDER_PAID && type != EventType.ORDER_PLACED_COD)
@@ -233,10 +241,9 @@ private final ObjectMapper objectMapper;
             return originalPayload;
         }
 
-        JsonNode cityNode = rootNode.get("dispatchCityId");
-        JsonNode radiusNode = rootNode.get("fleetSearchRadiusKm");
-        boolean cityMissing = cityNode == null || !cityNode.isTextual() || cityNode.asText().isBlank();
-        boolean radiusMissing = radiusNode == null || !radiusNode.isNumber() || radiusNode.asDouble() <= 0;
+        LegacyDispatchCheck check = objectMapper.readValue(originalPayload, LegacyDispatchCheck.class);
+        boolean cityMissing = check.getDispatchCityId() == null || check.getDispatchCityId().isBlank();
+        boolean radiusMissing = check.getFleetSearchRadiusKm() == null || check.getFleetSearchRadiusKm() <= 0;
         if (!cityMissing && !radiusMissing) {
             return originalPayload;
         }
@@ -249,7 +256,7 @@ private final ObjectMapper objectMapper;
             normalized.put("fleetSearchRadiusKm", deliveryZoneConfig.getFleetSearchRadiusKm());
         }
         log.warn("Order {} predates dispatch-scope fields; supplied configured legacy defaults for cityMissing={} radiusMissing={}",
-                rootNode.path("orderId").asText("unknown"), cityMissing, radiusMissing);
+                check.getOrderId(), cityMissing, radiusMissing);
         return objectMapper.writeValueAsString(normalized);
     }
 
