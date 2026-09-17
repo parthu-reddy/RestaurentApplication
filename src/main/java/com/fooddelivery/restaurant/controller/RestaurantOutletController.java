@@ -252,7 +252,7 @@ public class RestaurantOutletController {
     }
 
     @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
     public ResponseEntity<ApiResponse<com.fooddelivery.common.dto.PageResponseDto<NearbyRestaurantDTO>>> getAllOutletsWithLocation(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "100") int size) {
