@@ -11,3 +11,4 @@ The RestaurantApplication manages the restaurant partner side of the Food Delive
 - **Restaurant Onboarding**: Allows owners to register their restaurant details.
 - **Catalog Management**: Provides CRUD operations for menus, categories, and master items.
 - **Order Fulfillment**: Allows restaurant staff to accept incoming orders and transition their state (e.g., from `RECEIVED` to `PREPARED`).
+
