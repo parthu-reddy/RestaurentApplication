@@ -56,7 +56,7 @@ private final CategoryService categoryService;
     }
 
     @PostMapping("/api/v1/brands/{brandId}/categories")
-    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
+    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name))")
     public ResponseEntity<ApiResponse<CategoryDTO>> createBrandCategory(@PathVariable UUID brandId, @Valid @RequestBody CategoryDTO categoryDTO) {
         CategoryDTO created = categoryService.createCategory(categoryDTO, brandId);
         return ResponseEntity.ok(ApiResponse.success(created, "Brand category created successfully"));
@@ -70,7 +70,7 @@ private final CategoryService categoryService;
     }
 
     @PostMapping("/api/v1/outlets/{outletId}/categories/timings")
-    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.principal))")
+    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.name))")
     public ResponseEntity<ApiResponse<List<TimingDTO>>> setOutletCategoryTimings(@PathVariable UUID outletId, @Valid @RequestBody SetOutletCategoryTimingRequest request) {
         List<TimingDTO> timings = outletCategoryTimingService.setTimings(outletId, request);
         return ResponseEntity.ok(ApiResponse.success(timings, "Outlet category timings set successfully"));
@@ -84,7 +84,7 @@ private final CategoryService categoryService;
     }
 
     @PostMapping("/api/v1/brands/{brandId}/categories/timings")
-    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.principal))")
+    @PreAuthorize("hasRole(\'ADMIN\') or (hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name))")
     public ResponseEntity<ApiResponse<List<TimingDTO>>> setBrandCategoryTimings(@PathVariable UUID brandId, @Valid @RequestBody SetBrandCategoryTimingRequest request) {
         List<TimingDTO> timings = brandCategoryTimingService.setTimings(brandId, request);
         return ResponseEntity.ok(ApiResponse.success(timings, "Brand category timings set successfully"));
