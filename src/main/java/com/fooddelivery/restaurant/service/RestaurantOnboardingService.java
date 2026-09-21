@@ -62,9 +62,11 @@ private static final String KEY_BRAND_ID = "brandId";
         if (cin != null && cin.length() != 21) {
             throw new IllegalArgumentException("Invalid CIN. Must be 21 characters.");
         }
-        Brand brand =  // Verified via async/service
-        // Verified via webhook
-        Brand.builder().id(UUID.randomUUID()).ownerId(ownerId).name(name).gstin(gstin).pan(pan).cin(cin).bankAccountNumber(bankAccountNumber).bankIfsc(ifscCode).logoUrl(logoUrl).isGstinVerified(false).isBankVerified(false).kycStatus(VerificationStatus.PENDING).pennyDropStatus(VerificationStatus.PENDING).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
+        boolean isDev = activeProfile != null && (activeProfile.contains("dev") || activeProfile.contains("test"));
+        VerificationStatus initialStatus = isDev ? VerificationStatus.VERIFIED : VerificationStatus.PENDING;
+        boolean initialVerified = isDev;
+
+        Brand brand = Brand.builder().id(UUID.randomUUID()).ownerId(ownerId).name(name).gstin(gstin).pan(pan).cin(cin).bankAccountNumber(bankAccountNumber).bankIfsc(ifscCode).logoUrl(logoUrl).isGstinVerified(initialVerified).isBankVerified(initialVerified).kycStatus(initialStatus).pennyDropStatus(initialStatus).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
         brand = brandRepository.save(brand);
         try {
             // Write to Outbox table within the same transaction for CDC/Kafka
