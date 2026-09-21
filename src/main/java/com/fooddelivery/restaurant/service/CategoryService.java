@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
 private final CategoryRepository categoryRepository;
 
-    @Cacheable(value = "categories", key = "#brandId != null ? #brandId.toString() : \'global\'")
+    @Cacheable(value = "categories", key = "#brandId != null ? #brandId.toString() : 'global'")
     public List<CategoryDTO> getActiveCategories(java.util.UUID brandId) {
         List<com.fooddelivery.restaurant.entity.Category> categories;
         if (brandId != null) {

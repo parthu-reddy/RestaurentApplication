@@ -11,7 +11,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/campaigns")
-@PreAuthorize("hasRole(\'RESTAURANT_OWNER\')")
+@PreAuthorize("hasRole('RESTAURANT_OWNER')")
 @lombok.extern.slf4j.Slf4j
 @lombok.RequiredArgsConstructor
 public class CampaignController {

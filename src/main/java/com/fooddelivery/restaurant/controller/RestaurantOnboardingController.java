@@ -36,7 +36,7 @@ private final RestaurantOnboardingService onboardingService;
 
     // Phase 1: Brand Onboarding
     @PostMapping("/api/v1/brands")
-    @PreAuthorize("hasRole(\'RESTAURANT\')")
+    @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<ApiResponse<Brand>> onboardBrand(java.security.Principal principal, @Valid @RequestBody BrandOnboardRequest request) {
         io.github.bucket4j.Bucket bucket = rateLimitingService.resolveBucket("onboarding_brand:" + (principal != null ? principal.getName() : "anonymous"), 5, 5, java.time.Duration.ofHours(1));
         if (!bucket.tryConsume(1)) {

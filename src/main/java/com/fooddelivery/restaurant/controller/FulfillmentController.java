@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/v1/restaurants/{restaurantId}/fulfillment")
-@PreAuthorize("hasRole(\'RESTAURANT\') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.name)")
+@PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.name)")
 @lombok.extern.slf4j.Slf4j
 @lombok.RequiredArgsConstructor
 public class FulfillmentController {
