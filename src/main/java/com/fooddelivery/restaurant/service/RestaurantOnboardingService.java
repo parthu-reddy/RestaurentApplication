@@ -152,6 +152,29 @@ private static final String KEY_BRAND_ID = "brandId";
         if (cache != null) {
             cache.evict(outletId);
         }
+
+        // CustomerApplication caches this outlet's details, prep default included, and uses the
+        // default as the floor on every new order's prep time. MENU_UPDATED is the event it
+        // already clears those caches on; without it a new default took up to the cache TTL.
+        // Same payload as CatalogService.notifyMenuUpdate.
+        try {
+            String payload = objectMapper.writeValueAsString(java.util.Map.of(
+                    "brandId", outlet.getBrandId().toString(),
+                    "type", "MENU_UPDATED",
+                    "timestamp", java.time.Instant.now().toString()));
+            outboxEventRepository.save(OutboxEventEntity.builder()
+                    .id(UUID.randomUUID())
+                    .aggregateId(outlet.getBrandId().toString())
+                    .aggregateType(AggregateType.BRAND)
+                    .eventType(EventType.MENU_UPDATED)
+                    .payload(payload)
+                    .status(OutboxStatus.UNPROCESSED)
+                    .createdAt(LocalDateTime.now())
+                    .retryCount(0)
+                    .build());
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new IllegalStateException("Failed to persist MENU_UPDATED outbox event for outlet " + outletId, e);
+        }
     }
 
     @org.springframework.transaction.annotation.Transactional
