@@ -1646,6 +1646,36 @@
         }
       }
     },
+    "/api/v1/internal/restaurants/outlets/{outletId}/invoice-details" : {
+      "get" : {
+        "tags" : [ "internal-restaurant-controller" ],
+        "operationId" : "getInvoiceDetails",
+        "parameters" : [ {
+          "name" : "outletId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/internal/restaurants/outlets/{outletId}/exists" : {
       "get" : {
         "tags" : [ "internal-restaurant-controller" ],

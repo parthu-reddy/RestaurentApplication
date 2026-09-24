@@ -64,6 +64,28 @@ public class InternalRestaurantController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * What a customer's tax invoice names as the supplier: the legal entity behind the outlet,
+     * its GSTIN (with whether it was verified) and the outlet's FSSAI licence. CustomerApplication
+     * snapshots this once, when it issues the invoice, so a later edit here never changes an
+     * invoice already issued.
+     */
+    @GetMapping("/outlets/{outletId}/invoice-details")
+    public ResponseEntity<Map<String, Object>> getInvoiceDetails(@PathVariable UUID outletId) {
+        return outletRepository.findById(outletId)
+                .flatMap(outlet -> brandRepository.findById(outlet.getBrandId()).map(brand -> {
+                    Map<String, Object> details = new java.util.LinkedHashMap<>();
+                    details.put("outletName", outlet.getName());
+                    details.put("brandName", brand.getName());
+                    details.put("legalEntityName", brand.getLegalEntityName() != null ? brand.getLegalEntityName() : brand.getName());
+                    details.put("gstin", brand.getGstin());
+                    details.put("gstinVerified", Boolean.TRUE.equals(brand.getIsGstinVerified()));
+                    details.put("fssaiLicenseNumber", outlet.getFssaiLicenseNumber());
+                    return ResponseEntity.ok(details);
+                }))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PostMapping("/outlets/summaries")
     public ResponseEntity<List<Map<String, String>>> getOutletSummaries(@RequestBody List<UUID> outletIds) {
         List<Map<String, String>> summaries = outletRepository.findAllById(outletIds).stream()
