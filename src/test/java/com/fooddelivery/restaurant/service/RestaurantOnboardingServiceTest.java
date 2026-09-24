@@ -41,6 +41,9 @@ class RestaurantOnboardingServiceTest {
     @Spy
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    @Mock
+    private org.springframework.cache.CacheManager cacheManager;
+
     @InjectMocks
     private RestaurantOnboardingService restaurantOnboardingService;
 
@@ -112,5 +115,26 @@ class RestaurantOnboardingServiceTest {
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
                 brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag"
         ));
+    }
+
+    @Test
+    void updateOutletSettings_tellsCustomerAppToDropItsCachedOutlet() {
+        // CustomerApplication floors every new order's prep time at this default and caches the
+        // outlet; MENU_UPDATED for the brand is what clears that cache.
+        UUID outletId = UUID.randomUUID();
+        UUID brandId = UUID.randomUUID();
+        Outlet outlet = Outlet.builder().id(outletId).brandId(brandId).defaultPrepTimeSeconds(900).build();
+        when(outletRepository.findById(outletId)).thenReturn(Optional.of(outlet));
+
+        restaurantOnboardingService.updateOutletSettings(outletId, 1500);
+
+        assertEquals(1500, outlet.getDefaultPrepTimeSeconds());
+        org.mockito.ArgumentCaptor<com.fooddelivery.common.outbox.entity.OutboxEventEntity> event =
+                org.mockito.ArgumentCaptor.forClass(com.fooddelivery.common.outbox.entity.OutboxEventEntity.class);
+        verify(outboxEventRepository).save(event.capture());
+        assertEquals(com.fooddelivery.common.constants.EventType.MENU_UPDATED, event.getValue().getEventType());
+        assertEquals(brandId.toString(), event.getValue().getAggregateId());
+        assertTrue(event.getValue().getPayload().contains("\"brandId\":\"" + brandId + "\""));
+        assertTrue(event.getValue().getPayload().contains("\"type\":\"MENU_UPDATED\""));
     }
 }
