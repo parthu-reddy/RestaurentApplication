@@ -10,7 +10,7 @@ import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
 import com.fooddelivery.restaurant.repository.OutletRepository;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 import io.micrometer.observation.annotation.Observed;
@@ -32,7 +32,7 @@ public class RestaurantActionService {
     public void publishEvent(String aggregateId, com.fooddelivery.common.constants.EventType eventType, Object eventPayload) {
         try {
             String payload = objectMapper.writeValueAsString(eventPayload);
-            OutboxEventEntity outboxEvent = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER).aggregateId(aggregateId).eventType(eventType).payload(payload).createdAt(LocalDateTime.now()).status(OutboxStatus.UNPROCESSED).build();
+            OutboxEventEntity outboxEvent = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(com.fooddelivery.common.constants.AggregateType.ORDER).aggregateId(aggregateId).eventType(eventType).payload(payload).createdAt(Instant.now()).status(OutboxStatus.UNPROCESSED).build();
             outboxEventRepository.save(outboxEvent);
             log.info("RESTAURANT_OUTBOX_EVENT_ENQUEUED eventId={} eventType={} aggregateId={}",
                     outboxEvent.getId(), eventType, aggregateId);

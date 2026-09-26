@@ -218,10 +218,11 @@ private final ObjectMapper objectMapper;
 
     @DltHandler
     public void handleDlt(String message, @org.springframework.messaging.handler.annotation.Headers java.util.Map<String, Object> headers) {
-        log.error("RESTAURANT_EVENT_DLT eventId={} eventType={} payloadBytes={}",
+        log.error("RESTAURANT_EVENT_DLT eventId={} eventType={} payloadBytes={} replay={}",
                 com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"),
                 com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventType"),
-                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
+                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length,
+                com.fooddelivery.common.util.KafkaHeaderUtils.deadLetterPosition(headers));
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 

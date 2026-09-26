@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -66,12 +66,12 @@ private static final String KEY_BRAND_ID = "brandId";
         VerificationStatus initialStatus = isDev ? VerificationStatus.VERIFIED : VerificationStatus.PENDING;
         boolean initialVerified = isDev;
 
-        Brand brand = Brand.builder().id(UUID.randomUUID()).ownerId(ownerId).name(name).gstin(gstin).pan(pan).cin(cin).bankAccountNumber(bankAccountNumber).bankIfsc(ifscCode).logoUrl(logoUrl).isGstinVerified(initialVerified).isBankVerified(initialVerified).kycStatus(initialStatus).pennyDropStatus(initialStatus).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
+        Brand brand = Brand.builder().id(UUID.randomUUID()).ownerId(ownerId).name(name).gstin(gstin).pan(pan).cin(cin).bankAccountNumber(bankAccountNumber).bankIfsc(ifscCode).logoUrl(logoUrl).isGstinVerified(initialVerified).isBankVerified(initialVerified).kycStatus(initialStatus).pennyDropStatus(initialStatus).createdAt(Instant.now()).updatedAt(Instant.now()).build();
         brand = brandRepository.save(brand);
         try {
             // Write to Outbox table within the same transaction for CDC/Kafka
-            Map<String, Object> payload = Map.of(KEY_BRAND_ID, brand.getId().toString(), KEY_BRAND_NAME, brand.getName(), KEY_GSTIN, brand.getGstin(), KEY_BANK_ACCOUNT_NUMBER, brand.getBankAccountNumber(), KEY_IFSC_CODE, brand.getBankIfsc(), KEY_TIMESTAMP, LocalDateTime.now().toString());
-            OutboxEventEntity event = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(AggregateType.BRAND).aggregateId(brand.getId().toString()).eventType(EventType.BRAND_CREATED).payload(objectMapper.writeValueAsString(payload)).status(OutboxStatus.UNPROCESSED).createdAt(LocalDateTime.now()).retryCount(0).build();
+            Map<String, Object> payload = Map.of(KEY_BRAND_ID, brand.getId().toString(), KEY_BRAND_NAME, brand.getName(), KEY_GSTIN, brand.getGstin(), KEY_BANK_ACCOUNT_NUMBER, brand.getBankAccountNumber(), KEY_IFSC_CODE, brand.getBankIfsc(), KEY_TIMESTAMP, Instant.now().toString());
+            OutboxEventEntity event = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(AggregateType.BRAND).aggregateId(brand.getId().toString()).eventType(EventType.BRAND_CREATED).payload(objectMapper.writeValueAsString(payload)).status(OutboxStatus.UNPROCESSED).createdAt(Instant.now()).retryCount(0).build();
             outboxEventRepository.save(event);
         } catch (Exception e) {
             log.error("Failed to serialize outbox event payload for Brand", e);
@@ -82,8 +82,12 @@ private static final String KEY_BRAND_ID = "brandId";
 
     // Phase 2: Outlet & Geospatial Setup
     @org.springframework.transaction.annotation.Transactional
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, java.math.BigDecimal deliveryFee, String tags) {
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, java.math.BigDecimal deliveryFee, String tags, String timeZone) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
+        // Checked here too, not only by @IanaTimeZone on the request: the MCP tool reads its JSON by hand.
+        if (!com.fooddelivery.common.time.IanaTimeZoneValidator.isRegionId(timeZone)) {
+            throw new IllegalArgumentException("timeZone must be an IANA zone id such as Asia/Kolkata, not '" + timeZone + "'");
+        }
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new IllegalArgumentException("Brand not found"));
         if (!brand.getIsGstinVerified() || !brand.getIsBankVerified()) {
             boolean isDev = activeProfile != null && activeProfile.contains("dev");
@@ -103,11 +107,11 @@ private static final String KEY_BRAND_ID = "brandId";
             locationPoint = geometryFactory.createPoint(new Coordinate(lng, lat));
         }
         // Use randomUUID which acts as the legacy restaurantId
-        Outlet outlet = Outlet.builder().id(UUID.randomUUID()).brandId(brand.getId()).name(name).fssaiLicenseNumber(fssai).location(locationPoint).bannerUrl(bannerUrl).cuisine(cuisine).rating(rating != null ? rating : 0.0).reviewsCount(reviewsCount != null ? reviewsCount : 0).deliveryTime(deliveryTime).deliveryFee(deliveryFee).tags(tags).isActive(true).defaultPrepTimeSeconds(900).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
+        Outlet outlet = Outlet.builder().id(UUID.randomUUID()).brandId(brand.getId()).name(name).fssaiLicenseNumber(fssai).location(locationPoint).bannerUrl(bannerUrl).cuisine(cuisine).rating(rating != null ? rating : 0.0).reviewsCount(reviewsCount != null ? reviewsCount : 0).deliveryTime(deliveryTime).deliveryFee(deliveryFee).tags(tags).timeZone(java.time.ZoneId.of(timeZone)).isActive(true).defaultPrepTimeSeconds(900).createdAt(Instant.now()).updatedAt(Instant.now()).build();
         List<com.fooddelivery.restaurant.entity.OutletTiming> timings = new java.util.ArrayList<>();
         if (timingsReq != null) {
             for (com.fooddelivery.restaurant.dto.TimingRequest tr : timingsReq) {
-                com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder().id(UUID.randomUUID()).outlet(outlet).openingTime(tr.getOpeningTime()).closingTime(tr.getClosingTime()).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
+                com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder().id(UUID.randomUUID()).outlet(outlet).openingTime(tr.getOpeningTime()).closingTime(tr.getClosingTime()).createdAt(Instant.now()).updatedAt(Instant.now()).build();
                 timings.add(timing);
             }
         }
@@ -119,12 +123,12 @@ private static final String KEY_BRAND_ID = "brandId";
     public void updateOutletStatus(UUID outletId, boolean isActive) {
         Outlet outlet = outletRepository.findById(outletId).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
         outlet.setIsActive(isActive);
-        outlet.setUpdatedAt(LocalDateTime.now());
+        outlet.setUpdatedAt(Instant.now());
         outletRepository.save(outlet);
         try {
             // Write to Outbox table within the same transaction for CDC/Kafka
-            Map<String, Object> payload = Map.of(KEY_OUTLET_ID, outletId.toString(), KEY_BRAND_ID, outlet.getBrandId().toString(), KEY_IS_ACTIVE, isActive, KEY_TIMESTAMP, LocalDateTime.now().toString());
-            OutboxEventEntity event = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(AggregateType.OUTLET).aggregateId(outletId.toString()).eventType(isActive ? EventType.OUTLET_ACTIVATED : EventType.OUTLET_DEACTIVATED).payload(objectMapper.writeValueAsString(payload)).status(OutboxStatus.UNPROCESSED).createdAt(LocalDateTime.now()).retryCount(0).build();
+            Map<String, Object> payload = Map.of(KEY_OUTLET_ID, outletId.toString(), KEY_BRAND_ID, outlet.getBrandId().toString(), KEY_IS_ACTIVE, isActive, KEY_TIMESTAMP, Instant.now().toString());
+            OutboxEventEntity event = OutboxEventEntity.builder().id(UUID.randomUUID()).aggregateType(AggregateType.OUTLET).aggregateId(outletId.toString()).eventType(isActive ? EventType.OUTLET_ACTIVATED : EventType.OUTLET_DEACTIVATED).payload(objectMapper.writeValueAsString(payload)).status(OutboxStatus.UNPROCESSED).createdAt(Instant.now()).retryCount(0).build();
             outboxEventRepository.save(event);
             
             // Proactively invalidate menu cache
@@ -144,7 +148,7 @@ private static final String KEY_BRAND_ID = "brandId";
         if (defaultPrepTimeSeconds != null && defaultPrepTimeSeconds > 0) {
             outlet.setDefaultPrepTimeSeconds(defaultPrepTimeSeconds);
         }
-        outlet.setUpdatedAt(LocalDateTime.now());
+        outlet.setUpdatedAt(Instant.now());
         outletRepository.save(outlet);
         
         // Proactively invalidate menu cache
@@ -169,7 +173,7 @@ private static final String KEY_BRAND_ID = "brandId";
                     .eventType(EventType.MENU_UPDATED)
                     .payload(payload)
                     .status(OutboxStatus.UNPROCESSED)
-                    .createdAt(LocalDateTime.now())
+                    .createdAt(Instant.now())
                     .retryCount(0)
                     .build());
         } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
@@ -183,11 +187,11 @@ private static final String KEY_BRAND_ID = "brandId";
         outlet.getTimings().clear();
         if (timingsReq != null) {
             for (com.fooddelivery.restaurant.dto.TimingRequest tr : timingsReq) {
-                com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder().id(UUID.randomUUID()).outlet(outlet).openingTime(tr.getOpeningTime()).closingTime(tr.getClosingTime()).createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
+                com.fooddelivery.restaurant.entity.OutletTiming timing = com.fooddelivery.restaurant.entity.OutletTiming.builder().id(UUID.randomUUID()).outlet(outlet).openingTime(tr.getOpeningTime()).closingTime(tr.getClosingTime()).createdAt(Instant.now()).updatedAt(Instant.now()).build();
                 outlet.getTimings().add(timing);
             }
         }
-        outlet.setUpdatedAt(LocalDateTime.now());
+        outlet.setUpdatedAt(Instant.now());
         outletRepository.save(outlet);
     }
 

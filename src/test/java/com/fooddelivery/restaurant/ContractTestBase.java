@@ -57,6 +57,7 @@ public abstract class ContractTestBase {
         outlet.setIsActive(Boolean.TRUE);
         outlet.setDefaultPrepTimeSeconds(900);
         outlet.setRating(4.5);
+        outlet.setTimeZone(java.time.ZoneId.of("Asia/Kolkata"));
 
         Mockito.when(outletRepository.findByOwnerId(any(UUID.class))).thenReturn(List.of(outlet));
         Mockito.when(outletRepository.findById(any())).thenReturn(Optional.of(outlet));
@@ -70,6 +71,7 @@ public abstract class ContractTestBase {
         brandOutlet.setIsActive(Boolean.TRUE);
         brandOutlet.setDefaultPrepTimeSeconds(900);
         brandOutlet.setRating(4.5);
+        brandOutlet.setTimeZone(java.time.ZoneId.of("Asia/Kolkata"));
         Mockito.when(onboardingService.getNearbyOutletsByBrand(any(UUID.class), anyDouble(), anyDouble(), anyDouble()))
                .thenReturn(List.of(brandOutlet));
         Mockito.when(onboardingService.getOutletById(any(UUID.class))).thenReturn(outlet);
@@ -96,7 +98,8 @@ public abstract class ContractTestBase {
         order.setStatus(OrderStatus.PREPARING);
         Mockito.when(orderRepository.findById(any(UUID.class))).thenReturn(Optional.of(order));
 
-        RestAssuredMockMvc.standaloneSetup(
+        // Serialize as production does: see PlatformJson (contract-harness Jackson drift).
+        com.fooddelivery.common.contract.PlatformJson.standaloneSetup(
                 new InternalRestaurantController(outletRepository,
                         Mockito.mock(com.fooddelivery.restaurant.repository.MasterMenuItemRepository.class),
                         brandRepository),

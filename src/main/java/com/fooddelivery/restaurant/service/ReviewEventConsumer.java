@@ -100,8 +100,9 @@ public class ReviewEventConsumer {
                 }
                 
                 com.fooddelivery.common.event.ReviewCreatedEvent event = eventBinder.bindIf(
-                        EventType.REVIEW_CREATED, eventType, message, com.fooddelivery.common.event.ReviewCreatedEvent.class).orElse(null);
-                if (event == null) return null;
+                        EventType.REVIEW_CREATED, eventType, message, com.fooddelivery.common.event.ReviewCreatedEvent.class)
+                        .orElseThrow(() -> new IllegalStateException(
+                                "bindIf returned empty for " + eventType + " despite an exact event-type match"));
 
                 String entityType = event.getEntityType();
                 if (!ENTITY_TYPE_RESTAURANT.equals(entityType)) {
@@ -154,10 +155,11 @@ public class ReviewEventConsumer {
 
     @DltHandler
     public void handleDlt(String message, @Headers java.util.Map<String, Object> headers) {
-        log.error("REVIEW_EVENT_DLT eventId={} eventType={} payloadBytes={}",
+        log.error("REVIEW_EVENT_DLT eventId={} eventType={} payloadBytes={} replay={}",
                 com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventId"),
                 com.fooddelivery.common.util.KafkaHeaderUtils.extractHeaderValue(headers, "eventType"),
-                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
+                message == null ? 0 : message.getBytes(java.nio.charset.StandardCharsets.UTF_8).length,
+                com.fooddelivery.common.util.KafkaHeaderUtils.deadLetterPosition(headers));
         meterRegistry.counter("kafka.dlt.messages", "service", "restaurant-application").increment();
     }
 

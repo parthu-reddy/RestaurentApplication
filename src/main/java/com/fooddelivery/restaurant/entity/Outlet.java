@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.locationtech.jts.geom.Point;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -57,10 +57,15 @@ public class Outlet {
     private java.math.BigDecimal deliveryFee;
     @Column(name = "tags")
     private String tags;
+    /** The IANA zone the outlet's opening hours are written in; every open/closed decision uses it. */
+    @Column(name = "time_zone", nullable = false)
+    @jakarta.persistence.Convert(converter = com.fooddelivery.common.time.ZoneIdConverter.class)
+    @Schema(requiredMode = RequiredMode.REQUIRED, type = "string", example = "Asia/Kolkata")
+    private java.time.ZoneId timeZone;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
     @jakarta.persistence.Version
     @Column(name = "version")
     private Integer version;

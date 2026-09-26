@@ -31,8 +31,8 @@ private final FulfillmentService fulfillmentService;
     }
 
     @org.springframework.web.bind.annotation.GetMapping("/orders/history")
-    public ResponseEntity<ApiResponse<com.fooddelivery.common.dto.PageResponseDto<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getHistoricalRestaurantOrders(@PathVariable UUID restaurantId, @org.springframework.web.bind.annotation.RequestParam(required = false) String date, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
-        org.springframework.data.domain.Page<com.fooddelivery.restaurant.entity.RestaurantOrder> historicalOrders = fulfillmentService.getHistoricalOrdersByRestaurant(restaurantId, date, page, size);
+    public ResponseEntity<ApiResponse<com.fooddelivery.common.dto.PageResponseDto<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getHistoricalRestaurantOrders(@PathVariable UUID restaurantId, @org.springframework.web.bind.annotation.RequestParam(required = false) java.time.Instant from, @org.springframework.web.bind.annotation.RequestParam(required = false) java.time.Instant to, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page, @org.springframework.web.bind.annotation.RequestParam(defaultValue = "10") int size) {
+        org.springframework.data.domain.Page<com.fooddelivery.restaurant.entity.RestaurantOrder> historicalOrders = fulfillmentService.getHistoricalOrdersByRestaurant(restaurantId, from, to, page, size);
         return ResponseEntity.ok(ApiResponse.success(com.fooddelivery.common.dto.PageResponseDto.of(historicalOrders), "Historical orders retrieved"));
     }
 

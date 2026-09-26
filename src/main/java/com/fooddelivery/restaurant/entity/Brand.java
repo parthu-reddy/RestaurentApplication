@@ -6,7 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import com.fooddelivery.common.enums.VerificationStatus;
 
@@ -57,9 +57,9 @@ public class Brand {
     @Column(name = "is_bank_verified")
     private Boolean isBankVerified;
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
     @jakarta.persistence.Version
     @Column(name = "version")
     private Integer version;

@@ -51,7 +51,7 @@ public abstract class BaseMessagingClass {
                 "gstin", "29ABCDE1234F1Z5",
                 "bankAccountNumber", "1234567890",
                 "ifscCode", "HDFC0001234",
-                "timestamp", java.time.LocalDateTime.now().toString());
+                "timestamp", java.time.Instant.now().toString());
         publishViaOutbox(com.fooddelivery.common.constants.AggregateType.BRAND, brandId,
                 com.fooddelivery.common.constants.EventType.BRAND_CREATED, payload);
     }
@@ -79,7 +79,7 @@ public abstract class BaseMessagingClass {
                         .payload(payloadObject instanceof String
                                 ? (String) payloadObject
                                 : objectMapper.writeValueAsString(payloadObject))
-                        .createdAt(java.time.LocalDateTime.now())
+                        .createdAt(java.time.Instant.now())
                         .build();
         com.fooddelivery.common.outbox.repository.OutboxEventRepository repo =
                 org.mockito.Mockito.mock(com.fooddelivery.common.outbox.repository.OutboxEventRepository.class);

@@ -8,7 +8,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.FetchType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.LocalTime;
 import java.util.UUID;
 
@@ -36,10 +36,10 @@ public class OutletTiming {
     private LocalTime closingTime;
     @Column(name = "created_at")
     @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
     @Column(name = "updated_at")
     @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
     @jakarta.persistence.Version
     @Column(name = "version")
     private Integer version;

@@ -89,10 +89,11 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         Outlet outlet = restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag"
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "Asia/Kolkata"
         );
 
         assertNotNull(outlet);
+        assertEquals(java.time.ZoneId.of("Asia/Kolkata"), outlet.getTimeZone());
         assertEquals(brandId, outlet.getBrandId());
         assertEquals("12345678901234", outlet.getFssaiLicenseNumber());
     }
@@ -113,8 +114,23 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag"
+                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "Asia/Kolkata"
         ));
+    }
+
+    /** An offset is not a zone: "+05:30" has no daylight-saving rules, so an outlet stored with one is wrong half the year wherever DST applies. */
+    @Test
+    void testOnboardOutlet_RefusesAnOffsetForATimeZone() {
+        // Refused before anything is looked up: no brand stub is needed.
+        UUID brandId = UUID.randomUUID();
+        com.fooddelivery.restaurant.dto.TimingRequest tr = new com.fooddelivery.restaurant.dto.TimingRequest();
+        tr.setOpeningTime(LocalTime.of(9, 0));
+        tr.setClosingTime(LocalTime.of(22, 0));
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "+05:30"
+        ));
+        org.junit.jupiter.api.Assertions.assertTrue(e.getMessage().contains("timeZone"), e.getMessage());
     }
 
     @Test

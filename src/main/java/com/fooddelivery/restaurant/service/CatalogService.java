@@ -13,8 +13,6 @@ import com.fooddelivery.restaurant.repository.BrandCategoryTimingRepository;
 import com.fooddelivery.restaurant.entity.Category;
 import com.fooddelivery.restaurant.entity.OutletCategoryTiming;
 import com.fooddelivery.restaurant.entity.BrandCategoryTiming;
-import java.time.LocalTime;
-import java.time.ZoneId;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
@@ -174,12 +172,11 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         Map<UUID, OutletMenuOverride> overrideMap = overrides.stream().collect(Collectors.toMap(OutletMenuOverride::getMasterMenuItemId, o -> o, (o1, o2) -> o1));
         Map<UUID, List<OutletCategoryTiming>> timingsByCategory = categoryTimings.stream().collect(Collectors.groupingBy(t -> t.getCategory().getId()));
         Map<UUID, List<BrandCategoryTiming>> brandTimingsByCategory = brandTimings.stream().collect(Collectors.groupingBy(t -> t.getCategory().getId()));
-        LocalTime now = LocalTime.now(ZoneId.of("Asia/Kolkata"));
+        // Category hours are wall-clock times in this outlet's zone. Brand-level hours apply in each
+        // outlet's own zone, so a brand's "breakfast 07:00-11:00" means 07:00 wherever the outlet is.
+        java.time.Instant now = java.time.Instant.now();
+        java.time.ZoneId zone = outlet.getTimeZone();
         return 
-        // Evaluate category timings
-        // cross-midnight
-        // cross-midnight
-        // Override to false if category is currently closed
         masterItems.stream().map(master -> {
             OutletMenuOverride override = overrideMap.get(master.getId());
             boolean isAvail = override != null && override.getIsAvailable() != null ? override.getIsAvailable() : true;
@@ -188,40 +185,10 @@ private final MasterMenuItemRepository masterMenuItemRepository;
                 boolean hasOutletTimings = timings != null && !timings.isEmpty();
                 boolean hasBrandTimings = brandTimingsByCategory.containsKey(master.getCategoryId()) && !brandTimingsByCategory.get(master.getCategoryId()).isEmpty();
                 if (hasOutletTimings || hasBrandTimings) {
-                    boolean categoryOpen = false;
-                    if (hasOutletTimings) {
-                        for (OutletCategoryTiming timing : timings) {
-                            LocalTime start = timing.getOpeningTime();
-                            LocalTime end = timing.getClosingTime();
-                            if (start.isBefore(end) || start.equals(end)) {
-                                if (!now.isBefore(start) && !now.isAfter(end)) {
-                                    categoryOpen = true;
-                                    break;
-                                }
-                            } else {
-                                if (!now.isBefore(start) || !now.isAfter(end)) {
-                                    categoryOpen = true;
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (hasBrandTimings) {
-                        for (BrandCategoryTiming timing : brandTimingsByCategory.get(master.getCategoryId())) {
-                            LocalTime start = timing.getOpeningTime();
-                            LocalTime end = timing.getClosingTime();
-                            if (start.isBefore(end) || start.equals(end)) {
-                                if (!now.isBefore(start) && !now.isAfter(end)) {
-                                    categoryOpen = true;
-                                    break;
-                                }
-                            } else {
-                                if (!now.isBefore(start) || !now.isAfter(end)) {
-                                    categoryOpen = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    // Outlet-specific hours win over the brand's.
+                    boolean categoryOpen = hasOutletTimings
+                            ? OpeningHours.isOpen(now, zone, timings, OutletCategoryTiming::getOpeningTime, OutletCategoryTiming::getClosingTime)
+                            : OpeningHours.isOpen(now, zone, brandTimingsByCategory.get(master.getCategoryId()), BrandCategoryTiming::getOpeningTime, BrandCategoryTiming::getClosingTime);
                     if (!categoryOpen) {
                         isAvail = false;
                     }

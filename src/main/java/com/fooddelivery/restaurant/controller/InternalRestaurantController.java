@@ -58,7 +58,9 @@ public class InternalRestaurantController {
                     return ResponseEntity.ok(Map.of(
                             "id", outlet.getId().toString(),
                             "name", outlet.getName(),
-                            "brandName", brandName
+                            "brandName", brandName,
+                            // CustomerApplication reads the outlet's earnings day, week and month in it.
+                            "timeZone", outlet.getTimeZone().getId()
                     ));
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -81,6 +83,8 @@ public class InternalRestaurantController {
                     details.put("gstin", brand.getGstin());
                     details.put("gstinVerified", Boolean.TRUE.equals(brand.getIsGstinVerified()));
                     details.put("fssaiLicenseNumber", outlet.getFssaiLicenseNumber());
+                    // The zone the supplier trades in: the invoice's date (and so its financial year) is read in it.
+                    details.put("timeZone", outlet.getTimeZone().getId());
                     return ResponseEntity.ok(details);
                 }))
                 .orElseGet(() -> ResponseEntity.notFound().build());

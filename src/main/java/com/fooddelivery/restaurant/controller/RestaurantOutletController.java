@@ -51,6 +51,7 @@ public class RestaurantOutletController {
                 .deliveryFee(outlet.getDeliveryFee())
                 .tags(outlet.getTags())
                 .timings(timingsDto)
+                .timeZone(outlet.getTimeZone() != null ? outlet.getTimeZone().getId() : null)
                 .build();
     }
 
@@ -65,7 +66,7 @@ public class RestaurantOutletController {
     @PostMapping("/api/v1/brands/{brandId}/outlets")
     @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
     public ResponseEntity<ApiResponse<OutletDto>> onboardOutlet(@PathVariable UUID brandId, @Valid @RequestBody OutletOnboardRequest request) {
-        Outlet outlet = onboardingService.onboardOutlet(brandId, request.getName(), request.getFssaiLicenseNumber(), request.getLat(), request.getLng(), request.getTimings(), request.getBannerUrl(), request.getCuisine(), request.getRating(), request.getReviewsCount(), request.getDeliveryTime(), request.getDeliveryFee(), request.getTags());
+        Outlet outlet = onboardingService.onboardOutlet(brandId, request.getName(), request.getFssaiLicenseNumber(), request.getLat(), request.getLng(), request.getTimings(), request.getBannerUrl(), request.getCuisine(), request.getRating(), request.getReviewsCount(), request.getDeliveryTime(), request.getDeliveryFee(), request.getTags(), request.getTimeZone());
         return ResponseEntity.ok(ApiResponse.success(toOutletDto(outlet), "Outlet onboarded successfully"));
     }
 
@@ -102,25 +103,9 @@ public class RestaurantOutletController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<NearbyRestaurantDTO>> getRestaurant(@PathVariable UUID id) {
         Outlet outlet = onboardingService.getOutletById(id);
-        boolean isOpen = false;
-        if (outlet.getTimings() != null && !outlet.getTimings().isEmpty()) {
-            java.time.LocalTime now = java.time.LocalTime.now(java.time.ZoneId.of("Asia/Kolkata"));
-            for (com.fooddelivery.restaurant.entity.OutletTiming timing : outlet.getTimings()) {
-                java.time.LocalTime start = timing.getOpeningTime();
-                java.time.LocalTime end = timing.getClosingTime();
-                if (start.isBefore(end) || start.equals(end)) {
-                    if (!now.isBefore(start) && !now.isAfter(end)) {
-                        isOpen = true;
-                        break;
-                    }
-                } else {
-                    if (!now.isBefore(start) || !now.isAfter(end)) {
-                        isOpen = true;
-                        break;
-                    }
-                }
-            }
-        }
+        boolean isOpen = com.fooddelivery.restaurant.service.OpeningHours.isOpen(java.time.Instant.now(), outlet.getTimeZone(),
+                outlet.getTimings(), com.fooddelivery.restaurant.entity.OutletTiming::getOpeningTime,
+                com.fooddelivery.restaurant.entity.OutletTiming::getClosingTime);
         Brand brand = onboardingService.getBrandById(outlet.getBrandId());
         NearbyRestaurantDTO dto = NearbyRestaurantDTO.builder()
                 .id(outlet.getId())

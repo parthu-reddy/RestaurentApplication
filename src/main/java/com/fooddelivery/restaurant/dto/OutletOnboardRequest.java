@@ -17,6 +17,10 @@ public class OutletOnboardRequest {
         private Double lng;
         @NotNull
         private List<TimingRequest> timings;
+        /** IANA zone the timings are written in, e.g. Asia/Kolkata. Offsets such as +05:30 are refused: they have no DST rules. */
+        @NotBlank
+        @com.fooddelivery.common.time.IanaTimeZone
+        private String timeZone;
         private String bannerUrl;
         private String cuisine;
         private Double rating;

@@ -84,15 +84,22 @@ private static final String DRIVER_FIELD_ID = "id";
         }
     }
 
-    public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, String date, int page, int size) {
+    /**
+     * The kitchen's past orders, optionally within {@code [from, to)}: a day the UI computed in the
+     * restaurant's zone. Both bounds or neither. TimezoneCorrectness_2026-09-25.
+     */
+    public org.springframework.data.domain.Page<RestaurantOrder> getHistoricalOrdersByRestaurant(UUID restaurantId, java.time.Instant from, java.time.Instant to, int page, int size) {
         int safeSize = Math.min(size, 100);
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, safeSize, org.springframework.data.domain.Sort.by(SORT_FIELD_CREATED_AT).descending());
-        java.time.LocalDateTime start = null;
-        java.time.LocalDateTime end = null;
-        if (date != null && !date.trim().isEmpty()) {
-            java.time.LocalDate localDate = java.time.LocalDate.parse(date);
-            start = localDate.atStartOfDay();
-            end = localDate.atTime(java.time.LocalTime.MAX);
+        if ((from == null) != (to == null)) {
+            throw new IllegalArgumentException("Give both from and to, or neither");
+        }
+        java.time.Instant start = null;
+        java.time.Instant end = null;
+        if (from != null) {
+            com.fooddelivery.common.time.TimeWindow window = new com.fooddelivery.common.time.TimeWindow(from, to);
+            start = window.from();
+            end = window.to();
         }
         org.springframework.data.domain.Page<RestaurantOrder> resultPage = restaurantOrderRepository.findHistoryOrdersByRestaurantId(restaurantId, CANCELLED_STATUSES, java.util.List.of(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED, com.fooddelivery.common.enums.DeliveryStatus.FAILED, com.fooddelivery.common.enums.DeliveryStatus.CANCELLED), start, end, pageable);
         populateDriverDetails(resultPage.getContent(), false);

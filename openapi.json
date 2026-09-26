@@ -157,41 +157,6 @@
         }
       }
     },
-    "/api/v1/campaigns/{campaignId}/pause" : {
-      "put" : {
-        "tags" : [ "campaign-controller" ],
-        "operationId" : "pauseCampaign",
-        "parameters" : [ {
-          "name" : "campaignId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        }, {
-          "name" : "restaurantId",
-          "in" : "query",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseCampaignDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/brands/{brandId}/master-menu/{itemId}" : {
       "put" : {
         "tags" : [ "catalog-controller" ],
@@ -806,34 +771,6 @@
         }
       }
     },
-    "/api/v1/campaigns" : {
-      "post" : {
-        "tags" : [ "campaign-controller" ],
-        "operationId" : "createCampaign",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CampaignRequestDto"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseCampaignDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/brands" : {
       "get" : {
         "tags" : [ "restaurant-onboarding-controller" ],
@@ -1178,11 +1115,20 @@
             "format" : "uuid"
           }
         }, {
-          "name" : "date",
+          "name" : "from",
           "in" : "query",
           "required" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "to",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }, {
           "name" : "page",
@@ -1769,33 +1715,6 @@
         }
       }
     },
-    "/api/v1/campaigns/restaurant/{restaurantId}" : {
-      "get" : {
-        "tags" : [ "campaign-controller" ],
-        "operationId" : "getCampaigns",
-        "parameters" : [ {
-          "name" : "restaurantId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListCampaignDto"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/brands/{brandId}/categories/{categoryId}/timings" : {
       "get" : {
         "tags" : [ "category-controller" ],
@@ -1999,59 +1918,6 @@
             "$ref" : "#/components/schemas/CategoryDTO"
           },
           "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "ApiResponseCampaignDto" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errorCode" : {
-            "type" : "string"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/CampaignDto"
-          },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "CampaignDto" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
-          "advertiserId" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "budget" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "status" : {
-            "type" : "string"
-          },
-          "startDate" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "endDate" : {
             "type" : "string",
             "format" : "date-time"
           }
@@ -2446,25 +2312,6 @@
           }
         }
       },
-      "CampaignRequestDto" : {
-        "type" : "object",
-        "properties" : {
-          "restaurantId" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "budget" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "status" : {
-            "type" : "string"
-          }
-        }
-      },
       "BrandOnboardRequest" : {
         "required" : [ "bankAccountNumber", "gstin", "ifscCode", "name", "pan" ],
         "type" : "object",
@@ -2582,7 +2429,7 @@
         }
       },
       "OutletOnboardRequest" : {
-        "required" : [ "fssaiLicenseNumber", "lat", "lng", "name", "timings" ],
+        "required" : [ "fssaiLicenseNumber", "lat", "lng", "name", "timeZone", "timings" ],
         "type" : "object",
         "properties" : {
           "name" : {
@@ -2604,6 +2451,9 @@
             "items" : {
               "$ref" : "#/components/schemas/TimingRequest"
             }
+          },
+          "timeZone" : {
+            "type" : "string"
           },
           "bannerUrl" : {
             "type" : "string"
@@ -2714,6 +2564,9 @@
             "items" : {
               "$ref" : "#/components/schemas/OutletTimingDto"
             }
+          },
+          "timeZone" : {
+            "type" : "string"
           }
         }
       },
@@ -3340,31 +3193,6 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/CategoryDTO"
-            }
-          },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "ApiResponseListCampaignDto" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errorCode" : {
-            "type" : "string"
-          },
-          "data" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CampaignDto"
             }
           },
           "timestamp" : {

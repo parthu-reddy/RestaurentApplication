@@ -106,6 +106,7 @@ public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
                 .brandId(UUID.randomUUID())
                 .name("Outlet One")
                 .fssaiLicenseNumber(duplicateFssai)
+                .timeZone(java.time.ZoneId.of("Asia/Kolkata"))
                 .build();
         outletRepository.save(outlet1);
 
@@ -114,6 +115,7 @@ public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
                 .brandId(UUID.randomUUID())
                 .name("Outlet Two")
                 .fssaiLicenseNumber(duplicateFssai) // Duplicate FSSAI
+                .timeZone(java.time.ZoneId.of("Asia/Kolkata"))
                 .build();
 
         assertThatThrownBy(() -> outletRepository.save(outlet2))

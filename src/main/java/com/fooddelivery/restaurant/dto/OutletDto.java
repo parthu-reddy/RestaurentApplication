@@ -25,4 +25,6 @@ public class OutletDto {
     private BigDecimal deliveryFee;
     private String tags;
     private List<OutletTimingDto> timings;
+    /** IANA zone the timings are in. */
+    private String timeZone;
 }
