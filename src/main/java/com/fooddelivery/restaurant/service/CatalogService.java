@@ -194,7 +194,7 @@ private final MasterMenuItemRepository masterMenuItemRepository;
                     }
                 }
             }
-            return MenuItemDTO.builder().id(master.getId()).restaurantId(outletId).name(master.getName()).description(master.getDescription()).price((override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice()).add(master.getPackingCharge() != null ? master.getPackingCharge() : java.math.BigDecimal.ZERO)).isAvailable(isAvail).prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes()).imageUrl(master.getImageUrl()).categoryId(master.getCategoryId()).categoryName(master.getCategoryId() != null ? categoryNames.get(master.getCategoryId()) : null).build();
+            return MenuItemDTO.builder().id(master.getId()).restaurantId(outletId).name(master.getName()).description(master.getDescription()).price((override != null && override.getOverriddenPrice() != null ? override.getOverriddenPrice() : master.getBasePrice()).add(master.getPackingCharge() != null ? master.getPackingCharge() : java.math.BigDecimal.ZERO)).isAvailable(isAvail).prepTimeMinutes(override != null && override.getOverriddenPrepTimeMinutes() != null ? override.getOverriddenPrepTimeMinutes() : master.getDefaultPrepTimeMinutes()).imageUrl(master.getImageUrl()).isVeg(master.getIsVeg()).categoryId(master.getCategoryId()).categoryName(master.getCategoryId() != null ? categoryNames.get(master.getCategoryId()) : null).build();
         }).collect(Collectors.toList());
     }
 
