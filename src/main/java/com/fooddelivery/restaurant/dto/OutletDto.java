@@ -15,6 +15,7 @@ public class OutletDto {
     private String fssaiLicenseNumber;
     private Double lat;
     private Double lng;
+    private String cityId;
     private String bannerUrl;
     private Boolean isActive;
     private Integer defaultPrepTimeSeconds;

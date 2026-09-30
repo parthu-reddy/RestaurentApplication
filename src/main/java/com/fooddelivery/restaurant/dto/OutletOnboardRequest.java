@@ -15,6 +15,11 @@ public class OutletOnboardRequest {
         private Double lat;
         @NotNull
         private Double lng;
+        /** Optional while the deployment has one fleet city; then the service supplies it. */
+        @jakarta.validation.constraints.Size(max = 64)
+        @com.fooddelivery.common.location.CityId
+        @jakarta.validation.constraints.Pattern(regexp = com.fooddelivery.common.location.CityIdValidator.REGEX)
+        private String cityId;
         @NotNull
         private List<TimingRequest> timings;
         /** IANA zone the timings are written in, e.g. Asia/Kolkata. Offsets such as +05:30 are refused: they have no DST rules. */

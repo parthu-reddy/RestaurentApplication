@@ -13,11 +13,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import org.springframework.validation.annotation.Validated;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
+@Validated
 public class RestaurantOutletController {
     private final RestaurantOnboardingService onboardingService;
 
@@ -41,6 +47,7 @@ public class RestaurantOutletController {
                 .fssaiLicenseNumber(outlet.getFssaiLicenseNumber())
                 .lat(outlet.getLocation() != null ? outlet.getLocation().getY() : null)
                 .lng(outlet.getLocation() != null ? outlet.getLocation().getX() : null)
+                .cityId(outlet.getCityId())
                 .bannerUrl(outlet.getBannerUrl())
                 .isActive(outlet.getIsActive())
                 .defaultPrepTimeSeconds(outlet.getDefaultPrepTimeSeconds())
@@ -66,7 +73,7 @@ public class RestaurantOutletController {
     @PostMapping("/api/v1/brands/{brandId}/outlets")
     @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
     public ResponseEntity<ApiResponse<OutletDto>> onboardOutlet(@PathVariable UUID brandId, @Valid @RequestBody OutletOnboardRequest request) {
-        Outlet outlet = onboardingService.onboardOutlet(brandId, request.getName(), request.getFssaiLicenseNumber(), request.getLat(), request.getLng(), request.getTimings(), request.getBannerUrl(), request.getCuisine(), request.getRating(), request.getReviewsCount(), request.getDeliveryTime(), request.getDeliveryFee(), request.getTags(), request.getTimeZone());
+        Outlet outlet = onboardingService.onboardOutlet(brandId, request.getName(), request.getFssaiLicenseNumber(), request.getLat(), request.getLng(), request.getTimings(), request.getBannerUrl(), request.getCuisine(), request.getRating(), request.getReviewsCount(), request.getDeliveryTime(), request.getDeliveryFee(), request.getTags(), request.getTimeZone(), request.getCityId());
         return ResponseEntity.ok(ApiResponse.success(toOutletDto(outlet), "Outlet onboarded successfully"));
     }
 
@@ -239,27 +246,42 @@ public class RestaurantOutletController {
     @GetMapping("/api/v1/internal/admin/restaurants/all-with-location")
     @PreAuthorize("hasAnyRole('ADMIN', 'SERVICE')")
     public ResponseEntity<ApiResponse<com.fooddelivery.common.dto.PageResponseDto<NearbyRestaurantDTO>>> getAllOutletsWithLocation(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "100") int size) {
-        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-        org.springframework.data.domain.Page<Outlet> outlets = onboardingService.getAllOutlets(pageable);
+            @RequestParam(required = false) @com.fooddelivery.common.location.CityId @Pattern(regexp = com.fooddelivery.common.location.CityIdValidator.REGEX) String cityId,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "100") @Min(1) @Max(100) int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, org.springframework.data.domain.Sort.by("id").ascending());
+        org.springframework.data.domain.Page<Outlet> outlets = onboardingService.getAllOutletsForFleetCity(cityId, pageable);
         
-        org.springframework.data.domain.Page<NearbyRestaurantDTO> responsePage = outlets.map(outlet -> {
-            NearbyRestaurantDTO dto = NearbyRestaurantDTO.builder()
-                .id(outlet.getId())
-                .name(outlet.getName())
-                .isActive(outlet.getIsActive())
-                .build();
-            if (outlet.getLocation() != null) {
-                dto.setLat(outlet.getLocation().getY());
-                dto.setLng(outlet.getLocation().getX());
-            } else {
-                dto.setLat(0.0);
-                dto.setLng(0.0);
-            }
-            return dto;
-        });
-        return ResponseEntity.ok(ApiResponse.success(com.fooddelivery.common.dto.PageResponseDto.of(responsePage), "All restaurants with locations fetched"));
+        // A missing point is not a location at (0,0). Keep the scoped source-page metadata so
+        // callers can continue through pages, but omit the unsafe fake pin from the map payload.
+        java.util.List<NearbyRestaurantDTO> locatedOutlets = outlets.getContent().stream()
+                .filter(outlet -> outlet.getLocation() != null)
+                .map(outlet -> NearbyRestaurantDTO.builder()
+                        .id(outlet.getId())
+                        .name(outlet.getName())
+                        .isActive(outlet.getIsActive())
+                        .cityId(outlet.getCityId())
+                        .lat(outlet.getLocation().getY())
+                        .lng(outlet.getLocation().getX())
+                        .build())
+                .toList();
+        // PageImpl normalizes a total down to the filtered content size when page size exceeds
+        // the total. Keep the source pagination metadata so callers can visit later source pages,
+        // while reporting the actual number of safe, drawable pins in this response.
+        com.fooddelivery.common.dto.PageResponseDto<NearbyRestaurantDTO> responsePage =
+                com.fooddelivery.common.dto.PageResponseDto.<NearbyRestaurantDTO>builder()
+                        .content(locatedOutlets)
+                        .totalElements(outlets.getTotalElements())
+                        .totalPages(outlets.getTotalPages())
+                        .last(outlets.isLast())
+                        .size(outlets.getSize())
+                        .number(outlets.getNumber())
+                        .first(outlets.isFirst())
+                        .numberOfElements(locatedOutlets.size())
+                        .empty(locatedOutlets.isEmpty())
+                        .build();
+        return ResponseEntity.ok(ApiResponse.success(responsePage, "All restaurants with locations fetched"));
     }
 }
 // @Getter

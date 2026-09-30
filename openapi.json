@@ -1683,10 +1683,19 @@
         "tags" : [ "restaurant-outlet-controller" ],
         "operationId" : "getAllOutletsWithLocation",
         "parameters" : [ {
+          "name" : "cityId",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "pattern" : "^[A-Z][A-Z0-9_-]{0,63}$",
+            "type" : "string"
+          }
+        }, {
           "name" : "page",
           "in" : "query",
           "required" : false,
           "schema" : {
+            "minimum" : 0,
             "type" : "integer",
             "format" : "int32",
             "default" : 0
@@ -1696,6 +1705,8 @@
           "in" : "query",
           "required" : false,
           "schema" : {
+            "maximum" : 100,
+            "minimum" : 1,
             "type" : "integer",
             "format" : "int32",
             "default" : 100
@@ -2446,6 +2457,12 @@
             "type" : "number",
             "format" : "double"
           },
+          "cityId" : {
+            "maxLength" : 64,
+            "minLength" : 0,
+            "pattern" : "^[A-Z][A-Z0-9_-]{0,63}$",
+            "type" : "string"
+          },
           "timings" : {
             "type" : "array",
             "items" : {
@@ -2527,6 +2544,9 @@
           "lng" : {
             "type" : "number",
             "format" : "double"
+          },
+          "cityId" : {
+            "type" : "string"
           },
           "bannerUrl" : {
             "type" : "string"
@@ -2923,6 +2943,9 @@
           "lng" : {
             "type" : "number",
             "format" : "double"
+          },
+          "cityId" : {
+            "type" : "string"
           },
           "distance" : {
             "type" : "number",

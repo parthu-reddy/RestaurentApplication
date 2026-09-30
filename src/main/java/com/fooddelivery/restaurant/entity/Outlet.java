@@ -35,6 +35,9 @@ public class Outlet {
     @JsonIgnore
     @Column(name = "location", columnDefinition = "geometry(Point, 4326)")
     private org.locationtech.jts.geom.Point location;
+    /** Canonical operating-area key. Display coordinates and time zone are not a fleet scope. */
+    @Column(name = "city_id", nullable = false, length = 64)
+    private String cityId;
     @Column(name = "banner_url")
     private String bannerUrl;
     @jakarta.persistence.OneToMany(mappedBy = "outlet", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true)

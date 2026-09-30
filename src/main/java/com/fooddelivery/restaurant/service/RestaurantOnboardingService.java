@@ -47,6 +47,8 @@ private static final String KEY_BRAND_ID = "brandId";
     private final org.springframework.cache.CacheManager cacheManager;
     @Value("${spring.profiles.active:}")
     private String activeProfile;
+    @Value("${platform.fleet.allowed-city-ids:BLR}")
+    private String allowedFleetCityIds = "BLR";
 
     // Phase 1: Brand & Financial Setup
     @org.springframework.transaction.annotation.Transactional
@@ -82,7 +84,7 @@ private static final String KEY_BRAND_ID = "brandId";
 
     // Phase 2: Outlet & Geospatial Setup
     @org.springframework.transaction.annotation.Transactional
-    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, java.math.BigDecimal deliveryFee, String tags, String timeZone) {
+    public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, java.math.BigDecimal deliveryFee, String tags, String timeZone, String requestedCityId) {
         log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
         // Checked here too, not only by @IanaTimeZone on the request: the MCP tool reads its JSON by hand.
         if (!com.fooddelivery.common.time.IanaTimeZoneValidator.isRegionId(timeZone)) {
@@ -101,13 +103,14 @@ private static final String KEY_BRAND_ID = "brandId";
         if (!isFssaiValid) {
             throw new IllegalArgumentException("Invalid FSSAI License.");
         }
+        String cityId = com.fooddelivery.common.location.FleetCityScope.resolve(requestedCityId, allowedFleetCityIds);
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         Point locationPoint = null;
         if (lat != null && lng != null) {
             locationPoint = geometryFactory.createPoint(new Coordinate(lng, lat));
         }
         // Use randomUUID which acts as the legacy restaurantId
-        Outlet outlet = Outlet.builder().id(UUID.randomUUID()).brandId(brand.getId()).name(name).fssaiLicenseNumber(fssai).location(locationPoint).bannerUrl(bannerUrl).cuisine(cuisine).rating(rating != null ? rating : 0.0).reviewsCount(reviewsCount != null ? reviewsCount : 0).deliveryTime(deliveryTime).deliveryFee(deliveryFee).tags(tags).timeZone(java.time.ZoneId.of(timeZone)).isActive(true).defaultPrepTimeSeconds(900).createdAt(Instant.now()).updatedAt(Instant.now()).build();
+        Outlet outlet = Outlet.builder().id(UUID.randomUUID()).brandId(brand.getId()).name(name).fssaiLicenseNumber(fssai).location(locationPoint).cityId(cityId).bannerUrl(bannerUrl).cuisine(cuisine).rating(rating != null ? rating : 0.0).reviewsCount(reviewsCount != null ? reviewsCount : 0).deliveryTime(deliveryTime).deliveryFee(deliveryFee).tags(tags).timeZone(java.time.ZoneId.of(timeZone)).isActive(true).defaultPrepTimeSeconds(900).createdAt(Instant.now()).updatedAt(Instant.now()).build();
         List<com.fooddelivery.restaurant.entity.OutletTiming> timings = new java.util.ArrayList<>();
         if (timingsReq != null) {
             for (com.fooddelivery.restaurant.dto.TimingRequest tr : timingsReq) {
@@ -224,6 +227,12 @@ private static final String KEY_BRAND_ID = "brandId";
 
     public org.springframework.data.domain.Page<Outlet> getAllOutlets(org.springframework.data.domain.Pageable pageable) {
         return outletRepository.findAll(pageable);
+    }
+
+    /** Administrative map data is scoped before pagination so pages never mix cities. */
+    public org.springframework.data.domain.Page<Outlet> getAllOutletsForFleetCity(String requestedCityId, org.springframework.data.domain.Pageable pageable) {
+        String cityId = com.fooddelivery.common.location.FleetCityScope.resolve(requestedCityId, allowedFleetCityIds);
+        return outletRepository.findByCityId(cityId, pageable);
     }
 
     public List<Outlet> getNearbyOutlets(double lat, double lng, double radiusInKm) {

@@ -18,6 +18,7 @@ public class NearbyRestaurantDTO {
     private Boolean isOpen;
     private Double lat;
     private Double lng;
+    private String cityId;
     private Double distance;
     private String image;
     private String cuisine;

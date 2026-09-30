@@ -89,13 +89,14 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         Outlet outlet = restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "Asia/Kolkata"
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "Asia/Kolkata", null
         );
 
         assertNotNull(outlet);
         assertEquals(java.time.ZoneId.of("Asia/Kolkata"), outlet.getTimeZone());
         assertEquals(brandId, outlet.getBrandId());
         assertEquals("12345678901234", outlet.getFssaiLicenseNumber());
+        assertEquals("BLR", outlet.getCityId());
     }
     
     @Test
@@ -114,7 +115,7 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "Asia/Kolkata"
+                brandId, "Test Outlet", "SHORT", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "Asia/Kolkata", null
         ));
     }
 
@@ -128,7 +129,7 @@ class RestaurantOnboardingServiceTest {
         tr.setClosingTime(LocalTime.of(22, 0));
 
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> restaurantOnboardingService.onboardOutlet(
-                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "+05:30"
+                brandId, "Test Outlet", "12345678901234", 12.9716, 77.5946, java.util.List.of(tr), null, "Cuisine", 4.5, 100, 30, java.math.BigDecimal.ZERO, "Tag", "+05:30", null
         ));
         org.junit.jupiter.api.Assertions.assertTrue(e.getMessage().contains("timeZone"), e.getMessage());
     }

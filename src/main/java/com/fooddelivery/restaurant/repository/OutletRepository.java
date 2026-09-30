@@ -6,9 +6,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @org.springframework.stereotype.Repository
 public interface OutletRepository extends org.springframework.data.jpa.repository.JpaRepository<Outlet, UUID> {
+    Page<Outlet> findByCityId(String cityId, Pageable pageable);
+
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"timings"})
     List<Outlet> findByBrandId(UUID brandId);
     
