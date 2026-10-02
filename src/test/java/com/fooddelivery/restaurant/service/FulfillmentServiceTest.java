@@ -53,6 +53,8 @@ class FulfillmentServiceTest {
         order.setOrderId(orderId);
         order.setRestaurantId(restaurantId);
         order.setStatus(OrderStatus.PREPARING);
+        // Finishing cooking early is allowed; the15min rule controls dispatch scheduling.
+        order.setEstimatedCompletionTime(System.currentTimeMillis() + 30 * 60_000L);
 
         // Tenant-scoped: FulfillmentService no longer has findById available to it, because
         // loading an order without its restaurant is what let one outlet drive another's orders.
@@ -61,5 +63,15 @@ class FulfillmentServiceTest {
 
 
         assertDoesNotThrow(() -> fulfillmentService.readyOrder(restaurantId, orderId));
+        org.assertj.core.api.Assertions.assertThat(order.getStatus()).isEqualTo(OrderStatus.READY_FOR_PICKUP);
+        verify(actionService).saveOrder(order);
+        ArgumentCaptor<com.fooddelivery.common.event.OrderReadyEvent> event = ArgumentCaptor.forClass(com.fooddelivery.common.event.OrderReadyEvent.class);
+        verify(actionService).publishEvent(eq(orderId.toString()), eq(com.fooddelivery.common.constants.EventType.ORDER_READY), event.capture());
+        org.assertj.core.api.Assertions.assertThat(event.getValue().getOrderId()).isEqualTo(orderId.toString());
+        org.assertj.core.api.Assertions.assertThat(event.getValue().getRestaurantId()).isEqualTo(restaurantId.toString());
+        org.junit.jupiter.api.Assertions.assertThrows(com.fooddelivery.common.exception.IllegalStateTransitionException.class,
+                () -> fulfillmentService.readyOrder(restaurantId, orderId));
+        verify(actionService, times(1)).saveOrder(order);
+        verify(actionService, times(1)).publishEvent(eq(orderId.toString()), eq(com.fooddelivery.common.constants.EventType.ORDER_READY), any(com.fooddelivery.common.event.OrderReadyEvent.class));
     }
 }
