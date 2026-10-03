@@ -24,6 +24,8 @@ public interface OutletRepository extends org.springframework.data.jpa.repositor
 
     @org.springframework.data.jpa.repository.Query("SELECT DISTINCT o FROM Outlet o, Brand b WHERE o.brandId = b.id AND b.organisationId IN :organisationIds")
     @org.springframework.data.jpa.repository.EntityGraph(attributePaths = {"timings"})
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @org.springframework.data.jpa.repository.QueryHints(@jakarta.persistence.QueryHint(name = "org.hibernate.readOnly", value = "true"))
     List<Outlet> findByOrganisationIdIn(@org.springframework.data.repository.query.Param("organisationIds") java.util.Collection<UUID> organisationIds);
 
     @org.springframework.data.jpa.repository.Query("SELECT new com.fooddelivery.common.dto.restaurant.OutletOrganisationDto(o.id,b.id,b.organisationId) FROM Outlet o, Brand b WHERE o.brandId = b.id AND o.id = :outletId")

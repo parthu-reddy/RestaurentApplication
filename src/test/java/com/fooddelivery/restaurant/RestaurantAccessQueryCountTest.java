@@ -49,6 +49,27 @@ class RestaurantAccessQueryCountTest {
     @Autowired BrandRepository brands;
     @Autowired OutletRepository outlets;
     @Autowired EntityManagerFactory factory;
+    @Autowired jakarta.persistence.EntityManager entityManager;
+    @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
+
+    @Test void bulkOutletReadsDoNotTrackEntitySnapshotsEvenInsideAWritableTransaction() {
+        UUID user = UUID.randomUUID();
+        var memberships = new ArrayList<MembershipDto>();
+        addOutlet(user, memberships);
+        when(organisations.getUserOrganisations(user)).thenReturn(List.copyOf(memberships));
+        var template = new org.springframework.transaction.support.TransactionTemplate(transactions);
+        UUID outletId = template.execute(status -> {
+            var result = service.getOutletsForUser(user, OrganisationPermission.ORG_VIEW);
+            assertEquals(1, result.size());
+            Outlet outlet = result.get(0);
+            var session = entityManager.unwrap(org.hibernate.Session.class);
+            assertTrue(session.isReadOnly(outlet), "List-only outlets must not allocate dirty-check snapshots");
+            assertTrue(session.isReadOnly(outlet.getTimings().get(0)), "Fetched timing rows are also read-only");
+            outlet.setName("A list read must not persist this accidental edit");
+            return outlet.getId();
+        });
+        assertEquals("Query outlet", outlets.findById(outletId).orElseThrow().getName());
+    }
 
     @Test void oneAndTwentyOrganisationsUseOneMembershipCallAndOneStatementWithTimingsLoaded() {
         UUID oneUser = UUID.randomUUID();
