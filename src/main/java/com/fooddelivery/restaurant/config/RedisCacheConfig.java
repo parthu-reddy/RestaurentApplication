@@ -54,7 +54,6 @@ public class RedisCacheConfig {
         // Domain-specific TTL configurations
         Map<String, RedisCacheConfiguration> initialCacheConfigs = new HashMap<>();
         initialCacheConfigs.put("categories", defaultConfig.entryTtl(Duration.ofHours(24)));
-        initialCacheConfigs.put("outletMenus", defaultConfig.entryTtl(Duration.ofMinutes(15)));
 
         // Create a non-locking cache writer wrapped in a dynamic proxy to inject randomized TTL jitter
         // This prevents cache stampedes (thundering herd) when bulk cached keys expire simultaneously
@@ -85,4 +84,3 @@ public class RedisCacheConfig {
                 .build();
     }
 }
-

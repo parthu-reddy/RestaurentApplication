@@ -20,8 +20,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.CacheEvict;
 import com.fooddelivery.common.outbox.repository.OutboxEventRepository;
 import com.fooddelivery.common.outbox.entity.OutboxEventEntity;
 import com.fooddelivery.common.constants.AggregateType;
@@ -38,9 +36,9 @@ private final MasterMenuItemRepository masterMenuItemRepository;
     private final CategoryRepository categoryRepository;
     private final OutletCategoryTimingRepository outletCategoryTimingRepository;
     private final BrandCategoryTimingRepository brandCategoryTimingRepository;
-    private final org.springframework.cache.CacheManager cacheManager;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
+    private final java.time.Clock clock;
     @org.springframework.beans.factory.annotation.Autowired
     @org.springframework.context.annotation.Lazy
     private CatalogService self;
@@ -68,16 +66,6 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         }
     }
 
-    private void evictOutletMenusForBrand(UUID brandId) {
-        org.springframework.cache.Cache cache = cacheManager.getCache("outletMenus");
-        if (cache != null) {
-            List<Outlet> outlets = outletRepository.findByBrandId(brandId);
-            for (Outlet outlet : outlets) {
-                cache.evict(outlet.getId());
-            }
-        }
-    }
-
     @Transactional
     public MasterMenuItem addMasterMenuItem(UUID brandId, MasterMenuItem item) {
         if (item.getCategoryId() != null) {
@@ -97,7 +85,6 @@ private final MasterMenuItemRepository masterMenuItemRepository;
             item.setPackingCharge(java.math.BigDecimal.ZERO);
         }
         MasterMenuItem savedItem = masterMenuItemRepository.save(item);
-        evictOutletMenusForBrand(brandId);
         notifyMenuUpdate(brandId);
         return savedItem;
     }
@@ -127,13 +114,11 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         if (updatedItem.getPackingCharge() != null) existingItem.setPackingCharge(updatedItem.getPackingCharge());
         if (updatedItem.getDefaultPrepTimeMinutes() != null) existingItem.setDefaultPrepTimeMinutes(updatedItem.getDefaultPrepTimeMinutes());
         MasterMenuItem savedItem = masterMenuItemRepository.save(existingItem);
-        evictOutletMenusForBrand(brandId);
         notifyMenuUpdate(brandId);
         return savedItem;
     }
 
     @Transactional
-    @CacheEvict(value = "outletMenus", key = "#outletId")
     public OutletMenuOverride addOrUpdateOverride(UUID outletId, UUID masterMenuItemId, OutletMenuOverride override) {
         Outlet outlet = requireItemAtOutlet(outletId, masterMenuItemId);
         Optional<OutletMenuOverride> existing = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId);
@@ -155,7 +140,6 @@ private final MasterMenuItemRepository masterMenuItemRepository;
     }
 
     @Transactional
-    @CacheEvict(value = "outletMenus", key = "#outletId")
     public OutletMenuOverride toggleStock(UUID outletId, UUID masterMenuItemId, boolean inStock) {
         Outlet outlet = requireItemAtOutlet(outletId, masterMenuItemId);
         OutletMenuOverride target = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId)
@@ -183,9 +167,10 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         return outletMenuOverrideRepository.findByOutletId(outletId);
     }
 
-    // Resolves the effective menu for an outlet (Master items + Overrides)
+    // Stock, prices and opening hours are current facts. Caching the derived availability for
+    // fifteen minutes served open categories after closing and delayed fresh stock readback.
+    // Each read uses bulk queries, independent of the number of items, and the outlet's clock.
     @Transactional(readOnly = true)
-    @Cacheable(value = "outletMenus", key = "#outletId", sync = true)
     public List<MenuItemDTO> getEffectiveMenuForOutlet(UUID outletId) {
         Outlet outlet = outletRepository.findById(outletId).orElseThrow(() -> new IllegalArgumentException("Outlet not found"));
         List<MasterMenuItem> masterItems = masterMenuItemRepository.findByBrandId(outlet.getBrandId());
@@ -199,7 +184,7 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         Map<UUID, List<BrandCategoryTiming>> brandTimingsByCategory = brandTimings.stream().collect(Collectors.groupingBy(t -> t.getCategory().getId()));
         // Category hours are wall-clock times in this outlet's zone. Brand-level hours apply in each
         // outlet's own zone, so a brand's "breakfast 07:00-11:00" means 07:00 wherever the outlet is.
-        java.time.Instant now = java.time.Instant.now();
+        java.time.Instant now = clock.instant();
         java.time.ZoneId zone = outlet.getTimeZone();
         return 
         masterItems.stream().map(master -> {

@@ -17,7 +17,7 @@ class CatalogStockToggleTest {
     OutboxEventRepository outbox=mock(OutboxEventRepository.class);
     CatalogService service=new CatalogService(menu,overrides,outlets,mock(CategoryRepository.class),
             mock(OutletCategoryTimingRepository.class),mock(BrandCategoryTimingRepository.class),
-            mock(org.springframework.cache.CacheManager.class),outbox,new ObjectMapper());
+            outbox,new ObjectMapper(),java.time.Clock.systemUTC());
     UUID outlet=UUID.randomUUID(),item=UUID.randomUUID(),brand=UUID.randomUUID();
     @Test void stockSwitchPreservesExistingPriceAndPreparationTime() {
         when(outlets.findById(outlet)).thenReturn(Optional.of(Outlet.builder().id(outlet).brandId(brand).build()));

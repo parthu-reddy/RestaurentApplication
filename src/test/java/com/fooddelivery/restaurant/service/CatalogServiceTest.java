@@ -47,6 +47,9 @@ class CatalogServiceTest {
     @Mock
     private BrandCategoryTimingRepository brandCategoryTimingRepository;
 
+    @org.mockito.Spy
+    private java.time.Clock clock = java.time.Clock.systemUTC();
+
     @InjectMocks
     private CatalogService catalogService;
 
