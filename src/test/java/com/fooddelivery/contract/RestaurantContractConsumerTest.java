@@ -68,17 +68,15 @@ public class RestaurantContractConsumerTest {
 
     @Test
     public void testGetDriverById() {
-        org.springframework.http.ResponseEntity<Map<String, Object>> response = deliveryClient.getDriverById(
+        org.springframework.http.ResponseEntity<Map<String, String>> response = deliveryClient.getDriverById(
                 java.util.UUID.fromString("123e4567-e89b-12d3-a456-426614174000"));
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
-        // DeliveryExecutive serialises fullName, not name, and DeliveryExecutiveStatus is
-        // OFFLINE | ONLINE | ON_DELIVERY -- there is no AVAILABLE. The contract has been correct
-        // since 2026-08-20; these assertions had not caught up.
+        // The service summary contains only the identity and name used by fulfilment.
         assertEquals("Test Driver", response.getBody().get("fullName"));
-        assertEquals("ONLINE", response.getBody().get("status"));
+        assertEquals(java.util.Set.of("id", "fullName"), response.getBody().keySet());
     }
 
     @Test
@@ -86,13 +84,14 @@ public class RestaurantContractConsumerTest {
         java.util.List<java.util.UUID> ids = java.util.Arrays.asList(
                 java.util.UUID.fromString("123e4567-e89b-12d3-a456-426614174000")
         );
-        org.springframework.http.ResponseEntity<java.util.List<Map<String, Object>>> response = deliveryClient.getDriversByIds(ids);
+        org.springframework.http.ResponseEntity<java.util.List<Map<String, String>>> response = deliveryClient.getDriversByIds(ids);
 
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().size());
         assertEquals("Test Driver", response.getBody().get(0).get("fullName"));
+        assertEquals(java.util.Set.of("id", "fullName"), response.getBody().get(0).keySet());
     }
 
 

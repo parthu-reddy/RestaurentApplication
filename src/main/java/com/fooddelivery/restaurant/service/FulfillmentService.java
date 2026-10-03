@@ -17,9 +17,8 @@ import java.util.UUID;
 @lombok.extern.slf4j.Slf4j
 @lombok.RequiredArgsConstructor
 public class FulfillmentService {
-private static final String DRIVER_FIELD_ID = "id";
+    private static final String DRIVER_FIELD_ID = "id";
     private static final String DRIVER_FIELD_FULL_NAME = "fullName";
-    private static final String DRIVER_FIELD_PHONE_NUMBER = "phoneNumber";
     private static final String SORT_FIELD_CREATED_AT = "createdAt";
     private final OutletRepository outletRepository;
     private final RestaurantOrderRepository restaurantOrderRepository;
@@ -47,11 +46,11 @@ private static final String DRIVER_FIELD_ID = "id";
 
     public java.util.List<RestaurantOrder> getActiveOrdersByRestaurant(UUID restaurantId) {
         java.util.List<RestaurantOrder> orders = restaurantOrderRepository.findActiveOrdersByRestaurantId(restaurantId, CANCELLED_STATUSES, java.util.List.of(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED, com.fooddelivery.common.enums.DeliveryStatus.FAILED, com.fooddelivery.common.enums.DeliveryStatus.CANCELLED));
-        populateDriverDetails(orders, true);
+        populateDriverDetails(orders);
         return orders;
     }
 
-    private void populateDriverDetails(Iterable<RestaurantOrder> orders, boolean includePhone) {
+    private void populateDriverDetails(Iterable<RestaurantOrder> orders) {
         java.util.Set<UUID> driverIds = new java.util.HashSet<>();
         for (RestaurantOrder order : orders) {
             if (order.getDeliveryExecutiveId() != null) {
@@ -60,17 +59,17 @@ private static final String DRIVER_FIELD_ID = "id";
         }
         if (driverIds.isEmpty()) return;
         try {
-            org.springframework.http.ResponseEntity<java.util.List<java.util.Map<String, Object>>> response = deliveryClient.getDriversByIds(new java.util.ArrayList<>(driverIds));
+            org.springframework.http.ResponseEntity<java.util.List<java.util.Map<String, String>>> response = deliveryClient.getDriversByIds(new java.util.ArrayList<>(driverIds));
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                java.util.Map<String, java.util.Map<String, Object>> driverMap = new java.util.HashMap<>();
-                for (java.util.Map<String, Object> driver : response.getBody()) {
+                java.util.Map<String, java.util.Map<String, String>> driverMap = new java.util.HashMap<>();
+                for (java.util.Map<String, String> driver : response.getBody()) {
                     if (driver.containsKey(DRIVER_FIELD_ID)) {
                         driverMap.put(driver.get(DRIVER_FIELD_ID).toString(), driver);
                     }
                 }
                 for (RestaurantOrder order : orders) {
                     if (order.getDeliveryExecutiveId() != null) {
-                        java.util.Map<String, Object> driver = driverMap.get(order.getDeliveryExecutiveId().toString());
+                        java.util.Map<String, String> driver = driverMap.get(order.getDeliveryExecutiveId().toString());
                         if (driver != null) {
                             if (driver.containsKey(DRIVER_FIELD_FULL_NAME)) {
                                 order.setRiderName(driver.get(DRIVER_FIELD_FULL_NAME).toString());
@@ -102,7 +101,7 @@ private static final String DRIVER_FIELD_ID = "id";
             end = window.to();
         }
         org.springframework.data.domain.Page<RestaurantOrder> resultPage = restaurantOrderRepository.findHistoryOrdersByRestaurantId(restaurantId, CANCELLED_STATUSES, java.util.List.of(com.fooddelivery.common.enums.DeliveryStatus.DELIVERED, com.fooddelivery.common.enums.DeliveryStatus.FAILED, com.fooddelivery.common.enums.DeliveryStatus.CANCELLED), start, end, pageable);
-        populateDriverDetails(resultPage.getContent(), false);
+        populateDriverDetails(resultPage.getContent());
         return resultPage;
     }
 

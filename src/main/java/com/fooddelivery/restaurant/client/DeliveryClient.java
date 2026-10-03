@@ -11,9 +11,11 @@ import java.util.Map;
 @FeignClient(name = "delivery-service", fallback = DeliveryClientFallback.class)
 public interface DeliveryClient {
 
-    @GetMapping("/api/v1/internal/admin/delivery/drivers/{driverId}")
-    ResponseEntity<Map<String, Object>> getDriverById(@PathVariable("driverId") UUID driverId);
+    // Fulfilment needs a display name, not an admin driver profile. Internal calls are signed
+    // with SERVICE identity and use the existing service-only summaries.
+    @GetMapping("/api/v1/internal/drivers/{driverId}")
+    ResponseEntity<Map<String, String>> getDriverById(@PathVariable("driverId") UUID driverId);
 
-    @org.springframework.web.bind.annotation.PostMapping("/api/v1/internal/admin/delivery/drivers/batch")
-    ResponseEntity<java.util.List<Map<String, Object>>> getDriversByIds(@org.springframework.web.bind.annotation.RequestBody java.util.List<UUID> driverIds);
+    @org.springframework.web.bind.annotation.PostMapping("/api/v1/internal/drivers/summaries")
+    ResponseEntity<java.util.List<Map<String, String>>> getDriversByIds(@org.springframework.web.bind.annotation.RequestBody java.util.List<UUID> driverIds);
 }

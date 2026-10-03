@@ -74,4 +74,33 @@ class FulfillmentServiceTest {
         verify(actionService, times(1)).saveOrder(order);
         verify(actionService, times(1)).publishEvent(eq(orderId.toString()), eq(com.fooddelivery.common.constants.EventType.ORDER_READY), any(com.fooddelivery.common.event.OrderReadyEvent.class));
     }
+
+    @Test
+    void historyEnrichesAllOrdersWithOneDeduplicatedMinimalSummaryRequest() {
+        UUID outlet = UUID.randomUUID(), driver = UUID.randomUUID();
+        var orders = java.util.stream.IntStream.range(0, 20).mapToObj(i -> {
+            var order = new RestaurantOrder();
+            order.setDeliveryExecutiveId(driver);
+            return order;
+        }).toList();
+        when(restaurantOrderRepository.findHistoryOrdersByRestaurantId(eq(outlet), anyList(), anyList(),
+                isNull(), isNull(), any())).thenReturn(new org.springframework.data.domain.PageImpl<>(orders));
+        when(deliveryClient.getDriversByIds(java.util.List.of(driver))).thenReturn(
+                org.springframework.http.ResponseEntity.ok(java.util.List.of(java.util.Map.of(
+                        "id", driver.toString(), "fullName", "Test Driver"))));
+        var history = fulfillmentService.getHistoricalOrdersByRestaurant(outlet, null, null, 0, 20);
+        org.assertj.core.api.Assertions.assertThat(history.getContent())
+                .allSatisfy(order -> org.assertj.core.api.Assertions.assertThat(order.getRiderName()).isEqualTo("Test Driver"));
+        verify(deliveryClient, times(1)).getDriversByIds(java.util.List.of(driver));
+        verifyNoMoreInteractions(deliveryClient);
+    }
+
+    @Test
+    void anUnassignedActiveQueueDoesNotRequestDriverProfiles() {
+        UUID outlet = UUID.randomUUID();
+        when(restaurantOrderRepository.findActiveOrdersByRestaurantId(eq(outlet), anyList(), anyList()))
+                .thenReturn(java.util.List.of(new RestaurantOrder()));
+        org.assertj.core.api.Assertions.assertThat(fulfillmentService.getActiveOrdersByRestaurant(outlet)).hasSize(1);
+        verifyNoInteractions(deliveryClient);
+    }
 }
