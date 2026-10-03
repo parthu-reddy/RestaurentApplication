@@ -6,6 +6,7 @@ import com.fooddelivery.common.enums.*;
 import com.fooddelivery.restaurant.entity.*;
 import com.fooddelivery.restaurant.repository.*;
 import com.fooddelivery.restaurant.service.RestaurantOnboardingService;
+import com.fooddelivery.restaurant.service.RestaurantMemberships;
 import jakarta.persistence.EntityManagerFactory;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class RestaurantAccessQueryCountTest {
         @Bean RestaurantOnboardingService onboarding(BrandRepository brands, OutletRepository outlets, OrganisationServiceClient orgs) {
             return new RestaurantOnboardingService(brands, outlets,
                     mock(com.fooddelivery.common.outbox.repository.OutboxEventRepository.class),
-                    new com.fasterxml.jackson.databind.ObjectMapper(), mock(org.springframework.cache.CacheManager.class), orgs);
+                    new com.fasterxml.jackson.databind.ObjectMapper(), mock(org.springframework.cache.CacheManager.class), new RestaurantMemberships(orgs));
         }
     }
     @MockBean OrganisationServiceClient organisations;
@@ -50,15 +51,19 @@ class RestaurantAccessQueryCountTest {
     @Autowired EntityManagerFactory factory;
 
     @Test void oneAndTwentyOrganisationsUseOneMembershipCallAndOneStatementWithTimingsLoaded() {
-        UUID user = UUID.randomUUID();
-        var memberships = new ArrayList<MembershipDto>();
-        addOutlet(user, memberships);
-        long one = statements(user, memberships, 1);
-        for (int i=1; i<20; i++) { addOutlet(user, memberships); }
-        long twenty = statements(user, memberships, 20);
+        UUID oneUser = UUID.randomUUID();
+        var oneMembership = new ArrayList<MembershipDto>();
+        addOutlet(oneUser, oneMembership);
+        long one = statements(oneUser, oneMembership, 1);
+        // Independently cold users preserve the network/query comparison after snapshot caching.
+        UUID twentyUser = UUID.randomUUID();
+        var twentyMemberships = new ArrayList<MembershipDto>();
+        for (int i=0; i<20; i++) { addOutlet(twentyUser, twentyMemberships); }
+        long twenty = statements(twentyUser, twentyMemberships, 20);
         assertEquals(1, one);
         assertEquals(one, twenty, "Membership count must not introduce per-brand queries");
-        verify(organisations, times(2)).getUserOrganisations(user);
+        verify(organisations).getUserOrganisations(oneUser);
+        verify(organisations).getUserOrganisations(twentyUser);
     }
 
     private void addOutlet(UUID user, List<MembershipDto> memberships) {

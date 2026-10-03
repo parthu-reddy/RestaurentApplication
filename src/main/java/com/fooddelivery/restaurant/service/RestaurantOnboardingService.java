@@ -45,7 +45,7 @@ private static final String KEY_BRAND_ID = "brandId";
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
     private final org.springframework.cache.CacheManager cacheManager;
-    private final com.fooddelivery.common.client.OrganisationServiceClient organisationClient;
+    private final RestaurantMemberships restaurantMemberships;
     @Value("${spring.profiles.active:}")
     private String activeProfile;
     @Value("${platform.fleet.allowed-city-ids:BLR}")
@@ -263,11 +263,11 @@ private static final String KEY_BRAND_ID = "brandId";
         return ids.isEmpty() ? List.of() : outletRepository.findByOrganisationIdIn(ids);
     }
 
-    /** Exactly one membership call and one IN query, irrespective of organisation count. */
+    /** At most one bulk membership lookup and one IN query, irrespective of organisation count. */
     private List<UUID> organisationsForUser(UUID userId, com.fooddelivery.common.enums.OrganisationPermission permission) {
         if (userId == null || permission == null) { return List.of(); }
         try {
-            var memberships = organisationClient.getUserOrganisations(userId);
+            var memberships = restaurantMemberships.forUser(userId);
             if (memberships == null) { throw new IllegalStateException("Missing membership response"); }
             return memberships.stream().filter(java.util.Objects::nonNull)
                 .filter(m -> userId.equals(m.userId()) && m.organisationId() != null && m.role() != null

@@ -61,6 +61,6 @@ class RestaurantFleetCityScopeTest {
 
     private RestaurantOnboardingService service(OutletRepository outlets) {
         return new RestaurantOnboardingService(mock(BrandRepository.class), outlets,
-                mock(OutboxEventRepository.class), new ObjectMapper(), mock(org.springframework.cache.CacheManager.class), mock(com.fooddelivery.common.client.OrganisationServiceClient.class));
+                mock(OutboxEventRepository.class), new ObjectMapper(), mock(org.springframework.cache.CacheManager.class), new RestaurantMemberships(mock(com.fooddelivery.common.client.OrganisationServiceClient.class)));
     }
 }
