@@ -1,6 +1,6 @@
 package com.fooddelivery.restaurant.controller;
 
-import com.fooddelivery.restaurant.entity.Brand;
+import com.fooddelivery.restaurant.dto.BrandSummaryDto;
 import com.fooddelivery.restaurant.service.RestaurantOnboardingService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,14 +21,15 @@ public class RestaurantSseController {
     @PreAuthorize("hasRole('RESTAURANT')")
     public org.springframework.web.servlet.mvc.method.annotation.SseEmitter streamBrands(java.security.Principal principal) {
         org.springframework.web.servlet.mvc.method.annotation.SseEmitter emitter = new org.springframework.web.servlet.mvc.method.annotation.SseEmitter(600000L); // 10 minutes timeout
-        UUID ownerId = UUID.fromString(principal.getName());
+        UUID userId = UUID.fromString(principal.getName());
         
         java.util.concurrent.ScheduledFuture<?> task = scheduler.scheduleAtFixedRate(() -> {
             try {
-                List<Brand> brands = onboardingService.getBrands(ownerId);
+                List<BrandSummaryDto> brands = onboardingService.getBrands(userId).stream()
+                        .map(BrandSummaryDto::from).toList();
                 emitter.send(org.springframework.web.servlet.mvc.method.annotation.SseEmitter.event().name("brands-update").data(brands));
             } catch (Exception e) {
-                log.warn("Failed to send brands update for owner {}, terminating connection", ownerId);
+                log.warn("Failed to send brands update for user {}, terminating connection", userId);
                 emitter.completeWithError(e);
             }
         }, 0, 5, java.util.concurrent.TimeUnit.SECONDS);
@@ -37,18 +38,18 @@ public class RestaurantSseController {
             try {
                 task.cancel(false);
             } catch (Exception e) {
-                log.warn("Error during SSE cleanup for owner: {}", ownerId, e);
+                log.warn("Error during SSE cleanup for user: {}", userId, e);
             }
         };
 
         emitter.onCompletion(cleanup);
         emitter.onTimeout(() -> {
-            log.info("SSE timeout for owner: {}", ownerId);
+            log.info("SSE timeout for user: {}", userId);
             cleanup.run();
             emitter.complete();
         });
         emitter.onError(ex -> {
-            log.warn("SSE error for owner: {}", ownerId, ex);
+            log.warn("SSE error for user: {}", userId, ex);
             cleanup.run();
         });
 

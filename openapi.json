@@ -120,6 +120,51 @@
         }
       }
     },
+    "/api/v1/outlets/{outletId}/menu-items/{masterMenuItemId}/stock" : {
+      "put" : {
+        "tags" : [ "catalog-controller" ],
+        "operationId" : "toggleStock",
+        "parameters" : [ {
+          "name" : "outletId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "masterMenuItemId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/StockToggleRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiResponseOverrideItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/categories/{categoryId}" : {
       "put" : {
         "tags" : [ "category-controller" ],
@@ -781,7 +826,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ApiResponseListBrand"
+                  "$ref" : "#/components/schemas/ApiResponseListBrandSummaryDto"
                 }
               }
             }
@@ -1249,6 +1294,14 @@
         "tags" : [ "restaurant-kyc-controller" ],
         "operationId" : "getPresignedUploadUrl",
         "parameters" : [ {
+          "name" : "brandId",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
           "name" : "docType",
           "in" : "query",
           "required" : true,
@@ -1480,6 +1533,45 @@
         }
       }
     },
+    "/api/v1/internal/restaurants/users/{userId}/outlets" : {
+      "get" : {
+        "tags" : [ "internal-restaurant-controller" ],
+        "operationId" : "getUserOutlets",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }, {
+          "name" : "permission",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "enum" : [ "ORG_VIEW", "ORG_MANAGE", "MEMBERS_MANAGE", "BUSINESS_APPLY", "OUTLET_MANAGE", "MENU_MANAGE", "STOCK_TOGGLE", "ORDERS_OPERATE", "EARNINGS_VIEW", "PAYOUTS_MANAGE", "ADS_VIEW", "ADS_MANAGE", "WALLET_VIEW", "WALLET_TOPUP" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string",
+                    "format" : "uuid"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/internal/restaurants/products/{productId}/exists" : {
       "get" : {
         "tags" : [ "internal-restaurant-controller" ],
@@ -1499,36 +1591,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ApiResponseBoolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/internal/restaurants/owner/{ownerId}/outlets" : {
-      "get" : {
-        "tags" : [ "internal-restaurant-controller" ],
-        "operationId" : "getOwnerOutlets",
-        "parameters" : [ {
-          "name" : "ownerId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "uuid"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "array",
-                  "items" : {
-                    "type" : "string"
-                  }
                 }
               }
             }
@@ -1566,16 +1628,17 @@
         }
       }
     },
-    "/api/v1/internal/restaurants/outlets/{outletId}/owner" : {
+    "/api/v1/internal/restaurants/outlets/{outletId}/organisation" : {
       "get" : {
         "tags" : [ "internal-restaurant-controller" ],
-        "operationId" : "getOutletOwner",
+        "operationId" : "getOutletOrganisation",
         "parameters" : [ {
           "name" : "outletId",
           "in" : "path",
           "required" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "format" : "uuid"
           }
         } ],
         "responses" : {
@@ -1584,7 +1647,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "type" : "object"
+                  "$ref" : "#/components/schemas/OutletOrganisationDto"
                 }
               }
             }
@@ -1844,6 +1907,68 @@
         "type" : "object",
         "properties" : {
           "defaultPrepTimeSeconds" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "StockToggleRequest" : {
+        "required" : [ "inStock" ],
+        "type" : "object",
+        "properties" : {
+          "inStock" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ApiResponseOverrideItemDto" : {
+        "required" : [ "message", "success", "timestamp" ],
+        "type" : "object",
+        "properties" : {
+          "success" : {
+            "type" : "boolean"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "errorCode" : {
+            "type" : "string"
+          },
+          "data" : {
+            "$ref" : "#/components/schemas/OverrideItemDto"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "OverrideItemDto" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "outletId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "masterMenuItemId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "overriddenPrice" : {
+            "type" : "number"
+          },
+          "isAvailable" : {
+            "type" : "boolean"
+          },
+          "overriddenPrepTimeMinutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "version" : {
             "type" : "integer",
             "format" : "int32"
           }
@@ -2146,59 +2271,6 @@
           }
         }
       },
-      "ApiResponseOverrideItemDto" : {
-        "required" : [ "message", "success", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "success" : {
-            "type" : "boolean"
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errorCode" : {
-            "type" : "string"
-          },
-          "data" : {
-            "$ref" : "#/components/schemas/OverrideItemDto"
-          },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "OverrideItemDto" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
-          "outletId" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
-          "masterMenuItemId" : {
-            "type" : "string",
-            "format" : "uuid"
-          },
-          "overriddenPrice" : {
-            "type" : "number"
-          },
-          "isAvailable" : {
-            "type" : "boolean"
-          },
-          "overriddenPrepTimeMinutes" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "version" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "SetOutletCategoryTimingRequest" : {
         "required" : [ "categoryId", "timings" ],
         "type" : "object",
@@ -2324,9 +2396,13 @@
         }
       },
       "BrandOnboardRequest" : {
-        "required" : [ "bankAccountNumber", "gstin", "ifscCode", "name", "pan" ],
+        "required" : [ "bankAccountNumber", "gstin", "ifscCode", "name", "organisationId", "pan" ],
         "type" : "object",
         "properties" : {
+          "organisationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
           "name" : {
             "type" : "string"
           },
@@ -2373,14 +2449,14 @@
         }
       },
       "Brand" : {
-        "required" : [ "id", "name", "ownerId" ],
+        "required" : [ "id", "name", "organisationId" ],
         "type" : "object",
         "properties" : {
           "id" : {
             "type" : "string",
             "format" : "uuid"
           },
-          "ownerId" : {
+          "organisationId" : {
             "type" : "string",
             "format" : "uuid"
           },
@@ -3136,6 +3212,23 @@
           }
         }
       },
+      "OutletOrganisationDto" : {
+        "type" : "object",
+        "properties" : {
+          "outletId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "brandId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "organisationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          }
+        }
+      },
       "ApiResponsePageResponseDtoNearbyRestaurantDTO" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
@@ -3224,7 +3317,7 @@
           }
         }
       },
-      "ApiResponseListBrand" : {
+      "ApiResponseListBrandSummaryDto" : {
         "required" : [ "message", "success", "timestamp" ],
         "type" : "object",
         "properties" : {
@@ -3240,12 +3333,58 @@
           "data" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/Brand"
+              "$ref" : "#/components/schemas/BrandSummaryDto"
             }
           },
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "BrandSummaryDto" : {
+        "required" : [ "id", "name", "organisationId" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "organisationId" : {
+            "type" : "string",
+            "format" : "uuid"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "logoUrl" : {
+            "type" : "string"
+          },
+          "kycStatus" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "APPROVED", "VERIFIED", "REJECTED", "MANUAL_REVIEW", "FAILED" ]
+          },
+          "pennyDropStatus" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "APPROVED", "VERIFIED", "REJECTED", "MANUAL_REVIEW", "FAILED" ]
+          },
+          "isGstinVerified" : {
+            "type" : "boolean"
+          },
+          "isBankVerified" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "version" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },

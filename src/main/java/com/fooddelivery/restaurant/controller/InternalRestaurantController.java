@@ -21,18 +21,19 @@ public class InternalRestaurantController {
     private final OutletRepository outletRepository;
     private final MasterMenuItemRepository masterMenuItemRepository;
     private final com.fooddelivery.restaurant.repository.BrandRepository brandRepository;
+    private final com.fooddelivery.restaurant.service.RestaurantOnboardingService onboardingService;
 
-    @GetMapping("/owner/{ownerId}/outlets")
-    public ResponseEntity<List<String>> getOwnerOutlets(@PathVariable UUID ownerId) {
-        List<String> outletIds = outletRepository.findByOwnerId(ownerId).stream().map(outlet -> outlet.getId().toString()).collect(Collectors.toList());
-        return ResponseEntity.ok(outletIds);
+    @GetMapping("/users/{userId}/outlets")
+    @PreAuthorize("hasAnyRole('SERVICE', 'ADMIN')")
+    public ResponseEntity<List<UUID>> getUserOutlets(@PathVariable UUID userId,
+            @RequestParam com.fooddelivery.common.enums.OrganisationPermission permission) {
+        return ResponseEntity.ok(onboardingService.getOutletsForUser(userId, permission).stream().map(Outlet::getId).toList());
     }
 
-    @GetMapping("/outlets/{outletId}/owner")
-    public ResponseEntity<?> getOutletOwner(@PathVariable String outletId) {
-        return outletRepository.findById(UUID.fromString(outletId))
-                .flatMap(outlet -> brandRepository.findById(outlet.getBrandId()))
-                .<ResponseEntity<?>>map(brand -> ResponseEntity.ok(java.util.Map.of("ownerId", brand.getOwnerId().toString())))
+    @GetMapping("/outlets/{outletId}/organisation")
+    @PreAuthorize("hasAnyRole('SERVICE', 'ADMIN')")
+    public ResponseEntity<com.fooddelivery.common.dto.restaurant.OutletOrganisationDto> getOutletOrganisation(@PathVariable UUID outletId) {
+        return outletRepository.findOrganisationByOutletId(outletId).map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

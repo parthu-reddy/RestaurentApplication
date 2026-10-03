@@ -37,6 +37,7 @@ public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
         
         Brand brand1 = Brand.builder()
                 .id(UUID.randomUUID())
+                .organisationId(UUID.randomUUID())
                 .name("Brand One")
                 .gstin(duplicateGstin)
                 .pan("AAAAA0000A")
@@ -50,6 +51,7 @@ public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
 
         Brand brand2 = Brand.builder()
                 .id(UUID.randomUUID())
+                .organisationId(UUID.randomUUID())
                 .name("Brand Two")
                 .gstin(duplicateGstin) // Duplicate GSTIN
                 .pan("BBBBB1111B")
@@ -70,6 +72,7 @@ public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
         
         Brand brand1 = Brand.builder()
                 .id(UUID.randomUUID())
+                .organisationId(UUID.randomUUID())
                 .name("Brand One")
                 .gstin("33AAAAA0000A1Z5")
                 .pan(duplicatePan)
@@ -83,6 +86,7 @@ public class RestaurantValidationIntegrationTest extends BaseIntegrationTest {
 
         Brand brand2 = Brand.builder()
                 .id(UUID.randomUUID())
+                .organisationId(UUID.randomUUID())
                 .name("Brand Two")
                 .gstin("44BBBBB1111B1Z5")
                 .pan(duplicatePan) // Duplicate PAN

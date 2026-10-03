@@ -7,6 +7,8 @@ import java.util.List;
 
 @lombok.Data
 public class BrandOnboardRequest {
+        @NotNull
+        private java.util.UUID organisationId;
         @NotBlank
         private String name;
         @NotBlank

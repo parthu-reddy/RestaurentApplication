@@ -32,8 +32,8 @@ public class RestaurantKycController {
 
     // Proxy endpoints for KYC
     @GetMapping("/api/v1/restaurants/verification/upload-url")
-    @PreAuthorize("hasRole('RESTAURANT')")
-    public ResponseEntity<ApiResponse<Map<String, String>>> getPresignedUploadUrl(@RequestParam("docType") String docType, @RequestParam("contentType") String contentType, java.security.Principal principal) {
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).BUSINESS_APPLY)")
+    public ResponseEntity<ApiResponse<Map<String, String>>> getPresignedUploadUrl(@RequestParam UUID brandId, @RequestParam("docType") String docType, @RequestParam("contentType") String contentType, java.security.Principal principal) {
         io.github.bucket4j.Bucket bucket = rateLimitingService.resolveBucket("kyc_upload:" + (principal != null ? principal.getName() : "anonymous"), 5, 5, java.time.Duration.ofHours(1));
         if (!bucket.tryConsume(1)) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.TOO_MANY_REQUESTS).build();
@@ -43,7 +43,7 @@ public class RestaurantKycController {
     }
 
     @PostMapping("/api/v1/restaurants/verification/brands/gstin")
-    @PreAuthorize("hasRole('RESTAURANT')")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#request.brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).BUSINESS_APPLY)")
     public ResponseEntity<ApiResponse<Void>> verifyGstin(@Valid @RequestBody com.fooddelivery.common.dto.governmentid.GstinRequest request, java.security.Principal principal) {
         io.github.bucket4j.Bucket bucket = rateLimitingService.resolveBucket("kyc_gstin:" + (principal != null ? principal.getName() : "anonymous"), 5, 5, java.time.Duration.ofHours(1));
         if (!bucket.tryConsume(1)) {
@@ -54,7 +54,7 @@ public class RestaurantKycController {
     }
 
     @PostMapping("/api/v1/restaurants/verification/brands/bank-account")
-    @PreAuthorize("hasRole('RESTAURANT')")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#request.brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).BUSINESS_APPLY)")
     public ResponseEntity<ApiResponse<Void>> verifyBankAccount(@Valid @RequestBody com.fooddelivery.common.dto.governmentid.BankAccountRequest request, java.security.Principal principal) {
         io.github.bucket4j.Bucket bucket = rateLimitingService.resolveBucket("kyc_bank:" + (principal != null ? principal.getName() : "anonymous"), 5, 5, java.time.Duration.ofHours(1));
         if (!bucket.tryConsume(1)) {

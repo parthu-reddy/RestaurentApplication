@@ -45,6 +45,7 @@ private static final String KEY_BRAND_ID = "brandId";
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
     private final org.springframework.cache.CacheManager cacheManager;
+    private final com.fooddelivery.common.client.OrganisationServiceClient organisationClient;
     @Value("${spring.profiles.active:}")
     private String activeProfile;
     @Value("${platform.fleet.allowed-city-ids:BLR}")
@@ -52,11 +53,11 @@ private static final String KEY_BRAND_ID = "brandId";
 
     // Phase 1: Brand & Financial Setup
     @org.springframework.transaction.annotation.Transactional
-    public Brand onboardBrand(UUID ownerId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, String logoUrl) {
-        log.info("Starting Brand onboarding: {}, GSTIN: {}, Bank: {}", name, gstin, bankAccountNumber);
-        List<Brand> existingBrands = brandRepository.findByOwnerId(ownerId);
-        if (!existingBrands.isEmpty()) {
-            throw new IllegalArgumentException("A user can only register one brand.");
+    public Brand onboardBrand(UUID organisationId, String name, String gstin, String pan, String cin, String bankAccountNumber, String ifscCode, String logoUrl) {
+        log.info("Starting Brand onboarding organisationId={}", organisationId);
+        if (organisationId == null) { throw new IllegalArgumentException("organisationId is required"); }
+        if (brandRepository.findByOrganisationId(organisationId).isPresent()) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT, "This organisation already has a brand");
         }
         if (pan != null && pan.length() != 10) {
             throw new IllegalArgumentException("Invalid PAN. Must be 10 characters.");
@@ -68,8 +69,13 @@ private static final String KEY_BRAND_ID = "brandId";
         VerificationStatus initialStatus = isDev ? VerificationStatus.VERIFIED : VerificationStatus.PENDING;
         boolean initialVerified = isDev;
 
-        Brand brand = Brand.builder().id(UUID.randomUUID()).ownerId(ownerId).name(name).gstin(gstin).pan(pan).cin(cin).bankAccountNumber(bankAccountNumber).bankIfsc(ifscCode).logoUrl(logoUrl).isGstinVerified(initialVerified).isBankVerified(initialVerified).kycStatus(initialStatus).pennyDropStatus(initialStatus).createdAt(Instant.now()).updatedAt(Instant.now()).build();
-        brand = brandRepository.save(brand);
+        Brand brand = Brand.builder().id(UUID.randomUUID()).organisationId(organisationId).name(name).gstin(gstin).pan(pan).cin(cin).bankAccountNumber(bankAccountNumber).bankIfsc(ifscCode).logoUrl(logoUrl).isGstinVerified(initialVerified).isBankVerified(initialVerified).kycStatus(initialStatus).pennyDropStatus(initialStatus).createdAt(Instant.now()).updatedAt(Instant.now()).build();
+        try {
+            brand = brandRepository.saveAndFlush(brand);
+        } catch (org.springframework.dao.DataIntegrityViolationException conflict) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                    "The organisation or registration details already have a brand", conflict);
+        }
         try {
             // Write to Outbox table within the same transaction for CDC/Kafka
             Map<String, Object> payload = Map.of(KEY_BRAND_ID, brand.getId().toString(), KEY_BRAND_NAME, brand.getName(), KEY_GSTIN, brand.getGstin(), KEY_BANK_ACCOUNT_NUMBER, brand.getBankAccountNumber(), KEY_IFSC_CODE, brand.getBankIfsc(), KEY_TIMESTAMP, Instant.now().toString());
@@ -85,7 +91,7 @@ private static final String KEY_BRAND_ID = "brandId";
     // Phase 2: Outlet & Geospatial Setup
     @org.springframework.transaction.annotation.Transactional
     public Outlet onboardOutlet(UUID brandId, String name, String fssai, Double lat, Double lng, List<com.fooddelivery.restaurant.dto.TimingRequest> timingsReq, String bannerUrl, String cuisine, Double rating, Integer reviewsCount, Integer deliveryTime, java.math.BigDecimal deliveryFee, String tags, String timeZone, String requestedCityId) {
-        log.info("Starting Outlet onboarding for Brand: {}, FSSAI: {}", brandId, fssai);
+        log.info("Starting Outlet onboarding brandId={}", brandId);
         // Checked here too, not only by @IanaTimeZone on the request: the MCP tool reads its JSON by hand.
         if (!com.fooddelivery.common.time.IanaTimeZoneValidator.isRegionId(timeZone)) {
             throw new IllegalArgumentException("timeZone must be an IANA zone id such as Asia/Kolkata, not '" + timeZone + "'");
@@ -211,18 +217,7 @@ private static final String KEY_BRAND_ID = "brandId";
     }
 
     private boolean verifyFssai(String fssai) {
-        log.info("Mock verifying FSSAI for {}", fssai);
         return fssai != null && fssai.length() == 14;
-    }
-
-    private boolean verifyGstin(String gstin) {
-        log.info("Mock verifying GSTIN for {}", gstin);
-        return gstin != null && gstin.length() == 15;
-    }
-
-    private boolean verifyBankAccount(String bankAccountNumber, String ifscCode) {
-        log.info("Mock Penny Drop Verification A/C: {}, IFSC: {}", bankAccountNumber, ifscCode);
-        return bankAccountNumber != null && ifscCode != null && bankAccountNumber.length() >= 9;
     }
 
     public org.springframework.data.domain.Page<Outlet> getAllOutlets(org.springframework.data.domain.Pageable pageable) {
@@ -258,12 +253,35 @@ private static final String KEY_BRAND_ID = "brandId";
         return rawOutlets.stream().map(o -> outletMap.getOrDefault(o.getId(), o)).collect(java.util.stream.Collectors.toList());
     }
 
-    public List<Brand> getBrands(UUID ownerId) {
-        return brandRepository.findByOwnerId(ownerId);
+    public List<Brand> getBrands(UUID userId) {
+        var ids = organisationsForUser(userId, com.fooddelivery.common.enums.OrganisationPermission.ORG_VIEW);
+        return ids.isEmpty() ? List.of() : brandRepository.findAllByOrganisationIdIn(ids);
     }
 
-    public List<Outlet> getOutletsByOwner(UUID ownerId) {
-        return outletRepository.findByOwnerId(ownerId);
+    public List<Outlet> getOutletsForUser(UUID userId, com.fooddelivery.common.enums.OrganisationPermission permission) {
+        var ids = organisationsForUser(userId, permission);
+        return ids.isEmpty() ? List.of() : outletRepository.findByOrganisationIdIn(ids);
+    }
+
+    /** Exactly one membership call and one IN query, irrespective of organisation count. */
+    private List<UUID> organisationsForUser(UUID userId, com.fooddelivery.common.enums.OrganisationPermission permission) {
+        if (userId == null || permission == null) { return List.of(); }
+        try {
+            var memberships = organisationClient.getUserOrganisations(userId);
+            if (memberships == null) { throw new IllegalStateException("Missing membership response"); }
+            return memberships.stream().filter(java.util.Objects::nonNull)
+                .filter(m -> userId.equals(m.userId()) && m.organisationId() != null && m.role() != null
+                    && m.status() == com.fooddelivery.common.enums.MembershipStatus.ACTIVE
+                    && (m.organisationStatus() == com.fooddelivery.common.enums.OrganisationStatus.ACTIVE
+                        || (m.organisationStatus() == com.fooddelivery.common.enums.OrganisationStatus.SUSPENDED
+                            && permission == com.fooddelivery.common.enums.OrganisationPermission.ORG_VIEW))
+                    && m.role().grants(permission))
+                .map(com.fooddelivery.common.dto.organisation.MembershipDto::organisationId).distinct().toList();
+        } catch (Exception failure) {
+            log.warn("Restaurant memberships unavailable userId={}", userId);
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE,
+                    "Organisation access is temporarily unavailable");
+        }
     }
 
     @org.springframework.transaction.annotation.Transactional

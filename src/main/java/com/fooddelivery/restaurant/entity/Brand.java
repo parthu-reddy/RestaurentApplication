@@ -22,9 +22,9 @@ public class Brand {
     @Column(name = "id")
     @Schema(requiredMode = RequiredMode.REQUIRED)
     private UUID id;
-    @Column(name = "owner_id")
+    @Column(name = "organisation_id", nullable = false, unique = true)
     @Schema(requiredMode = RequiredMode.REQUIRED)
-    private UUID ownerId;
+    private UUID organisationId;
     @Column(name = "name")
     @Schema(requiredMode = RequiredMode.REQUIRED)
     private String name;

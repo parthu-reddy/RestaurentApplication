@@ -21,7 +21,7 @@ class InternalRestaurantInvoiceDetailsTest {
     private final OutletRepository outlets = mock(OutletRepository.class);
     private final BrandRepository brands = mock(BrandRepository.class);
     private final InternalRestaurantController controller =
-            new InternalRestaurantController(outlets, mock(MasterMenuItemRepository.class), brands);
+            new InternalRestaurantController(outlets, mock(MasterMenuItemRepository.class), brands, mock(com.fooddelivery.restaurant.service.RestaurantOnboardingService.class));
 
     @Test
     void namesTheLegalEntityGstinAndFssai() {

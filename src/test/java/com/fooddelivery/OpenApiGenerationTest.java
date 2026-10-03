@@ -121,7 +121,7 @@ public class OpenApiGenerationTest {
 
 
     @org.springframework.boot.test.mock.mockito.MockBean
-    private com.fooddelivery.restaurant.security.RestaurantSecurityHelper restaurantSecurityHelper;
+    private com.fooddelivery.restaurant.security.RestaurantAccess restaurantAccess;
 
 
     @org.springframework.boot.test.mock.mockito.MockBean

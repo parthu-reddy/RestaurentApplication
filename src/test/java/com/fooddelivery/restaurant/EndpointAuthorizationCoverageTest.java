@@ -82,6 +82,8 @@ class EndpointAuthorizationCoverageTest {
             // The override row is keyed (outletId, masterMenuItemId) and always written with the caller's
             // outletId, so it can only ever affect the caller's own outlet menu.
             "CatalogController#overrideMenuItem",
+            // CatalogService.requireItemAtOutlet compares the item brand with the outlet brand before any write.
+            "CatalogController#toggleStock",
             // permitAll(): published opening hours, deliberately public.
             "CategoryController#getBrandCategoryTimings",
             // permitAll(): published opening hours, deliberately public.

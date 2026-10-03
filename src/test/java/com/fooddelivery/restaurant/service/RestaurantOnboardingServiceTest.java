@@ -53,7 +53,7 @@ class RestaurantOnboardingServiceTest {
 
     @Test
     void testOnboardBrand_Success() {
-        when(brandRepository.save(any(Brand.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(brandRepository.saveAndFlush(any(Brand.class))).thenAnswer(i -> i.getArguments()[0]);
 
         Brand brand = restaurantOnboardingService.onboardBrand(
                 UUID.randomUUID(), "Test Brand", "123456789012345", "ABCDE1234F", "U12345MH2023PTC123456", "123456789", "HDFC0001234", null

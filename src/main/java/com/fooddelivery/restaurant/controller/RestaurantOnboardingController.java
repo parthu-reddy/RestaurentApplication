@@ -28,7 +28,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @lombok.RequiredArgsConstructor
 public class RestaurantOnboardingController {
 private final RestaurantOnboardingService onboardingService;
-    private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
     private final com.fooddelivery.common.client.GovernmentIdServiceClient governmentIdClient;
 
 
@@ -36,13 +35,13 @@ private final RestaurantOnboardingService onboardingService;
 
     // Phase 1: Brand Onboarding
     @PostMapping("/api/v1/brands")
-    @PreAuthorize("hasRole('RESTAURANT')")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOrganisation(#request.organisationId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).BUSINESS_APPLY)")
     public ResponseEntity<ApiResponse<Brand>> onboardBrand(java.security.Principal principal, @Valid @RequestBody BrandOnboardRequest request) {
         io.github.bucket4j.Bucket bucket = rateLimitingService.resolveBucket("onboarding_brand:" + (principal != null ? principal.getName() : "anonymous"), 5, 5, java.time.Duration.ofHours(1));
         if (!bucket.tryConsume(1)) {
             return ResponseEntity.status(org.springframework.http.HttpStatus.TOO_MANY_REQUESTS).build();
         }
-        Brand brand = onboardingService.onboardBrand(UUID.fromString(principal.getName()), request.getName(), request.getGstin(), request.getPan(), request.getCin(), request.getBankAccountNumber(), request.getIfscCode(), request.getLogoUrl());
+        Brand brand = onboardingService.onboardBrand(request.getOrganisationId(), request.getName(), request.getGstin(), request.getPan(), request.getCin(), request.getBankAccountNumber(), request.getIfscCode(), request.getLogoUrl());
         // KYC is triggered async via Outbox/Kafka in the onboardingService
         return ResponseEntity.ok(ApiResponse.success(brand, "Brand onboarded successfully. KYC pending."));
     }
@@ -51,8 +50,9 @@ private final RestaurantOnboardingService onboardingService;
 
     @GetMapping("/api/v1/brands")
     @PreAuthorize("hasRole('RESTAURANT')")
-    public ResponseEntity<ApiResponse<List<Brand>>> getBrands(java.security.Principal principal) {
-        List<Brand> brands = onboardingService.getBrands(UUID.fromString(principal.getName()));
+    public ResponseEntity<ApiResponse<List<BrandSummaryDto>>> getBrands(java.security.Principal principal) {
+        List<BrandSummaryDto> brands = onboardingService.getBrands(UUID.fromString(principal.getName()))
+                .stream().map(BrandSummaryDto::from).toList();
         return ResponseEntity.ok(ApiResponse.success(brands, "Brands retrieved successfully"));
     }
 

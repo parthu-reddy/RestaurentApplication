@@ -13,12 +13,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api/v1/restaurants/{restaurantId}/fulfillment")
-@PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#restaurantId, authentication.name)")
+@PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#restaurantId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).ORDERS_OPERATE)")
 @lombok.extern.slf4j.Slf4j
 @lombok.RequiredArgsConstructor
 public class FulfillmentController {
 private final FulfillmentService fulfillmentService;
-    private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     @org.springframework.web.bind.annotation.GetMapping("/orders")
     public ResponseEntity<ApiResponse<java.util.List<com.fooddelivery.restaurant.entity.RestaurantOrder>>> getRestaurantOrders(@PathVariable UUID restaurantId) {

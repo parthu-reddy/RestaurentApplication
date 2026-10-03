@@ -22,11 +22,33 @@ private final FulfillmentService fulfillmentService;
     private final com.fooddelivery.restaurant.controller.InternalRestaurantController internalRestaurantController;
     private final com.fooddelivery.restaurant.controller.CategoryController categoryController;
     private final ObjectMapper objectMapper;
+    private final com.fooddelivery.restaurant.security.RestaurantAccess restaurantAccess;
+
+    private org.springframework.security.core.Authentication caller() {
+        var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth.getAuthorities().stream()
+                .noneMatch(a -> "ROLE_RESTAURANT".equals(a.getAuthority()))) {
+            throw new org.springframework.security.access.AccessDeniedException("Restaurant access required");
+        }
+        return auth;
+    }
+    private void requireBrand(String id, com.fooddelivery.common.enums.OrganisationPermission permission) {
+        if (!restaurantAccess.onBrand(UUID.fromString(id), caller(), permission)) {
+            throw new org.springframework.security.access.AccessDeniedException("Brand access denied");
+        }
+    }
+    private void requireOutlet(String id, com.fooddelivery.common.enums.OrganisationPermission permission) {
+        if (!restaurantAccess.onOutlet(UUID.fromString(id), caller(), permission)) {
+            throw new org.springframework.security.access.AccessDeniedException("Outlet access denied");
+        }
+    }
+
 
 
     @Tool(description = "Accept an incoming order. Provide restaurantId, orderId, optional additionalPrepTime (in minutes), and delayReason if additional time is needed.")
     public String acceptOrder(String restaurantId, String orderId, Integer additionalPrepTime, String delayReason) {
         try {
+            requireOutlet(restaurantId, com.fooddelivery.common.enums.OrganisationPermission.ORDERS_OPERATE);
             fulfillmentService.acceptOrder(UUID.fromString(restaurantId), UUID.fromString(orderId), additionalPrepTime, delayReason);
             return "Order accepted successfully.";
         } catch (Exception e) {
@@ -37,6 +59,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Reject an incoming order. Provide restaurantId and orderId, and an optional rejectReason.")
     public String rejectOrder(String restaurantId, String orderId, String rejectReason) {
         try {
+            requireOutlet(restaurantId, com.fooddelivery.common.enums.OrganisationPermission.ORDERS_OPERATE);
             fulfillmentService.rejectOrder(UUID.fromString(restaurantId), UUID.fromString(orderId), rejectReason);
             return "Order rejected successfully.";
         } catch (Exception e) {
@@ -47,6 +70,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Mark an accepted order as ready for pickup. Provide restaurantId and orderId.")
     public String readyOrder(String restaurantId, String orderId) {
         try {
+            requireOutlet(restaurantId, com.fooddelivery.common.enums.OrganisationPermission.ORDERS_OPERATE);
             fulfillmentService.readyOrder(UUID.fromString(restaurantId), UUID.fromString(orderId));
             return "Order ready successfully.";
         } catch (Exception e) {
@@ -57,6 +81,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Cancel an order after acceptance. Provide restaurantId and orderId, and an optional cancelReason.")
     public String cancelOrder(String restaurantId, String orderId, String cancelReason) {
         try {
+            requireOutlet(restaurantId, com.fooddelivery.common.enums.OrganisationPermission.ORDERS_OPERATE);
             fulfillmentService.cancelOrderAfterAccept(UUID.fromString(restaurantId), UUID.fromString(orderId), cancelReason);
             return "Order cancelled successfully.";
         } catch (Exception e) {
@@ -67,6 +92,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Add a master menu item to a brand. Provide brandId and a JSON string of MasterMenuItem.")
     public String addMasterMenuItem(String brandId, String masterMenuItemJson) {
         try {
+            requireBrand(brandId, com.fooddelivery.common.enums.OrganisationPermission.MENU_MANAGE);
             MasterMenuItem item = objectMapper.readValue(masterMenuItemJson, MasterMenuItem.class);
             return objectMapper.writeValueAsString(catalogService.addMasterMenuItem(UUID.fromString(brandId), item));
         } catch (Exception e) {
@@ -77,6 +103,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Get master menu items for a brand. Provide brandId.")
     public String getMasterMenuItems(String brandId) {
         try {
+            requireBrand(brandId, com.fooddelivery.common.enums.OrganisationPermission.ORG_VIEW);
             return objectMapper.writeValueAsString(catalogService.getMasterMenuItems(UUID.fromString(brandId)));
         } catch (Exception e) {
             return "Failed to get master menu items: " + e.getMessage();
@@ -86,6 +113,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Add an override for a menu item at an outlet. Provide outletId, masterMenuItemId, and JSON string of OutletMenuOverride.")
     public String addMenuOverride(String outletId, String masterMenuItemId, String overrideJson) {
         try {
+            requireOutlet(outletId, com.fooddelivery.common.enums.OrganisationPermission.MENU_MANAGE);
             OutletMenuOverride override = objectMapper.readValue(overrideJson, OutletMenuOverride.class);
             return objectMapper.writeValueAsString(catalogService.addOrUpdateOverride(UUID.fromString(outletId), UUID.fromString(masterMenuItemId), override));
         } catch (Exception e) {
@@ -112,11 +140,14 @@ private final FulfillmentService fulfillmentService;
         }
     }
 
-    @Tool(description = "Onboard a new brand. Provide JSON string of BrandOnboardRequest, and the ownerId.")
-    public String onboardBrand(String ownerId, String brandOnboardRequestJson) {
+    @Tool(description = "Onboard a new brand for an organisation you can manage. Provide JSON string of BrandOnboardRequest including organisationId.")
+    public String onboardBrand(String brandOnboardRequestJson) {
         try {
             BrandOnboardRequest req = objectMapper.readValue(brandOnboardRequestJson, BrandOnboardRequest.class);
-            return objectMapper.writeValueAsString(onboardingService.onboardBrand(UUID.fromString(ownerId), req.getName(), req.getGstin(), req.getPan(), req.getCin(), req.getBankAccountNumber(), req.getIfscCode(), req.getLogoUrl()));
+            if (!restaurantAccess.onOrganisation(req.getOrganisationId(), caller(), com.fooddelivery.common.enums.OrganisationPermission.BUSINESS_APPLY)) {
+                throw new org.springframework.security.access.AccessDeniedException("Organisation access denied");
+            }
+            return objectMapper.writeValueAsString(onboardingService.onboardBrand(req.getOrganisationId(), req.getName(), req.getGstin(), req.getPan(), req.getCin(), req.getBankAccountNumber(), req.getIfscCode(), req.getLogoUrl()));
         } catch (Exception e) {
             return "Failed to onboard brand: " + e.getMessage();
         }
@@ -125,6 +156,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Onboard an outlet for a brand. Provide brandId and JSON string of OutletOnboardRequest.")
     public String onboardOutlet(String brandId, String outletOnboardRequestJson) {
         try {
+            requireBrand(brandId, com.fooddelivery.common.enums.OrganisationPermission.OUTLET_MANAGE);
             OutletOnboardRequest req = objectMapper.readValue(outletOnboardRequestJson, OutletOnboardRequest.class);
             return objectMapper.writeValueAsString(onboardingService.onboardOutlet(UUID.fromString(brandId), req.getName(), req.getFssaiLicenseNumber(), req.getLat(), req.getLng(), req.getTimings(), req.getBannerUrl(), req.getCuisine(), req.getRating(), req.getReviewsCount(), req.getDeliveryTime(), req.getDeliveryFee(), req.getTags(), req.getTimeZone(), req.getCityId()));
         } catch (Exception e) {
@@ -135,6 +167,7 @@ private final FulfillmentService fulfillmentService;
     @Tool(description = "Get outlets for a brand. Provide brandId.")
     public String getOutlets(String brandId) {
         try {
+            requireBrand(brandId, com.fooddelivery.common.enums.OrganisationPermission.ORG_VIEW);
             return objectMapper.writeValueAsString(onboardingService.getOutletsByBrand(UUID.fromString(brandId)));
         } catch (Exception e) {
             return "Failed to get outlets: " + e.getMessage();
@@ -173,10 +206,10 @@ private final FulfillmentService fulfillmentService;
     }
 
     // InternalRestaurantController
-    @Tool(description = "Internal: Get outlet IDs by owner. Provide ownerId.")
-    public String getOutletIdsByOwner(String ownerId) {
+    @Tool(description = "Get outlet IDs for your active organisation memberships.")
+    public String getMyOutletIds() {
         try {
-            return objectMapper.writeValueAsString(internalRestaurantController.getOwnerOutlets(UUID.fromString(ownerId)).getBody());
+            return objectMapper.writeValueAsString(onboardingService.getOutletsForUser(UUID.fromString(caller().getName()), com.fooddelivery.common.enums.OrganisationPermission.ORG_VIEW).stream().map(com.fooddelivery.restaurant.entity.Outlet::getId).toList());
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }

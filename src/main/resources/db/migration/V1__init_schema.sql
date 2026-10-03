@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS postgis;
 
 CREATE TABLE brands (
     id UUID PRIMARY KEY,
-    owner_id UUID,
+    organisation_id UUID NOT NULL,
     name VARCHAR(255) NOT NULL,
     gstin VARCHAR(15),
     pan VARCHAR(10),
@@ -11,8 +11,8 @@ CREATE TABLE brands (
     bank_ifsc VARCHAR(20),
     is_gstin_verified BOOLEAN DEFAULT FALSE,
     is_bank_verified BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ,
     version INTEGER DEFAULT 0,
     logo_url VARCHAR(1024),
     median_price DOUBLE PRECISION DEFAULT 0.0,
@@ -36,11 +36,13 @@ CREATE TABLE outlets (
     id UUID PRIMARY KEY,
     brand_id UUID NOT NULL REFERENCES brands(id),
     name VARCHAR(255) NOT NULL,
+    time_zone VARCHAR(64) NOT NULL,
+    city_id VARCHAR(64) NOT NULL CONSTRAINT ck_outlets_city_id_canonical CHECK (city_id ~ '^[A-Z][A-Z0-9_-]{0,63}$'),
     fssai_license_number VARCHAR(14),
     location geometry(Point, 4326),
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ,
     version INTEGER DEFAULT 0,
     banner_url VARCHAR(1024),
     cuisine VARCHAR(255),
@@ -83,8 +85,8 @@ CREATE TABLE outlet_timings (
     opening_time TIME NOT NULL,
     closing_time TIME NOT NULL,
     version INTEGER DEFAULT 0,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
 );
 
 CREATE TABLE category_timings (
@@ -93,8 +95,8 @@ CREATE TABLE category_timings (
     opening_time TIME NOT NULL,
     closing_time TIME NOT NULL,
     version INTEGER DEFAULT 0,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ
 );
 
 CREATE TABLE outlet_category_timings (
@@ -103,8 +105,8 @@ CREATE TABLE outlet_category_timings (
     category_id UUID NOT NULL REFERENCES categories(id),
     opening_time TIME NOT NULL,
     closing_time TIME NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE,
-    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    created_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ,
     version INTEGER
 );
 
@@ -114,8 +116,8 @@ CREATE TABLE brand_category_timings (
     category_id UUID NOT NULL REFERENCES categories(id),
     opening_time TIME NOT NULL,
     closing_time TIME NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     version INTEGER DEFAULT 0
 );
 
@@ -129,17 +131,27 @@ CREATE TABLE restaurant_orders (
     delivery_lat DOUBLE PRECISION CHECK (delivery_lat >= -90 AND delivery_lat <= 90),
     delivery_lng DOUBLE PRECISION CHECK (delivery_lng >= -180 AND delivery_lng <= 180),
     delivery_address VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     version INTEGER DEFAULT 0,
     items_json TEXT,
     pickup_otp VARCHAR(255),
     estimated_completion_time BIGINT CHECK (estimated_completion_time >= 0),
     rider_name VARCHAR(255),
     delivery_status VARCHAR(50),
-    payment_status VARCHAR(50),
+    payment_status VARCHAR(50) CONSTRAINT chk_restaurant_order_payment_status_prepaid CHECK (payment_status NOT IN ('PENDING_COLLECTION', 'COLLECTED')),
     customer_name VARCHAR(255),
-    delivery_executive_id UUID
+    delivery_executive_id UUID,
+    food_cost DECIMAL(10,2),
+    restaurant_platform_fee DECIMAL(10,2),
+    restaurant_delivery_contribution DECIMAL(10,2),
+    platform_bonus DECIMAL(10,2),
+    restaurant_payout DECIMAL(10,2),
+    total_amount DECIMAL(10,2),
+    customer_id UUID,
+    payment_method VARCHAR(16) NOT NULL CONSTRAINT chk_restaurant_order_payment_method_prepaid CHECK (payment_method IN ('CARD', 'UPI', 'WALLET')),
+    dispatch_city_id VARCHAR(64) NOT NULL,
+    fleet_search_radius_km DOUBLE PRECISION NOT NULL
 );
 
 
@@ -204,4 +216,5 @@ CREATE INDEX IF NOT EXISTS idx_outlet_menu_overrides_outlet_item ON outlet_menu_
 
 CREATE INDEX IF NOT EXISTS idx_restaurant_orders_restaurant_status_created ON restaurant_orders(restaurant_id, status, created_at DESC);
 
-CREATE INDEX IF NOT EXISTS idx_brands_owner_id ON brands(owner_id) WHERE owner_id IS NOT NULL;
+CREATE UNIQUE INDEX uq_brands_organisation ON brands (organisation_id);
+CREATE INDEX idx_outlets_city_id ON outlets (city_id, id);

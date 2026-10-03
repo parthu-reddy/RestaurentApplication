@@ -14,7 +14,6 @@ import com.fooddelivery.restaurant.entity.Outlet;
 import com.fooddelivery.restaurant.entity.RestaurantOrder;
 import com.fooddelivery.restaurant.repository.OutletRepository;
 import com.fooddelivery.restaurant.repository.RestaurantOrderRepository;
-import com.fooddelivery.restaurant.security.RestaurantSecurityHelper;
 import com.fooddelivery.restaurant.service.CatalogService;
 import com.fooddelivery.restaurant.service.RestaurantOnboardingService;
 
@@ -48,7 +47,6 @@ public abstract class ContractTestBase {
         OutletRepository outletRepository = Mockito.mock(OutletRepository.class);
         RestaurantOnboardingService onboardingService = Mockito.mock(RestaurantOnboardingService.class);
         CatalogService catalogService = Mockito.mock(CatalogService.class);
-        RestaurantSecurityHelper securityHelper = Mockito.mock(RestaurantSecurityHelper.class);
         RestaurantOrderRepository orderRepository = Mockito.mock(RestaurantOrderRepository.class);
 
         Outlet outlet = new Outlet();
@@ -59,7 +57,10 @@ public abstract class ContractTestBase {
         outlet.setRating(4.5);
         outlet.setTimeZone(java.time.ZoneId.of("Asia/Kolkata"));
 
-        Mockito.when(outletRepository.findByOwnerId(any(UUID.class))).thenReturn(List.of(outlet));
+        Mockito.when(onboardingService.getOutletsForUser(any(UUID.class), any())).thenReturn(List.of(outlet));
+        Mockito.when(outletRepository.findOrganisationByOutletId(any(UUID.class))).thenReturn(Optional.of(
+                new com.fooddelivery.common.dto.restaurant.OutletOrganisationDto(SAMPLE_ID, SAMPLE_ID,
+                        UUID.fromString("321e4567-e89b-12d3-a456-426614174000"))));
         Mockito.when(outletRepository.findById(any())).thenReturn(Optional.of(outlet));
         Mockito.when(onboardingService.getNearbyOutlets(anyDouble(), anyDouble(), anyDouble()))
                .thenReturn(List.of(outlet));
@@ -83,7 +84,7 @@ public abstract class ContractTestBase {
         Mockito.when(onboardingService.getBrandById(any())).thenReturn(brand);
 
         com.fooddelivery.restaurant.repository.BrandRepository brandRepository = Mockito.mock(com.fooddelivery.restaurant.repository.BrandRepository.class);
-        brand.setOwnerId(UUID.fromString("321e4567-e89b-12d3-a456-426614174000"));
+        brand.setOrganisationId(UUID.fromString("321e4567-e89b-12d3-a456-426614174000"));
         Mockito.when(brandRepository.findById(any())).thenReturn(Optional.of(brand));
 
         MenuItemDTO item = new MenuItemDTO();
@@ -102,9 +103,9 @@ public abstract class ContractTestBase {
         com.fooddelivery.common.contract.PlatformJson.standaloneSetup(
                 new InternalRestaurantController(outletRepository,
                         Mockito.mock(com.fooddelivery.restaurant.repository.MasterMenuItemRepository.class),
-                        brandRepository),
+                        brandRepository, onboardingService),
                 new RestaurantOutletController(onboardingService),
-                new CatalogController(catalogService, securityHelper),
+                new CatalogController(catalogService),
                 new InternalOrderController(orderRepository));
     }
 }

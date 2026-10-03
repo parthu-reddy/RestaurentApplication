@@ -135,6 +135,7 @@ private final MasterMenuItemRepository masterMenuItemRepository;
     @Transactional
     @CacheEvict(value = "outletMenus", key = "#outletId")
     public OutletMenuOverride addOrUpdateOverride(UUID outletId, UUID masterMenuItemId, OutletMenuOverride override) {
+        Outlet outlet = requireItemAtOutlet(outletId, masterMenuItemId);
         Optional<OutletMenuOverride> existing = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId);
         OutletMenuOverride target = existing.orElse(new OutletMenuOverride());
         if (target.getId() == null) {
@@ -148,9 +149,33 @@ private final MasterMenuItemRepository masterMenuItemRepository;
         OutletMenuOverride saved = outletMenuOverrideRepository.save(target);
         
         // Notify for the specific outlet's brand
-        outletRepository.findById(outletId).ifPresent(outlet -> notifyMenuUpdate(outlet.getBrandId()));
+        notifyMenuUpdate(outlet.getBrandId());
         
         return saved;
+    }
+
+    @Transactional
+    @CacheEvict(value = "outletMenus", key = "#outletId")
+    public OutletMenuOverride toggleStock(UUID outletId, UUID masterMenuItemId, boolean inStock) {
+        Outlet outlet = requireItemAtOutlet(outletId, masterMenuItemId);
+        OutletMenuOverride target = outletMenuOverrideRepository.findByOutletIdAndMasterMenuItemId(outletId, masterMenuItemId)
+                .orElseGet(() -> OutletMenuOverride.builder().id(UUID.randomUUID()).outletId(outletId)
+                        .masterMenuItemId(masterMenuItemId).build());
+        target.setIsAvailable(inStock);
+        OutletMenuOverride saved = outletMenuOverrideRepository.save(target);
+        notifyMenuUpdate(outlet.getBrandId());
+        return saved;
+    }
+
+    private Outlet requireItemAtOutlet(UUID outletId, UUID itemId) {
+        Outlet outlet = outletRepository.findById(outletId).orElseThrow(() ->
+                new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Outlet not found"));
+        MasterMenuItem item = masterMenuItemRepository.findById(itemId).orElseThrow(() ->
+                new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Menu item not found"));
+        if (!outlet.getBrandId().equals(item.getBrandId())) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND, "Menu item not found at this outlet");
+        }
+        return outlet;
     }
 
     @Transactional(readOnly = true)

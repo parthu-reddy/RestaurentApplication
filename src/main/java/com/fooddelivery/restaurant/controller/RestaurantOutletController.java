@@ -65,41 +65,41 @@ public class RestaurantOutletController {
     @GetMapping("/api/v1/outlets")
     @PreAuthorize("hasRole('RESTAURANT')")
     public ResponseEntity<ApiResponse<List<OutletDto>>> getOutlets(java.security.Principal principal) {
-        List<OutletDto> outlets = onboardingService.getOutletsByOwner(UUID.fromString(principal.getName())).stream().map(this::toOutletDto).collect(java.util.stream.Collectors.toList());
+        List<OutletDto> outlets = onboardingService.getOutletsForUser(UUID.fromString(principal.getName()), com.fooddelivery.common.enums.OrganisationPermission.ORG_VIEW).stream().map(this::toOutletDto).collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(ApiResponse.success(outlets, "Outlets retrieved successfully"));
     }
 
     // Phase 2: Outlet Onboarding
     @PostMapping("/api/v1/brands/{brandId}/outlets")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).OUTLET_MANAGE)")
     public ResponseEntity<ApiResponse<OutletDto>> onboardOutlet(@PathVariable UUID brandId, @Valid @RequestBody OutletOnboardRequest request) {
         Outlet outlet = onboardingService.onboardOutlet(brandId, request.getName(), request.getFssaiLicenseNumber(), request.getLat(), request.getLng(), request.getTimings(), request.getBannerUrl(), request.getCuisine(), request.getRating(), request.getReviewsCount(), request.getDeliveryTime(), request.getDeliveryFee(), request.getTags(), request.getTimeZone(), request.getCityId());
         return ResponseEntity.ok(ApiResponse.success(toOutletDto(outlet), "Outlet onboarded successfully"));
     }
 
     @PutMapping("/api/v1/outlets/{outletId}/timings")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#outletId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).OUTLET_MANAGE)")
     public ResponseEntity<ApiResponse<Void>> updateOutletTimings(@PathVariable UUID outletId, @Valid @RequestBody OutletTimingsUpdateRequest request) {
         onboardingService.updateOutletTimings(outletId, request.getTimings());
         return ResponseEntity.ok(ApiResponse.success(null, "Outlet timings updated successfully"));
     }
 
     @GetMapping("/api/v1/brands/{brandId}/outlets")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).ORG_VIEW)")
     public ResponseEntity<ApiResponse<List<OutletDto>>> getOutletsByBrand(@PathVariable UUID brandId) {
         List<OutletDto> dtos = onboardingService.getOutletsByBrand(brandId).stream().map(this::toOutletDto).collect(java.util.stream.Collectors.toList());
         return ResponseEntity.ok(ApiResponse.success(dtos, "Fetched outlets"));
     }
 
     @PutMapping("/api/v1/outlets/{outletId}/status")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#outletId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).OUTLET_MANAGE)")
     public ResponseEntity<ApiResponse<Void>> updateOutletStatus(@PathVariable UUID outletId, @Valid @RequestBody OutletStatusUpdateRequest request) {
         onboardingService.updateOutletStatus(outletId, request.getIsActive());
         return ResponseEntity.ok(ApiResponse.success(null, "Outlet status updated successfully"));
     }
 
     @PutMapping("/api/v1/outlets/{outletId}/settings")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#outletId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).OUTLET_MANAGE)")
     public ResponseEntity<ApiResponse<Void>> updateOutletSettings(@PathVariable UUID outletId, @Valid @RequestBody OutletSettingsUpdateRequest request) {
         onboardingService.updateOutletSettings(outletId, request.getDefaultPrepTimeSeconds());
         return ResponseEntity.ok(ApiResponse.success(null, "Outlet settings updated successfully"));

@@ -33,18 +33,17 @@ public class CatalogController {
         return OverrideItemDto.builder().id(item.getId()).outletId(item.getOutletId()).masterMenuItemId(item.getMasterMenuItemId()).overriddenPrice(item.getOverriddenPrice()).isAvailable(item.getIsAvailable()).overriddenPrepTimeMinutes(item.getOverriddenPrepTimeMinutes()).version(item.getVersion()).build();
     }
 private final com.fooddelivery.restaurant.service.CatalogService catalogService;
-    private final com.fooddelivery.restaurant.security.RestaurantSecurityHelper securityHelper;
 
     // Phase 3: Brand uploads Master Menu
     @PostMapping("/api/v1/brands/{brandId}/master-menu")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).MENU_MANAGE)")
     public ResponseEntity<ApiResponse<MasterMenuItemDto>> addMasterMenuItem(@PathVariable UUID brandId, @Valid @RequestBody MasterMenuItem item) {
         MasterMenuItem savedItem = catalogService.addMasterMenuItem(brandId, item);
         return ResponseEntity.ok(ApiResponse.success(toMasterMenuItemDto(savedItem), "Master Menu item added successfully"));
     }
 
     @GetMapping("/api/v1/brands/{brandId}/master-menu")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).ORG_VIEW)")
     public ResponseEntity<ApiResponse<List<MasterMenuItemDto>>> getMasterMenuItems(@PathVariable UUID brandId) {
         List<MasterMenuItem> items = catalogService.getMasterMenuItems(brandId);
         List<MasterMenuItemDto> dtos = items.stream().map(this::toMasterMenuItemDto).collect(Collectors.toList());
@@ -52,7 +51,7 @@ private final com.fooddelivery.restaurant.service.CatalogService catalogService;
     }
 
     @PutMapping("/api/v1/brands/{brandId}/master-menu/{itemId}")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isBrandOwner(#brandId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onBrand(#brandId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).MENU_MANAGE)")
     public ResponseEntity<ApiResponse<MasterMenuItemDto>> editMasterMenuItem(@PathVariable UUID brandId, @PathVariable UUID itemId, @Valid @RequestBody MasterMenuItem item) {
         MasterMenuItem updated = catalogService.editMasterMenuItem(brandId, itemId, item);
         return ResponseEntity.ok(ApiResponse.success(toMasterMenuItemDto(updated), "Master Menu item updated successfully"));
@@ -60,20 +59,28 @@ private final com.fooddelivery.restaurant.service.CatalogService catalogService;
 
     // Phase 3: Outlet overrides Price or Availability
     @PostMapping("/api/v1/outlets/{outletId}/menu-overrides/{masterMenuItemId}")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#outletId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).MENU_MANAGE)")
     public ResponseEntity<ApiResponse<OverrideItemDto>> overrideMenuItem(@PathVariable UUID outletId, @PathVariable UUID masterMenuItemId, @Valid @RequestBody OutletMenuOverride override) {
         OutletMenuOverride saved = catalogService.addOrUpdateOverride(outletId, masterMenuItemId, override);
         return ResponseEntity.ok(ApiResponse.success(toOverrideItemDto(saved), "Menu override saved"));
     }
 
     @GetMapping("/api/v1/outlets/{outletId}/menu-overrides")
-    @PreAuthorize("hasRole('RESTAURANT') and @restaurantSecurityHelper.isOutletOwner(#outletId, authentication.name)")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#outletId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).ORG_VIEW)")
     public ResponseEntity<ApiResponse<List<OverrideItemDto>>> getOverrides(@PathVariable UUID outletId) {
         List<OverrideItemDto> dtos = catalogService.getOverrides(outletId).stream().map(this::toOverrideItemDto).collect(Collectors.toList());
         return ResponseEntity.ok(ApiResponse.success(dtos, "Menu overrides retrieved"));
     }
 
     // Customer fetching the effective menu for an Outlet
+    @PutMapping("/api/v1/outlets/{outletId}/menu-items/{masterMenuItemId}/stock")
+    @PreAuthorize("hasRole('RESTAURANT') and @restaurantAccess.onOutlet(#outletId, authentication, T(com.fooddelivery.common.enums.OrganisationPermission).STOCK_TOGGLE)")
+    public ResponseEntity<ApiResponse<OverrideItemDto>> toggleStock(@PathVariable UUID outletId,
+            @PathVariable UUID masterMenuItemId, @Valid @RequestBody com.fooddelivery.restaurant.dto.StockToggleRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(toOverrideItemDto(
+                catalogService.toggleStock(outletId, masterMenuItemId, request.inStock())), "Stock updated"));
+    }
+
     @GetMapping("/api/v1/restaurants/{restaurantId}/catalog/items")
     @PreAuthorize("permitAll()")
     public ResponseEntity<ApiResponse<List<MenuItemDTO>>> getEffectiveMenu(@PathVariable UUID restaurantId) {
